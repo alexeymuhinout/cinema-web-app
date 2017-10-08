@@ -1,4 +1,4 @@
-package com.rustedbrain.study.course.controller;
+package com.rustedbrain.study.course.controller.service;
 
 import com.rustedbrain.study.course.model.authorization.User;
 import com.rustedbrain.study.course.model.cinema.*;
@@ -6,7 +6,7 @@ import com.rustedbrain.study.course.model.cinema.*;
 import java.util.Date;
 import java.util.List;
 
-public interface CinemaLogic {
+public interface CinemaService {
 
     List<Movie> getMovies(Cinema cinema, Date date);
 
@@ -14,7 +14,7 @@ public interface CinemaLogic {
 
     List<City> getCities();
 
-    List<Message> getMessages(Movie movie);
+    List<Comment> getMessages(Movie movie);
 
     void addFilmScreening(FilmScreening filmScreening);
 

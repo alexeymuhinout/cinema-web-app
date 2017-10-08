@@ -1,6 +1,7 @@
 package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
+import com.rustedbrain.study.course.model.authorization.User;
 
 import javax.persistence.*;
 import java.util.List;
@@ -9,10 +10,20 @@ import java.util.List;
 @Table(name = "city")
 public class City extends DatabaseEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", length = 64, nullable = false, unique = true)
     private String name;
-    @OneToMany(mappedBy = "city", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<Cinema> cinemas;
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<User> users;
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
 
     public String getName() {
         return name;
@@ -43,5 +54,12 @@ public class City extends DatabaseEntity {
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "City{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

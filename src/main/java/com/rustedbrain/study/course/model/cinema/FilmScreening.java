@@ -2,8 +2,7 @@ package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -11,10 +10,25 @@ import java.util.List;
 @Table(name = "filmScreening")
 public class FilmScreening extends DatabaseEntity {
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cinemaId", referencedColumnName = "id")
+    private Cinema cinema;
+    @ManyToOne(fetch = FetchType.LAZY)
     private Movie movie;
+    @Column(name = "startDate")
     private Date startDate;
+    @OneToMany(mappedBy = "filmScreening")
     private List<FilmScreeningEvent> times;
+    @Column(name = "endDate")
     private Date endDate;
+
+    public Cinema getCinema() {
+        return cinema;
+    }
+
+    public void setCinema(Cinema cinema) {
+        this.cinema = cinema;
+    }
 
     public Movie getMovie() {
         return movie;

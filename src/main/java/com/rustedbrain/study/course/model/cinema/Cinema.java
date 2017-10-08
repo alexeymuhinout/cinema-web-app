@@ -19,6 +19,27 @@ public class Cinema extends DatabaseEntity {
             joinColumns = @JoinColumn(name = "cinemaId")
     )
     private List<String> additionalFeatures;
+    @OneToMany(mappedBy = "cinema")
+    private List<CinemaHall> cinemaHalls;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cityId", referencedColumnName = "id")
+    private City city;
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
+
+    public List<CinemaHall> getCinemaHalls() {
+        return cinemaHalls;
+    }
+
+    public void setCinemaHalls(List<CinemaHall> cinemaHalls) {
+        this.cinemaHalls = cinemaHalls;
+    }
 
     public List<String> getAdditionalFeatures() {
         return additionalFeatures;

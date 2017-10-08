@@ -13,6 +13,8 @@ public class DatabaseEntity implements Serializable {
     private long id;
     @Column(name = "registrationDate")
     private Date registrationDate;
+    @Column(name = "lastAccessDate")
+    private Date lastAccessDate;
 
     public long getId() {
         return id;

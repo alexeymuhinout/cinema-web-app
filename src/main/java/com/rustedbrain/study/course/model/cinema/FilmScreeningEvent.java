@@ -2,17 +2,32 @@ package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.time.LocalTime;
+import javax.persistence.*;
+import java.sql.Time;
+import java.util.List;
 
 @Entity
 @Table(name = "filmScreeningEvent")
 public class FilmScreeningEvent extends DatabaseEntity {
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "filmScreeningId")
     private FilmScreening filmScreening;
-    private LocalTime time;
+    @OneToMany(mappedBy = "event")
+    private List<Ticket> tickets;
+    @Column(name = "time")
+    private Time time;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cinemaHallId", referencedColumnName = "id")
     private CinemaHall cinemaHall;
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
+    }
 
     public FilmScreening getFilmScreening() {
         return filmScreening;
@@ -22,11 +37,11 @@ public class FilmScreeningEvent extends DatabaseEntity {
         this.filmScreening = filmScreening;
     }
 
-    public LocalTime getTime() {
+    public Time getTime() {
         return time;
     }
 
-    public void setTime(LocalTime time) {
+    public void setTime(Time time) {
         this.time = time;
     }
 

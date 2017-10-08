@@ -9,10 +9,31 @@ import java.util.List;
 @Table(name = "cinemaHall")
 public class CinemaHall extends DatabaseEntity {
 
-    @Column(name = "name", length = 64)
+    @Column(name = "name", length = 64, nullable = false)
     private String name;
     @OneToMany(mappedBy = "cinemaHall", cascade = CascadeType.PERSIST)
     private List<Row> rows;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cinemaId")
+    private Cinema cinema;
+    @OneToMany(mappedBy = "cinemaHall")
+    private List<FilmScreeningEvent> filmScreeningEvents;
+
+    public List<FilmScreeningEvent> getFilmScreeningEvents() {
+        return filmScreeningEvents;
+    }
+
+    public void setFilmScreeningEvents(List<FilmScreeningEvent> filmScreeningEvents) {
+        this.filmScreeningEvents = filmScreeningEvents;
+    }
+
+    public Cinema getCinema() {
+        return cinema;
+    }
+
+    public void setCinema(Cinema cinema) {
+        this.cinema = cinema;
+    }
 
     public String getName() {
         return name;

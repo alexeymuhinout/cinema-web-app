@@ -1,17 +1,45 @@
 package com.rustedbrain.study.course.model.authorization;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
+import com.rustedbrain.study.course.model.cinema.City;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@MappedSuperclass
 public class User extends DatabaseEntity {
 
+    @Column(name = "login", length = 64, nullable = false, unique = true)
     private String login;
+    @Column(name = "password", length = 64, nullable = false)
+    private String password;
+    @Column(name = "name", length = 64)
     private String name;
+    @Column(name = "surname", length = 64)
     private String surname;
+    @Column(name = "mail", length = 64, nullable = false, unique = true)
     private String mail;
+    @Column(name = "birthday")
     private Date birthday;
-    private Date lastAccessTime;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cityId", referencedColumnName = "id")
+    private City city;
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getLogin() {
         return login;
@@ -53,11 +81,30 @@ public class User extends DatabaseEntity {
         this.birthday = birthday;
     }
 
-    public Date getLastAccessTime() {
-        return lastAccessTime;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        User user = (User) o;
+
+        return mail.equals(user.mail);
     }
 
-    public void setLastAccessTime(Date lastAccessTime) {
-        this.lastAccessTime = lastAccessTime;
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + mail.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "login='" + login + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                '}';
     }
 }

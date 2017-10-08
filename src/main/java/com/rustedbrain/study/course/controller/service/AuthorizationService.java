@@ -1,8 +1,8 @@
-package com.rustedbrain.study.course.controller;
+package com.rustedbrain.study.course.controller.service;
 
 import com.rustedbrain.study.course.model.authorization.User;
 
-public interface AuthorizationLogic {
+public interface AuthorizationService {
 
     void registerUser(User user) throws IllegalArgumentException;
 

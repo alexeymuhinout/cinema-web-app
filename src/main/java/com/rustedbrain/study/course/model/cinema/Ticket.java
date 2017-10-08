@@ -2,14 +2,29 @@ package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "ticket")
 public class Ticket extends DatabaseEntity {
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "eventId")
+    private FilmScreeningEvent event;
+    @Column(name = "soldDate")
     private Date soldDate;
-    private int hallNumber;
-    private int rowNumber;
-    private int seatNumber;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seatId")
+    private Seat seat;
+
+    public FilmScreeningEvent getEvent() {
+        return event;
+    }
+
+    public void setEvent(FilmScreeningEvent event) {
+        this.event = event;
+    }
 
     public Date getSoldDate() {
         return soldDate;
@@ -19,27 +34,39 @@ public class Ticket extends DatabaseEntity {
         this.soldDate = soldDate;
     }
 
-    public int getHallNumber() {
-        return hallNumber;
+    public Seat getSeat() {
+        return seat;
     }
 
-    public void setHallNumber(int hallNumber) {
-        this.hallNumber = hallNumber;
+    public void setSeat(Seat seat) {
+        this.seat = seat;
     }
 
-    public int getRowNumber() {
-        return rowNumber;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Ticket ticket = (Ticket) o;
+
+        return event.equals(ticket.event) && seat.equals(ticket.seat);
     }
 
-    public void setRowNumber(int rowNumber) {
-        this.rowNumber = rowNumber;
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + event.hashCode();
+        result = 31 * result + seat.hashCode();
+        return result;
     }
 
-    public int getSeatNumber() {
-        return seatNumber;
-    }
-
-    public void setSeatNumber(int seatNumber) {
-        this.seatNumber = seatNumber;
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "event=" + event +
+                ", soldDate=" + soldDate +
+                ", seat=" + seat +
+                '}';
     }
 }

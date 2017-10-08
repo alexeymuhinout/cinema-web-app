@@ -1,11 +1,29 @@
 package com.rustedbrain.study.course.model.cinema;
 
+import com.rustedbrain.study.course.model.DatabaseEntity;
+
+import javax.persistence.*;
 import java.util.List;
 
-public class Row {
+@Entity
+@Table(name = "row")
+public class Row extends DatabaseEntity {
 
+    @Column(name = "number")
     private int number;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cinemaHallId")
+    private CinemaHall cinemaHall;
+    @OneToMany(mappedBy = "row")
     private List<Seat> seats;
+
+    public CinemaHall getCinemaHall() {
+        return cinemaHall;
+    }
+
+    public void setCinemaHall(CinemaHall cinemaHall) {
+        this.cinemaHall = cinemaHall;
+    }
 
     public int getNumber() {
         return number;
@@ -38,5 +56,13 @@ public class Row {
         int result = number;
         result = 31 * result + seats.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Row{" +
+                "number=" + number +
+                ", seats=" + seats +
+                '}';
     }
 }
