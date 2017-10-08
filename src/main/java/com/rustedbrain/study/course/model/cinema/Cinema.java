@@ -13,40 +13,31 @@ public class Cinema extends DatabaseEntity {
     private String name;
     @OneToMany
     private List<FilmScreening> filmScreenings;
-    @ElementCollection
-    @CollectionTable(
-            name = "additionalFeature",
-            joinColumns = @JoinColumn(name = "cinemaId")
-    )
-    private List<String> additionalFeatures;
+    @ManyToMany(mappedBy = "cinemas")
+    private List<CinemaFeature> cinemaFeatures;
     @OneToMany(mappedBy = "cinema")
     private List<CinemaHall> cinemaHalls;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cityId", referencedColumnName = "id")
     private City city;
 
-    public City getCity() {
-        return city;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Cinema cinema = (Cinema) o;
+
+        return name.equals(cinema.name) && city.equals(cinema.city);
     }
 
-    public void setCity(City city) {
-        this.city = city;
-    }
-
-    public List<CinemaHall> getCinemaHalls() {
-        return cinemaHalls;
-    }
-
-    public void setCinemaHalls(List<CinemaHall> cinemaHalls) {
-        this.cinemaHalls = cinemaHalls;
-    }
-
-    public List<String> getAdditionalFeatures() {
-        return additionalFeatures;
-    }
-
-    public void setAdditionalFeatures(List<String> additionalFeatures) {
-        this.additionalFeatures = additionalFeatures;
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + city.hashCode();
+        return result;
     }
 
     public String getName() {
@@ -65,32 +56,35 @@ public class Cinema extends DatabaseEntity {
         this.filmScreenings = filmScreenings;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        Cinema cinema = (Cinema) o;
-
-        return name.equals(cinema.name) && (filmScreenings != null ? filmScreenings.equals(cinema.filmScreenings) : cinema.filmScreenings == null) && (additionalFeatures != null ? additionalFeatures.equals(cinema.additionalFeatures) : cinema.additionalFeatures == null);
+    public List<CinemaFeature> getCinemaFeatures() {
+        return cinemaFeatures;
     }
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + (filmScreenings != null ? filmScreenings.hashCode() : 0);
-        result = 31 * result + (additionalFeatures != null ? additionalFeatures.hashCode() : 0);
-        return result;
+    public void setCinemaFeatures(List<CinemaFeature> cinemaFeatures) {
+        this.cinemaFeatures = cinemaFeatures;
+    }
+
+    public List<CinemaHall> getCinemaHalls() {
+        return cinemaHalls;
+    }
+
+    public void setCinemaHalls(List<CinemaHall> cinemaHalls) {
+        this.cinemaHalls = cinemaHalls;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
     }
 
     @Override
     public String toString() {
         return "Cinema{" +
                 "name='" + name + '\'' +
-                ", filmScreenings=" + filmScreenings +
-                ", additionalFeatures=" + additionalFeatures +
+                ", city=" + city +
                 '}';
     }
 }
