@@ -6,20 +6,20 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "cinemaFeature")
-public class CinemaFeature extends DatabaseEntity {
+@Table(name = "feature")
+public class Feature extends DatabaseEntity {
 
-    @Column(name = "name", length = 32, nullable = false, unique = true, columnDefinition = "Cinema feature name")
+    @Column(name = "name", length = 32, nullable = false, unique = true)
     private String name;
-    @Column(name = "description", length = 256, nullable = true, unique = true, columnDefinition = "Cinema feature description")
-    private String description;
+    @Column(name = "featureDescription", length = 256, unique = true)
+    private String featureDescription;
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
     })
-    @JoinTable(name = "cinemaFeatureCinema",
-            joinColumns = @JoinColumn(name = "cinemaFeatureId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "cinemaId", referencedColumnName = "id")
+    @JoinTable(name = "cinemaFeature",
+            joinColumns = @JoinColumn(name = "feature_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "cinema_id", referencedColumnName = "id")
     )
     private List<Cinema> cinemas;
 
@@ -39,12 +39,12 @@ public class CinemaFeature extends DatabaseEntity {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getFeatureDescription() {
+        return featureDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setFeatureDescription(String featuredescription) {
+        this.featureDescription = featuredescription;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CinemaFeature extends DatabaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        CinemaFeature that = (CinemaFeature) o;
+        Feature that = (Feature) o;
 
         return name.equals(that.name);
     }
@@ -67,9 +67,10 @@ public class CinemaFeature extends DatabaseEntity {
 
     @Override
     public String toString() {
-        return "CinemaFeature{" +
+        return "Feature{" +
                 "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+                ", featureDescription='" + featureDescription + '\'' +
+                ", cinemas=" + cinemas +
+                "} " + super.toString();
     }
 }

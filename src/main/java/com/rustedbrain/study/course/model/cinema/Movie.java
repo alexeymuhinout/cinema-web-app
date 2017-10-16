@@ -1,12 +1,14 @@
 package com.rustedbrain.study.course.model.cinema;
 
+import com.rustedbrain.study.course.model.DatabaseEntity;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "movie")
-public class Movie {
+public class Movie extends DatabaseEntity {
 
     @Column(name = "localizedName", length = 128, nullable = false)
     private String localizedName;
@@ -14,11 +16,11 @@ public class Movie {
     private String originalName;
     @Column(name = "releaseDate")
     private Date releaseDate;
-    @ManyToMany(mappedBy = "movie")
+    @ManyToMany(mappedBy = "movies")
     private List<Genre> genres;
     @Column(name = "description", length = 512)
     private String description;
-    @Column(name = "description")
+    @Column(name = "minAge")
     private int minAge;
     @Column(name = "timeMinutes")
     private int timeMinutes;

@@ -6,24 +6,27 @@ import com.rustedbrain.study.course.model.cinema.City;
 import javax.persistence.*;
 import java.util.Date;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "userId")
+@Table(name = "user")
 public class User extends DatabaseEntity {
 
     @Column(name = "login", length = 64, nullable = false, unique = true)
-    private String login;
+    protected String login;
     @Column(name = "password", length = 64, nullable = false)
-    private String password;
+    protected String password;
     @Column(name = "name", length = 64)
-    private String name;
+    protected String name;
     @Column(name = "surname", length = 64)
-    private String surname;
+    protected String surname;
     @Column(name = "mail", length = 64, nullable = false, unique = true)
-    private String mail;
+    protected String mail;
     @Column(name = "birthday")
-    private Date birthday;
+    protected Date birthday;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cityId", referencedColumnName = "id")
-    private City city;
+    protected City city;
 
     public City getCity() {
         return city;

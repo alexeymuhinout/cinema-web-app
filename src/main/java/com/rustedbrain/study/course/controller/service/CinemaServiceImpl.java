@@ -12,16 +12,8 @@ import java.util.List;
 @Service
 public class CinemaServiceImpl implements CinemaService {
 
-    private CityRepository cityRepository;
-
-    public CityRepository getCityRepository() {
-        return cityRepository;
-    }
-
     @Autowired
-    public void setCityRepository(CityRepository cityRepository) {
-        this.cityRepository = cityRepository;
-    }
+    private CityRepository cityRepository;
 
     @Override
     public List<Movie> getMovies(Cinema cinema, Date date) {

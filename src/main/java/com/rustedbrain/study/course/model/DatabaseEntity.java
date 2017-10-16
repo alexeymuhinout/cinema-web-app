@@ -16,6 +16,9 @@ public class DatabaseEntity implements Serializable {
     @Column(name = "lastAccessDate")
     private Date lastAccessDate;
 
+    public DatabaseEntity() {
+    }
+
     public long getId() {
         return id;
     }

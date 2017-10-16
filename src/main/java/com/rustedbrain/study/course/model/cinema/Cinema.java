@@ -14,7 +14,7 @@ public class Cinema extends DatabaseEntity {
     @OneToMany
     private List<FilmScreening> filmScreenings;
     @ManyToMany(mappedBy = "cinemas")
-    private List<CinemaFeature> cinemaFeatures;
+    private List<Feature> features;
     @OneToMany(mappedBy = "cinema")
     private List<CinemaHall> cinemaHalls;
     @ManyToOne(fetch = FetchType.EAGER)
@@ -56,12 +56,12 @@ public class Cinema extends DatabaseEntity {
         this.filmScreenings = filmScreenings;
     }
 
-    public List<CinemaFeature> getCinemaFeatures() {
-        return cinemaFeatures;
+    public List<Feature> getFeatures() {
+        return features;
     }
 
-    public void setCinemaFeatures(List<CinemaFeature> cinemaFeatures) {
-        this.cinemaFeatures = cinemaFeatures;
+    public void setFeatures(List<Feature> features) {
+        this.features = features;
     }
 
     public List<CinemaHall> getCinemaHalls() {
