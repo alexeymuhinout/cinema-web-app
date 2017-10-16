@@ -25,7 +25,7 @@ public class Application {
             // save a couple of customers
             repository.save(new Administrator("alexeymuhinout", "Bloodarkness1996", "alexeymuhinout@gmail.com"));
             repository.save(new Administrator("mogtarip", "mogtariperson1996", "mogtarmogtar@gmail.com"));
-            repository.save(new Administrator("eleonora", "281093", "kiparoidzie@gmail.com"));
+            repository.save(new Administrator("eleonoraKipa", "281093", "kiparoidzie@gmail.com"));
             repository.save(new Administrator("hardeathit", "hardeathit1992", "hardeathit@gmail.com"));
 
             // fetch all customers
