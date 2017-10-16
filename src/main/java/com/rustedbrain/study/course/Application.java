@@ -37,8 +37,8 @@ public class Application {
             log.info("");
 
             // fetch an individual customer by ID
-            Administrator customer = repository.findOne(1L);
-            log.info("Customer found with findOne(1L):");
+            Administrator customer = repository.getOne(1L);
+            log.info("Customer found with getOne(1L):");
             log.info("--------------------------------");
             log.info(customer.toString());
             log.info("");
