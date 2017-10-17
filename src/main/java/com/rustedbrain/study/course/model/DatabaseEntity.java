@@ -19,6 +19,14 @@ public class DatabaseEntity implements Serializable {
     public DatabaseEntity() {
     }
 
+    public Date getLastAccessDate() {
+        return lastAccessDate;
+    }
+
+    public void setLastAccessDate(Date lastAccessDate) {
+        this.lastAccessDate = lastAccessDate;
+    }
+
     public long getId() {
         return id;
     }
@@ -42,12 +50,12 @@ public class DatabaseEntity implements Serializable {
 
         DatabaseEntity that = (DatabaseEntity) o;
 
-        return registrationDate.equals(that.registrationDate);
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return registrationDate.hashCode();
+        return (int) (id ^ (id >>> 32));
     }
 
     @Override
