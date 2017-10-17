@@ -8,12 +8,15 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class TicketTest {
 
     private static Ticket ticket1;
     private static Ticket ticket2;
+    private static Ticket ticket3;
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -21,10 +24,15 @@ public class TicketTest {
         ticket2 = new Ticket();
         ticket1.setId(1);
         ticket1.setSeat(setUpSeat());
-        setUpEvent(ticket1);
+        setUpEvent(ticket1, new Time(10));
         ticket2.setId(1);
         ticket2.setSeat(setUpSeat());
-        setUpEvent(ticket2);
+        setUpEvent(ticket2, new Time(10));
+
+        ticket3 = new Ticket();
+        ticket3.setId(6);
+        ticket3.setSeat(setUpSeat());
+        setUpEvent(ticket3, new Time(23));
     }
 
     private static Seat setUpSeat() {
@@ -36,10 +44,10 @@ public class TicketTest {
         return seat;
     }
 
-    private static void setUpEvent(Ticket ticket) {
+    private static void setUpEvent(Ticket ticket, Time time) {
         FilmScreeningEvent filmScreeningEvent = new FilmScreeningEvent();
         filmScreeningEvent.setId(2);
-        filmScreeningEvent.setTime(new Time(10));
+        filmScreeningEvent.setTime(time);
         setUpCinemaHall(filmScreeningEvent);
         ticket.setEvent(filmScreeningEvent);
     }
@@ -74,8 +82,30 @@ public class TicketTest {
     }
 
     @Test
-    public void testEquals() {
+    public void testSymmetryEquals() {
         assertTrue(ticket1.equals(ticket2) && ticket2.equals(ticket1));
+    }
+
+    @Test
+    public void testNotEquals() {
+        assertFalse(ticket2.equals(ticket3));
+    }
+
+    @Test
+    public void testEqualsConsistency() {
+        assertEquals(ticket1.equals(ticket2), ticket1.equals(ticket2));
+        setUpEvent(ticket1, new Time(22));
+        assertFalse(ticket1.equals(ticket2));
+    }
+
+    @Test
+    public void testEqualsComparisonOfNull() {
+        assertEquals(false, ticket1.equals(null));
+    }
+
+    @Test
+    public void testEqualsReflectivity() {
+        assertTrue(ticket1.equals(ticket1));
     }
 
     @Test

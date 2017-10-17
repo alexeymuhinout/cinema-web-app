@@ -8,12 +8,15 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class FilmScreeningEventTest {
 
     private static FilmScreeningEvent filmScreeningEvent1;
     private static FilmScreeningEvent filmScreeningEvent2;
+    private static FilmScreeningEvent filmScreeningEvent3;
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -25,6 +28,11 @@ public class FilmScreeningEventTest {
         filmScreeningEvent2.setId(1);
         filmScreeningEvent2.setTime(new Time(10));
         setUpCinemaHall(filmScreeningEvent2);
+
+        filmScreeningEvent3 = new FilmScreeningEvent();
+        filmScreeningEvent3.setId(3);
+        filmScreeningEvent3.setTime(new Time(20));
+        setUpCinemaHall(filmScreeningEvent3);
     }
 
     private static void setUpCinemaHall(FilmScreeningEvent filmScreeningEvent) {
@@ -57,8 +65,30 @@ public class FilmScreeningEventTest {
     }
 
     @Test
-    public void testEquals() {
+    public void testSymmetryEquals() {
         assertTrue(filmScreeningEvent1.equals(filmScreeningEvent2) && filmScreeningEvent2.equals(filmScreeningEvent1));
+    }
+
+    @Test
+    public void testNotEquals() {
+        assertFalse(filmScreeningEvent2.equals(filmScreeningEvent3));
+    }
+
+    @Test
+    public void testEqualsConsistency() {
+        assertEquals(filmScreeningEvent1.equals(filmScreeningEvent2), filmScreeningEvent1.equals(filmScreeningEvent2));
+        filmScreeningEvent1.setTime(new Time(21));
+        assertFalse(filmScreeningEvent1.equals(filmScreeningEvent2));
+    }
+
+    @Test
+    public void testEqualsComparisonOfNull() {
+        assertEquals(false, filmScreeningEvent1.equals(null));
+    }
+
+    @Test
+    public void testEqualsReflectivity() {
+        assertTrue(filmScreeningEvent1.equals(filmScreeningEvent1));
     }
 
     @Test

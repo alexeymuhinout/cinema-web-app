@@ -4,11 +4,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class GenreTest {
 
     private static Genre genre1;
     private static Genre genre2;
+    private static Genre genre3;
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -18,11 +21,37 @@ public class GenreTest {
         genre1.setName("Horror");
         genre2.setId(1);
         genre2.setName("Horror");
+
+        genre3 = new Genre();
+        genre3.setId(5);
+        genre3.setName("Drama");
     }
 
     @Test
-    public void testEquals() {
+    public void testSymmetryEquals() {
         assertEquals(genre1.equals(genre2), genre2.equals(genre1));
+    }
+
+    @Test
+    public void testNotEquals() {
+        assertFalse(genre2.equals(genre3));
+    }
+
+    @Test
+    public void testEqualsConsistency() {
+        assertEquals(genre1.equals(genre2), genre1.equals(genre2));
+        genre1.setName("Melodrama");
+        assertFalse(genre1.equals(genre2));
+    }
+
+    @Test
+    public void testEqualsComparisonOfNull() {
+        assertEquals(false, genre1.equals(null));
+    }
+
+    @Test
+    public void testEqualsReflectivity() {
+        assertTrue(genre1.equals(genre1));
     }
 
     @Test

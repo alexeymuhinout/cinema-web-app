@@ -9,23 +9,48 @@ public class TestUser {
 
     private static User user1;
     private static User user2;
+    private static User user3;
 
     @BeforeClass
     public static void setUpBeforeClass() {
         user1 = new User();
         user1.setMail("user@gmail.com");
-        user1.setName("User1");
         user1.setId(1);
 
         user2 = new User();
         user2.setMail("user@gmail.com");
-        user2.setName("User2");
         user2.setId(1);
+
+        user3 = new User();
+        user3.setMail("test@gmail.com");
+        user3.setId(3);
     }
 
     @Test
-    public void testEquals() {
+    public void testEqualsSymmetry() {
         assertTrue(user1.equals(user2) && user2.equals(user1));
+    }
+
+    @Test
+    public void testNotEquals() {
+        assertFalse(user2.equals(user3));
+    }
+
+    @Test
+    public void testEqualsConsistency() {
+        assertEquals(user1.equals(user2), user1.equals(user2));
+        user1.setMail("consistency@test.com");
+        assertFalse(user1.equals(user2));
+    }
+
+    @Test
+    public void testEqualsComparisonOfNull() {
+        assertEquals(false, user1.equals(null));
+    }
+
+    @Test
+    public void testEqualsReflectivity() {
+        assertTrue(user1.equals(user1));
     }
 
     @Test
