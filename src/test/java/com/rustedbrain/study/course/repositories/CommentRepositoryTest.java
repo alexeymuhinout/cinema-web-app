@@ -7,7 +7,7 @@ import com.rustedbrain.study.course.model.authorization.Member;
 import com.rustedbrain.study.course.model.cinema.City;
 import com.rustedbrain.study.course.model.cinema.Comment;
 import com.rustedbrain.study.course.model.cinema.Movie;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,9 +83,8 @@ public class CommentRepositoryTest {
         Assert.assertEquals(Optional.empty(), repository.findById(comment.getId()));
     }
 
-    @AfterClass
-    @Test
-    public void tearDownAfterClass() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         repository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
         cityRepository.deleteAllInBatch();
