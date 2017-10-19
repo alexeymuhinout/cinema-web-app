@@ -9,10 +9,10 @@ import javax.persistence.*;
 @Table(name = "message")
 public class Comment extends DatabaseEntity {
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "memberId")
     private Member member;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "movieId")
     private Movie movie;
     @Column(name = "message", length = 512, nullable = false)

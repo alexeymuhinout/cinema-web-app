@@ -24,7 +24,7 @@ public class User extends DatabaseEntity {
     protected String mail;
     @Column(name = "birthday")
     protected Date birthday;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "cityId", referencedColumnName = "id")
     protected City city;
 

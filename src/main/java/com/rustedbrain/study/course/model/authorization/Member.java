@@ -12,7 +12,7 @@ public class Member extends User {
 
     @Column(name = "permanentlyBanned")
     private boolean permanentlyBanned;
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Comment> comments;
 
     public List<Comment> getComments() {

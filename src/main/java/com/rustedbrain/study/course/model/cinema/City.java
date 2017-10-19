@@ -17,6 +17,13 @@ public class City extends DatabaseEntity {
     @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<User> users;
 
+    public City() {
+    }
+
+    public City(String name) {
+        this.name = name;
+    }
+
     public List<User> getUsers() {
         return users;
     }
