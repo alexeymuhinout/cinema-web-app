@@ -24,4 +24,5 @@ public interface CinemaService {
 
     void unlockTicket(User user, FilmScreeningEvent event);
 
+    List<Cinema> getCinemas();
 }

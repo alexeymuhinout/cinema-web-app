@@ -15,6 +15,13 @@ public class Member extends User {
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Comment> comments;
 
+    public Member(String login, String password, String mail) {
+        super(login, password, mail);
+    }
+
+    public Member() {
+    }
+
     public List<Comment> getComments() {
         return comments;
     }

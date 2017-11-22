@@ -1,5 +1,6 @@
 package com.rustedbrain.study.course.controller.service;
 
+import com.rustedbrain.study.course.controller.repository.CinemaRepository;
 import com.rustedbrain.study.course.controller.repository.CityRepository;
 import com.rustedbrain.study.course.model.authorization.User;
 import com.rustedbrain.study.course.model.cinema.*;
@@ -14,6 +15,8 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Autowired
     private CityRepository cityRepository;
+    @Autowired
+    private CinemaRepository cinemaRepository;
 
     @Override
     public List<Movie> getMovies(Cinema cinema, Date date) {
@@ -53,5 +56,10 @@ public class CinemaServiceImpl implements CinemaService {
     @Override
     public void unlockTicket(User user, FilmScreeningEvent event) {
 
+    }
+
+    @Override
+    public List<Cinema> getCinemas() {
+        return cinemaRepository.findAll();
     }
 }

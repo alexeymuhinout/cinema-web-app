@@ -15,11 +15,19 @@ public class Cinema extends DatabaseEntity {
     private List<FilmScreening> filmScreenings;
     @ManyToMany(mappedBy = "cinemas")
     private List<Feature> features;
-    @OneToMany(mappedBy = "cinema")
+    @OneToMany(mappedBy = "cinema", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<CinemaHall> cinemaHalls;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cityId", referencedColumnName = "id")
     private City city;
+
+    public Cinema() {
+    }
+
+    public Cinema(String name, City city) {
+        this.name = name;
+        this.city = city;
+    }
 
     @Override
     public boolean equals(Object o) {

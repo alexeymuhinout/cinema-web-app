@@ -28,6 +28,15 @@ public class User extends DatabaseEntity {
     @JoinColumn(name = "cityId", referencedColumnName = "id")
     protected City city;
 
+    public User(String login, String password, String mail) {
+        this.login = login;
+        this.password = password;
+        this.mail = mail;
+    }
+
+    public User() {
+    }
+
     public City getCity() {
         return city;
     }

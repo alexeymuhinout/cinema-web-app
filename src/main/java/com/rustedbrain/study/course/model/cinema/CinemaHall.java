@@ -11,7 +11,7 @@ public class CinemaHall extends DatabaseEntity {
 
     @Column(name = "name", length = 64, nullable = false)
     private String name;
-    @OneToMany(mappedBy = "cinemaHall", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "cinemaHall", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Row> rows;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinemaId")

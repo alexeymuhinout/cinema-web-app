@@ -16,7 +16,7 @@ public class Movie extends DatabaseEntity {
     private String originalName;
     @Column(name = "releaseDate")
     private Date releaseDate;
-    @ManyToMany(mappedBy = "movies")
+    @ManyToMany(mappedBy = "movies", cascade = CascadeType.PERSIST)
     private List<Genre> genres;
     @Column(name = "description", length = 512)
     private String description;
@@ -24,9 +24,9 @@ public class Movie extends DatabaseEntity {
     private int minAge;
     @Column(name = "timeMinutes")
     private int timeMinutes;
-    @ManyToMany(mappedBy = "movies")
+    @ManyToMany(mappedBy = "movies", cascade = CascadeType.PERSIST)
     private List<Actor> actors;
-    @OneToMany(mappedBy = "movie")
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
     public Date getReleaseDate() {

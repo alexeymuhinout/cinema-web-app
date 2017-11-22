@@ -1,5 +1,6 @@
 package com.rustedbrain.study.course.controller.configuration;
 
+import com.vaadin.spring.annotation.EnableVaadin;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,7 +21,8 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan("com.rustedbrain.study.course")
+@EnableVaadin
+@ComponentScan
 @PropertySource("classpath:app.properties")
 @EnableJpaRepositories("com.rustedbrain.study.course.controller.repository")
 public class DataConfig {
@@ -34,7 +36,7 @@ public class DataConfig {
     @Resource
     private Environment env;
 
-    @Bean(name="h2DataSource")
+    @Bean(name = "h2DataSource")
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 

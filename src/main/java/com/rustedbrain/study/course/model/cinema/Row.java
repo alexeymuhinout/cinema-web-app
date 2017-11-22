@@ -14,7 +14,7 @@ public class Row extends DatabaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinemaHallId")
     private CinemaHall cinemaHall;
-    @OneToMany(mappedBy = "row")
+    @OneToMany(mappedBy = "row", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Seat> seats;
 
     public CinemaHall getCinemaHall() {
