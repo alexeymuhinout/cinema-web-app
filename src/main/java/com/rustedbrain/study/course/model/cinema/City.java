@@ -12,9 +12,9 @@ public class City extends DatabaseEntity {
 
     @Column(name = "name", length = 64, nullable = false, unique = true)
     private String name;
-    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Cinema> cinemas;
-    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
     private List<User> users;
 
     public City() {

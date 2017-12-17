@@ -24,7 +24,7 @@ public class Movie extends DatabaseEntity {
     private int minAge;
     @Column(name = "timeMinutes")
     private int timeMinutes;
-    @ManyToMany(mappedBy = "movies", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "movies")
     private List<Actor> actors;
     @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE)
     private List<Comment> comments;

@@ -41,6 +41,4 @@ public interface CinemaService {
     void deleteCinema(Cinema cinema);
 
     void createCinema(City city, String name, String street);
-
-    void deleteCityByName(String cityName);
 }

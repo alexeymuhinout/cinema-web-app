@@ -60,7 +60,7 @@ public class RegistrationView extends VerticalLayout implements View {
         surnameTextField = new TextField("Surname");
         content.addComponent(surnameTextField);
 
-        cityComboBox = new CityComboBox(cinemaService.getCities());
+        cityComboBox = new CityComboBox(cinemaService.getCities(), "City");
         content.addComponent(cityComboBox);
 
         birthdayDateField = new DateField("Birthday") {

@@ -13,6 +13,7 @@ import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class MainView extends NavigationView {
         HorizontalLayout layout = new HorizontalLayout();
         layout.addComponentsAndExpand(createCityCinemasPanel());
         layout.addComponentsAndExpand(createNewsPanel());
-        addComponent(layout);
+        addComponentsAndExpand(layout);
         if (VaadinSession.getCurrent().getAttribute(VaadinUI.MESSAGE_ATTRIBUTE) != null) {
             Notification.show(String.valueOf(VaadinSession.getCurrent().getAttribute(VaadinUI.MESSAGE_ATTRIBUTE)), Notification.Type.HUMANIZED_MESSAGE);
             VaadinSession.getCurrent().setAttribute(VaadinUI.MESSAGE_ATTRIBUTE, null);
@@ -54,19 +55,33 @@ public class MainView extends NavigationView {
 
     private Panel createCityCinemasPanel() {
         VerticalLayout verticalLayout = new VerticalLayout();
-        Label label = new Label("Cities&Cinemas");
 
         List<City> cities = cinemaService.getCities();
 
         ComboBox<City> cityComboBox = new CityComboBox(cities);
+        cityComboBox.setSizeFull();
+        HorizontalLayout layoutLabelAndFind = new HorizontalLayout();
+        layoutLabelAndFind.addComponentsAndExpand(cityComboBox);
 
-        Button findCityButton = new Button("Go");
-        findCityButton.addClickListener((Button.ClickListener) event -> new PageNavigator().navigateToCityView(getUI(), cityComboBox.getValue().getName()));
+        Button button = new Button("Go", (Button.ClickListener) event -> new PageNavigator().navigateToCityView(getUI(), cityComboBox.getValue().getName()));
+        button.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+        layoutLabelAndFind.addComponent(button);
 
-        HorizontalLayout horizontalLayoutLabelAndFind = new HorizontalLayout();
-        horizontalLayoutLabelAndFind.addComponentsAndExpand(label);
-        horizontalLayoutLabelAndFind.addComponentsAndExpand(cityComboBox);
-        horizontalLayoutLabelAndFind.addComponent(findCityButton);
+        verticalLayout.addComponentsAndExpand(layoutLabelAndFind, createCityAndCinemasTree(cities));
+
+        if (VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
+            verticalLayout.addComponentsAndExpand(createAdminCityAddingPanel());
+        }
+
+        Panel panel = new Panel(verticalLayout);
+        panel.setSizeFull();
+        return panel;
+    }
+
+    private Component createCityAndCinemasTree(List<City> cities) {
+        VerticalLayout layout = new VerticalLayout();
+
+        layout.addComponent(new Label("Cities&Cinemas"));
 
         TreeData<String> treeData = new TreeData<>();
 
@@ -91,18 +106,22 @@ public class MainView extends NavigationView {
             }
         });
 
-        verticalLayout.addComponent(horizontalLayoutLabelAndFind);
-        verticalLayout.addComponent(tree);
+        layout.addComponent(tree);
+        return layout;
+    }
 
-        if (VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
-            HorizontalLayout horizontalLayout = new HorizontalLayout();
-            textFieldCityName = new TextField();
-            Button buttonCreateCity = new Button("Create city", event -> createCity());
-            horizontalLayout.addComponentsAndExpand(textFieldCityName);
-            horizontalLayout.addComponentsAndExpand(buttonCreateCity);
-            verticalLayout.addComponent(horizontalLayout);
-        }
+    private Component createAdminCityAddingPanel() {
+        VerticalLayout verticalLayout = new VerticalLayout();
 
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+
+        textFieldCityName = new TextField("Name");
+        horizontalLayout.addComponentsAndExpand(textFieldCityName);
+
+        verticalLayout.addComponentsAndExpand(horizontalLayout);
+        Button buttonCreateCity = new Button("Create city", event -> createCity());
+        buttonCreateCity.setSizeFull();
+        verticalLayout.addComponentsAndExpand(buttonCreateCity);
         Panel panel = new Panel(verticalLayout);
         panel.setSizeFull();
         return panel;

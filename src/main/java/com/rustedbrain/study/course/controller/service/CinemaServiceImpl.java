@@ -111,17 +111,5 @@ public class CinemaServiceImpl implements CinemaService {
         } else {
             cinemaRepository.save(new Cinema(city, name, street));
         }
-
     }
-
-    @Override
-    public void deleteCityByName(String cityName) {
-        if (cityName == null || cityName.isEmpty()) {
-            throw new IllegalArgumentException("Cinema name cannot be empty");
-        } else {
-            cityRepository.deleteCityByName(cityName);
-        }
-    }
-
-
 }

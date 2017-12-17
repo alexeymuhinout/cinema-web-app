@@ -9,7 +9,22 @@ import java.util.List;
 public class CityComboBox extends ComboBox<City> {
 
     public CityComboBox(List<City> cities) {
-        super(City.class.getSimpleName());
+        super();
+        this.setItemCaptionGenerator(City::getName);
+        this.setEmptySelectionAllowed(false);
+
+        this.setItems(cities);
+
+        this.setNewItemHandler(inputString -> {
+            City city = new City(inputString);
+            cities.add(city);
+            this.setItems(cities);
+            this.setSelectedItem(city);
+        });
+    }
+
+    public CityComboBox(List<City> cities, String caption) {
+        super(caption);
         this.setItemCaptionGenerator(City::getName);
         this.setEmptySelectionAllowed(false);
 

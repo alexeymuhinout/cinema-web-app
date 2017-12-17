@@ -11,6 +11,7 @@ import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringView(name = VaadinUI.CITY_VIEW)
@@ -19,7 +20,6 @@ public class CityView extends NavigationView {
     public static final String CITY_ATTRIBUTE = "cityName";
 
     private CinemaService cinemaService;
-    private String cityName;
 
     private TextField textFieldCinemaName;
     private TextField textFieldCinemaStreet;
@@ -32,7 +32,7 @@ public class CityView extends NavigationView {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         VerticalLayout layout = new VerticalLayout();
-        cityName = (String) VaadinSession.getCurrent().getAttribute(CityView.CITY_ATTRIBUTE);
+        String cityName = (String) VaadinSession.getCurrent().getAttribute(CityView.CITY_ATTRIBUTE);
         if (cityName != null && !cityName.isEmpty()) {
             City city = cinemaService.getCity(cityName);
             layout.addComponentsAndExpand(createCityPanel(city));
@@ -50,7 +50,7 @@ public class CityView extends NavigationView {
         Label label = new Label("Cinemas in " + city.getName());
         horizontalLayout.addComponentsAndExpand(label);
         if (VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
-            horizontalLayout.addComponentsAndExpand(new Button("Delete City", (Button.ClickListener) event -> deleteCity()));
+            horizontalLayout.addComponentsAndExpand(new Button("Delete City", (Button.ClickListener) event -> deleteCity(city)));
         }
         layout.addComponentsAndExpand(horizontalLayout);
 
@@ -71,7 +71,7 @@ public class CityView extends NavigationView {
         textFieldCinemaStreet = new TextField("Street");
         horizontalLayout.addComponentsAndExpand(textFieldCinemaStreet);
         verticalLayout.addComponentsAndExpand(horizontalLayout);
-        Button buttonCreateCity = new Button("Create cinema", event -> createCinema(city));
+        Button buttonCreateCity = new Button("Create Cinema", event -> createCinema(city));
         buttonCreateCity.setSizeFull();
         verticalLayout.addComponentsAndExpand(buttonCreateCity);
         return panel;
@@ -91,12 +91,13 @@ public class CityView extends NavigationView {
     private void fillLayoutByCinemas(VerticalLayout layout, City city) {
         for (Cinema cinema : city.getCinemas()) {
             Button button = new Button(cinema.getName() + ", " + cinema.getLocation(), (Button.ClickListener) clickEvent -> new PageNavigator().navigateToCinemaView(getUI(), cinema.getName()));
+            button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
             layout.addComponentsAndExpand(button);
         }
     }
 
-    private void deleteCity() {
-        cinemaService.deleteCityByName(cityName);
+    private void deleteCity(City city) {
+        cinemaService.deleteCity(city);
         Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
     }
 }

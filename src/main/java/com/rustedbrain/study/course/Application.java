@@ -1,10 +1,7 @@
 package com.rustedbrain.study.course;
 
 
-import com.rustedbrain.study.course.controller.repository.AdministratorRepository;
-import com.rustedbrain.study.course.controller.repository.CinemaRepository;
-import com.rustedbrain.study.course.controller.repository.CityRepository;
-import com.rustedbrain.study.course.controller.repository.MemberRepository;
+import com.rustedbrain.study.course.controller.repository.*;
 import com.rustedbrain.study.course.model.authorization.Administrator;
 import com.rustedbrain.study.course.model.authorization.Member;
 import com.rustedbrain.study.course.model.cinema.*;
@@ -16,7 +13,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 public class Application {
@@ -28,7 +29,7 @@ public class Application {
     }
 
     @Bean
-    public CommandLineRunner loadData(CinemaRepository cinemaRepository, CityRepository cityRepository, AdministratorRepository administratorRepository, MemberRepository memberRepository) {
+    public CommandLineRunner loadData(GenreRepository genreRepository, ActorRepository actorRepository, FilmScreeningRepository filmScreeningRepository, CinemaRepository cinemaRepository, CityRepository cityRepository, AdministratorRepository administratorRepository, MemberRepository memberRepository, MovieRepository movieRepository) {
         return (args) -> {
             // save a couple of customers
             administratorRepository.save(new Administrator("mogtarip", "mogtariperson1996", "mogtarmogtar@gmail.com"));
@@ -89,6 +90,66 @@ public class Application {
             cinema6.setCinemaHalls(Arrays.asList(cinemaHall3, cinemaHall4));
 
             cinemaRepository.save(cinema5);
+
+            Date date = Date.from(Instant.now());
+
+            Actor actor1 = new Actor();
+            actor1.setName("Orlando");
+            actor1.setSurname("Bloom");
+            actor1.setRegistrationDate(date);
+            actor1.setLastAccessDate(date);
+
+            Actor actor2 = new Actor();
+            actor2.setName("John");
+            actor2.setSurname("Depp");
+            actor2.setRegistrationDate(date);
+            actor2.setLastAccessDate(date);
+
+            actorRepository.save(actor1);
+            actorRepository.save(actor2);
+
+            Movie movie = new Movie();
+            movie.setLocalizedName("Великий Гэтсби");
+            movie.setOriginalName("The Great Gatsby");
+            movie.setMinAge(13);
+            movie.setRegistrationDate(new Date());
+            movie.setActors(Arrays.asList(actor1, actor2));
+
+            Genre genre1 = new Genre();
+            genre1.setName("adventure");
+            genre1.setRegistrationDate(date);
+            genre1.setLastAccessDate(date);
+
+            Genre genre2 = new Genre();
+            genre2.setName("comedy");
+            genre2.setRegistrationDate(date);
+            genre2.setLastAccessDate(date);
+
+            Genre genre3 = new Genre();
+            genre3.setName("drama");
+            genre3.setRegistrationDate(date);
+            genre3.setLastAccessDate(date);
+
+            Genre genre4 = new Genre();
+            genre4.setName("horror");
+            genre4.setRegistrationDate(date);
+            genre4.setLastAccessDate(date);
+
+            movie.setGenres(Arrays.asList(genre1, genre2, genre3, genre4));
+
+            movieRepository.save(movie);
+
+            FilmScreening filmScreening = new FilmScreening();
+            filmScreening.setStartDate(new Date());
+            filmScreening.setEndDate(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(14)));
+            filmScreening.setRegistrationDate(date);
+            filmScreening.setLastAccessDate(date);
+            filmScreening.setMovie(movie);
+
+            filmScreeningRepository.save(filmScreening);
+
+            cinema6.setFilmScreenings(Collections.singletonList(filmScreening));
+
             cinemaRepository.save(cinema6);
         };
     }

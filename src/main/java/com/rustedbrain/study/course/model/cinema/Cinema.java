@@ -17,8 +17,8 @@ public class Cinema extends DatabaseEntity {
     private List<Feature> features;
     @OneToMany(mappedBy = "cinema", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<CinemaHall> cinemaHalls;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cityId", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "cityId")
     private City city;
     @Column(name = "location", length = 512, nullable = false)
     private String location;
