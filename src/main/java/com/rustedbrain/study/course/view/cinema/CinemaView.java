@@ -1,15 +1,11 @@
 package com.rustedbrain.study.course.view.cinema;
 
 import com.rustedbrain.study.course.controller.service.CinemaService;
-import com.rustedbrain.study.course.model.cinema.Actor;
 import com.rustedbrain.study.course.model.cinema.Cinema;
-import com.rustedbrain.study.course.model.cinema.FilmScreening;
-import com.rustedbrain.study.course.model.cinema.Movie;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,30 +41,30 @@ public class CinemaView extends NavigationView {
 
         Accordion accordion = new Accordion();
 
-        for (FilmScreening filmScreening : cinema.getFilmScreenings()) {
-            Movie movie = filmScreening.getMovie();
-
-            for (Actor actor : movie)
-
-
-                accordion.setHeight(100.0f, Unit.PERCENTAGE);
-
-            final Label label = new Label(movie., ContentMode.HTML);
-            label.setWidth(100.0f, Unit.PERCENTAGE);
-
-            final VerticalLayout layout = new VerticalLayout(label);
-            layout.setMargin(true);
-
-            accordion.addTab(layout, "Tab " + i);
-        }
-
-        Panel panel = new Panel();
-
-    }
-
-
-
-        layout.addComponentsAndExpand(horizontalLayout);
+//        for (FilmScreening filmScreening : cinema.getFilmScreenings()) {
+//            Movie movie = filmScreening.getMovie();
+//
+//            for (Actor actor : movie)
+//
+//
+//                accordion.setHeight(100.0f, Unit.PERCENTAGE);
+//
+//            final Label label = new Label(movie., ContentMode.HTML);
+//            label.setWidth(100.0f, Unit.PERCENTAGE);
+//
+//            final VerticalLayout layout = new VerticalLayout(label);
+//            layout.setMargin(true);
+//
+//            accordion.addTab(layout, "Tab " + i);
+//        }
+//
+//        Panel panel = new Panel();
+//
+//    }
+//
+//
+//
+//        layout.addComponentsAndExpand(horizontalLayout);
         return new Panel(layout);
     }
 
