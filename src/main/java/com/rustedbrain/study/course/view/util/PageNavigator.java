@@ -1,6 +1,5 @@
 package com.rustedbrain.study.course.view.util;
 
-import com.rustedbrain.study.course.model.cinema.Cinema;
 import com.rustedbrain.study.course.model.cinema.Movie;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.cinema.CinemaView;
@@ -11,9 +10,9 @@ import com.vaadin.ui.UI;
 
 public class PageNavigator {
 
-    public void navigateToCinemaView(UI ui, Cinema cinema) {
-        if (cinema != null) {
-            VaadinSession.getCurrent().setAttribute(CinemaView.CINEMA_ATTRIBUTE, cinema);
+    public void navigateToCinemaView(UI ui, String cinemaName) {
+        if (cinemaName != null && !cinemaName.isEmpty()) {
+            VaadinSession.getCurrent().setAttribute(CinemaView.CINEMA_ATTRIBUTE, cinemaName);
             ui.getNavigator().navigateTo(VaadinUI.CINEMA_VIEW);
         }
     }

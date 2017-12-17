@@ -4,6 +4,7 @@ import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -76,5 +77,22 @@ public class FilmScreeningEvent extends DatabaseEntity {
                 "time=" + time +
                 ", cinemaHall=" + cinemaHall +
                 '}';
+    }
+
+    @Override
+    protected FilmScreeningEvent clone() throws CloneNotSupportedException {
+        FilmScreeningEvent filmScreeningEventCopy = (FilmScreeningEvent) super.clone();
+
+        if (tickets != null) {
+            List<Ticket> ticketsCopy = new ArrayList<>(tickets.size());
+
+            for (Ticket ticket : tickets) {
+                ticketsCopy.add(ticket.clone());
+            }
+
+            filmScreeningEventCopy.setTickets(ticketsCopy);
+        }
+
+        return filmScreeningEventCopy;
     }
 }

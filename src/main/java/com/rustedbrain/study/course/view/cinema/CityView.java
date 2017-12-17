@@ -17,12 +17,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CityView extends NavigationView {
 
     public static final String CITY_ATTRIBUTE = "cityName";
-    @Autowired
-    CinemaService cinemaService;
+
+    private CinemaService cinemaService;
     private String cityName;
 
     private TextField textFieldCinemaName;
     private TextField textFieldCinemaStreet;
+
+    @Autowired
+    public void setCinemaService(CinemaService cinemaService) {
+        this.cinemaService = cinemaService;
+    }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -85,9 +90,7 @@ public class CityView extends NavigationView {
 
     private void fillLayoutByCinemas(VerticalLayout layout, City city) {
         for (Cinema cinema : city.getCinemas()) {
-            Button button = new Button(cinema.getName() + ", " + cinema.getLocation(), (Button.ClickListener) clickEvent -> {
-                new PageNavigator().navigateToCinemaView(getUI(), cinema);
-            });
+            Button button = new Button(cinema.getName() + ", " + cinema.getLocation(), (Button.ClickListener) clickEvent -> new PageNavigator().navigateToCinemaView(getUI(), cinema.getName()));
             layout.addComponentsAndExpand(button);
         }
     }

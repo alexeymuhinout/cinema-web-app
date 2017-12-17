@@ -69,4 +69,13 @@ public class Ticket extends DatabaseEntity {
                 ", seat=" + seat +
                 '}';
     }
+
+    @Override
+    protected Ticket clone() throws CloneNotSupportedException {
+        Ticket ticket = (Ticket) super.clone();
+        if (this.soldDate != null) {
+            ticket.setSoldDate((Date) this.soldDate.clone());
+        }
+        return ticket;
+    }
 }

@@ -16,14 +16,22 @@ import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SpringView(name = VaadinUI.MAIN_VIEW)
 public class MainView extends NavigationView {
 
-    @Autowired
-    CinemaService cinemaService;
+    private Pattern patternCinemaStreet = Pattern.compile(" \\(.+\\)");
+
+    private CinemaService cinemaService;
 
     private TextField textFieldCityName;
+
+    @Autowired
+    public void setCinemaService(CinemaService cinemaService) {
+        this.cinemaService = cinemaService;
+    }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -71,9 +79,16 @@ public class MainView extends NavigationView {
         tree.addItemClickListener((Tree.ItemClickListener<String>) event -> {
             String name = event.getItem();
             City city = cinemaService.getCity(name);
-            new PageNavigator().navigateToCityView(getUI(), city.getName());
-            Cinema cinema = cinemaService.getCinema(name);
-            new PageNavigator().navigateToCinemaView(getUI(), cinema);
+            if (city != null) {
+                new PageNavigator().navigateToCityView(getUI(), city.getName());
+            } else {
+                Matcher matcher = patternCinemaStreet.matcher(name);
+                if (matcher.find()) {
+                    name = matcher.replaceAll("").trim();
+                }
+                Cinema cinema = cinemaService.getCinema(name);
+                new PageNavigator().navigateToCinemaView(getUI(), cinema.getName());
+            }
         });
 
         verticalLayout.addComponent(horizontalLayoutLabelAndFind);

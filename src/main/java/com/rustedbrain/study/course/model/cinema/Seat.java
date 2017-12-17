@@ -88,4 +88,11 @@ public class Seat extends DatabaseEntity {
                 ", price=" + price +
                 '}';
     }
+
+    @Override
+    public Seat clone() throws CloneNotSupportedException {
+        Seat clonedSeat = (Seat) super.clone();
+        clonedSeat.setPrice(new BigDecimal(this.price.toString()));
+        return clonedSeat;
+    }
 }

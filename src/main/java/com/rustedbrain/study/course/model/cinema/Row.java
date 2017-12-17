@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.model.cinema;
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -72,5 +73,22 @@ public class Row extends DatabaseEntity {
                 "number=" + number +
                 ", seats=" + seats +
                 '}';
+    }
+
+    @Override
+    public Row clone() throws CloneNotSupportedException {
+        Row clonedRow = (Row) super.clone();
+
+        if (seats != null) {
+            List<Seat> copy = new ArrayList<>(seats.size());
+
+            for (Seat seat : seats) {
+                copy.add(seat.clone());
+            }
+
+            clonedRow.setSeats(copy);
+        }
+
+        return clonedRow;
     }
 }

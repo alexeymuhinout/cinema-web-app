@@ -81,10 +81,10 @@ public class Application {
             cinema5.setCinemaHalls(Arrays.asList(cinemaHall1, cinemaHall2));
 
             CinemaHall cinemaHall3 = new CinemaHall("3");
-            cinemaHall3.setRows(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8));
+            cinemaHall3.setRows(Arrays.asList(row1.clone(), row2.clone(), row3.clone(), row4.clone(), row5.clone(), row6.clone(), row7.clone(), row8.clone()));
 
             CinemaHall cinemaHall4 = new CinemaHall("4");
-            cinemaHall4.setRows(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8));
+            cinemaHall4.setRows(Arrays.asList(row1.clone(), row2.clone(), row3.clone(), row4.clone(), row5.clone(), row6.clone(), row7.clone(), row8.clone()));
 
             cinema6.setCinemaHalls(Arrays.asList(cinemaHall3, cinemaHall4));
 

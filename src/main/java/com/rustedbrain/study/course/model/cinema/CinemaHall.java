@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.model.cinema;
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -83,5 +84,32 @@ public class CinemaHall extends DatabaseEntity {
                 "name='" + name + '\'' +
                 ", rows=" + rows +
                 '}';
+    }
+
+    @Override
+    public CinemaHall clone() throws CloneNotSupportedException {
+        CinemaHall clonedCinemaHall = (CinemaHall) super.clone();
+
+        if (this.rows != null) {
+            List<Row> rowsCopy = new ArrayList<>(rows.size());
+
+            for (Row row : rows) {
+                rowsCopy.add(row.clone());
+            }
+
+            clonedCinemaHall.setRows(rowsCopy);
+        }
+
+        if (this.filmScreeningEvents != null) {
+            List<FilmScreeningEvent> filmScreeningEventsCopy = new ArrayList<>(filmScreeningEvents.size());
+
+            for (FilmScreeningEvent filmScreeningEvent : filmScreeningEvents) {
+                filmScreeningEventsCopy.add(filmScreeningEvent.clone());
+            }
+
+            clonedCinemaHall.setFilmScreeningEvents(filmScreeningEventsCopy);
+        }
+
+        return clonedCinemaHall;
     }
 }

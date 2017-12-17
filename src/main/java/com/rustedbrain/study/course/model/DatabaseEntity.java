@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @MappedSuperclass
-public class DatabaseEntity implements Serializable {
+public class DatabaseEntity implements Serializable, Cloneable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
