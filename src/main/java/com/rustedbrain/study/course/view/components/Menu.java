@@ -3,9 +3,7 @@ package com.rustedbrain.study.course.view.components;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.users.LoginView;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.Arrays;
@@ -14,25 +12,33 @@ import java.util.List;
 public class Menu extends CustomComponent {
 
     public Menu() {
-        HorizontalLayout layout = new HorizontalLayout();
+        VerticalLayout verticalLayout = new VerticalLayout();
+
+        if (VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_USER_ATTRIBUTE) != null) {
+            verticalLayout.addComponent(new Label("Welcome " + VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_USER_ATTRIBUTE)));
+        }
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
         List<Button> buttons = Arrays.asList(
                 createNavigationButton("Main", VaadinUI.MAIN_VIEW),
                 createNavigationButton("Help", VaadinUI.HELP_VIEW),
-                VaadinSession.getCurrent().getAttribute(LoginView.LOGINED_USER_ATRIBUTE) != null ? createNavigationButton("Profile", VaadinUI.PROFILE_VIEW) : createNavigationButton("Login", VaadinUI.LOGIN_VIEW),
-                VaadinSession.getCurrent().getAttribute(LoginView.LOGINED_USER_ATRIBUTE) == null ? createNavigationButton("Registration", VaadinUI.REGISTRATION_VIEW) : null,
-                VaadinSession.getCurrent().getAttribute(LoginView.LOGINED_USER_ATRIBUTE) != null ? logoutButton() : null
+                VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_USER_ATTRIBUTE) != null ? createNavigationButton("Profile", VaadinUI.PROFILE_VIEW) : createNavigationButton("Login", VaadinUI.LOGIN_VIEW),
+                VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_USER_ATTRIBUTE) != null ? null : createNavigationButton("Registration", VaadinUI.REGISTRATION_VIEW),
+                VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_USER_ATTRIBUTE) != null ? createLogoutButton() : null
         );
 
         for (Button button : buttons) {
             if (button != null) {
-                layout.addComponentsAndExpand(button);
+                horizontalLayout.addComponentsAndExpand(button);
             }
         }
-        layout.setSizeFull();
-        setCompositionRoot(layout);
+
+        verticalLayout.addComponentsAndExpand(horizontalLayout);
+
+        setCompositionRoot(verticalLayout);
     }
 
-    private Button logoutButton() {
+    private Button createLogoutButton() {
         Button button = new Button("Logout", (Button.ClickListener) event -> {
             getUI().getSession().close();
             getUI().getPage().setLocation(getLogoutPath());

@@ -40,7 +40,7 @@ public class CinemaRepositoryTest {
     @Test
     public void findCinemaByName() throws Exception {
         repository.save(cinema);
-        Assert.assertEquals(cinema.getName(), repository.findCinemaByName(cinema.getName()).getName());
+        Assert.assertEquals(cinema.getName(), repository.findByName(cinema.getName()).getName());
     }
 
     @Test

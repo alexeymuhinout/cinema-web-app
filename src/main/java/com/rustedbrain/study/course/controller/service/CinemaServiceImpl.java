@@ -62,4 +62,66 @@ public class CinemaServiceImpl implements CinemaService {
     public List<Cinema> getCinemas() {
         return cinemaRepository.findAll();
     }
+
+    @Override
+    public boolean isCityExist(String name) {
+        return getCity(name) != null;
+    }
+
+    @Override
+    public boolean isCinemaExist(String name) {
+        return getCinema(name) != null;
+    }
+
+    @Override
+    public City getCity(String name) {
+        return cityRepository.findByName(name);
+    }
+
+    @Override
+    public Cinema getCinema(String name) {
+        return cinemaRepository.findByName(name);
+    }
+
+    @Override
+    public void deleteCity(City city) {
+        cityRepository.delete(city);
+    }
+
+    @Override
+    public void createCity(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("City name cannot be empty");
+        } else {
+            cityRepository.save(new City(name));
+        }
+    }
+
+    @Override
+    public void deleteCinema(Cinema cinema) {
+        cinemaRepository.delete(cinema);
+    }
+
+    @Override
+    public void createCinema(City city, String name, String street) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Cinema name cannot be empty");
+        } else if (street == null || street.isEmpty()) {
+            throw new IllegalArgumentException("Cinema street cannot be empty");
+        } else {
+            cinemaRepository.save(new Cinema(city, name, street));
+        }
+
+    }
+
+    @Override
+    public void deleteCityByName(String cityName) {
+        if (cityName == null || cityName.isEmpty()) {
+            throw new IllegalArgumentException("Cinema name cannot be empty");
+        } else {
+            cityRepository.deleteCityByName(cityName);
+        }
+    }
+
+
 }

@@ -20,6 +20,8 @@ public class Cinema extends DatabaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cityId", referencedColumnName = "id")
     private City city;
+    @Column(name = "location", length = 512, nullable = false)
+    private String location;
 
     public Cinema() {
     }
@@ -27,6 +29,20 @@ public class Cinema extends DatabaseEntity {
     public Cinema(String name, City city) {
         this.name = name;
         this.city = city;
+    }
+
+    public Cinema(City city, String name, String location) {
+        this.city = city;
+        this.name = name;
+        this.location = location;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     @Override

@@ -17,6 +17,14 @@ public class Row extends DatabaseEntity {
     @OneToMany(mappedBy = "row", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Seat> seats;
 
+    public Row(int number, List<Seat> seats) {
+        this.number = number;
+        this.seats = seats;
+    }
+
+    public Row() {
+    }
+
     public CinemaHall getCinemaHall() {
         return cinemaHall;
     }

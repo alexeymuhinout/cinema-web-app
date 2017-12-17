@@ -12,12 +12,21 @@ public class Seat extends DatabaseEntity {
     @ManyToOne
     @JoinColumn(name = "rowId", referencedColumnName = "id")
     private Row row;
-    @Column(name = "number")
+    @Column(name = "number", nullable = false)
     private int number;
-    @Column(name = "clientCount")
+    @Column(name = "clientCount", nullable = false)
     private int clientCount;
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
+
+    public Seat(int number, int clientCount, BigDecimal price) {
+        this.number = number;
+        this.clientCount = clientCount;
+        this.price = price;
+    }
+
+    public Seat() {
+    }
 
     public Row getRow() {
         return row;

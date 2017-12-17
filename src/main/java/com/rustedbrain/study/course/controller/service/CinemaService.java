@@ -25,4 +25,22 @@ public interface CinemaService {
     void unlockTicket(User user, FilmScreeningEvent event);
 
     List<Cinema> getCinemas();
+
+    boolean isCityExist(String name);
+
+    boolean isCinemaExist(String name);
+
+    City getCity(String name);
+
+    Cinema getCinema(String name);
+
+    void deleteCity(City city);
+
+    void createCity(String name);
+
+    void deleteCinema(Cinema cinema);
+
+    void createCinema(City city, String name, String street);
+
+    void deleteCityByName(String cityName);
 }

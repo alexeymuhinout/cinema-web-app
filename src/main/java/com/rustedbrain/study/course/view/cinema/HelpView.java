@@ -1,5 +1,6 @@
-package com.rustedbrain.study.course.view;
+package com.rustedbrain.study.course.view.cinema;
 
+import com.rustedbrain.study.course.view.VaadinUI;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.FormLayout;
@@ -7,14 +8,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 
 @SpringView(name = VaadinUI.HELP_VIEW)
-public class HelpView extends MainView {
-
-    private Panel currentPanel;
-
-    public HelpView() {
-        super();
-        reloadCurrentPanel(createHelpPanel());
-    }
+public class HelpView extends NavigationView {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -32,14 +26,6 @@ public class HelpView extends MainView {
         content.setMargin(true);
         helpPanel.setContent(content);
         return helpPanel;
-    }
-
-    private void reloadCurrentPanel(Panel newPanel) {
-        if (currentPanel != null) {
-            removeComponent(currentPanel);
-        }
-        currentPanel = newPanel;
-        addComponent(currentPanel);
     }
 
 

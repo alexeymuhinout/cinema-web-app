@@ -13,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SpringView(name = VaadinUI.LOGIN_VIEW)
 public class LoginView extends VerticalLayout implements View {
 
-    public static final String LOGINED_USER_ATRIBUTE = "user";
+    public static final String LOGGED_USER_ATTRIBUTE = "user";
+    public static final String LOGGED_ADMINISTRATOR_ATTRIBUTE = "administrator";
     @Autowired
     private AuthorizationService authorizationService;
     private TextField loginTextField;
@@ -32,8 +33,16 @@ public class LoginView extends VerticalLayout implements View {
 
         Button send = new Button("Enter");
         send.addClickListener(clickEvent -> {
-            if (authorizationService.isRegisteredUser(loginTextField.getValue(), passwordTextField.getValue())) {
-                VaadinSession.getCurrent().setAttribute("user", loginTextField.getValue());
+            if (authorizationService.isRegisteredAdministrator(loginTextField.getValue(), passwordTextField.getValue())) {
+                VaadinSession.getCurrent().setAttribute(LOGGED_ADMINISTRATOR_ATTRIBUTE, loginTextField.getValue());
+                VaadinSession.getCurrent().setAttribute(LOGGED_USER_ATTRIBUTE, loginTextField.getValue());
+                VaadinSession.getCurrent().setAttribute(VaadinUI.MESSAGE_ATTRIBUTE, "Welcome " + loginTextField.getValue() + "!");
+                getUI().getNavigator().addView(VaadinUI.PROFILE_VIEW, ProfileView.class);
+                getUI().getNavigator().addView(VaadinUI.CITY_CREATION_VIEW, ProfileView.class);
+                Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
+            } else if (authorizationService.isRegisteredMember(loginTextField.getValue(), passwordTextField.getValue())) {
+                VaadinSession.getCurrent().setAttribute(LOGGED_USER_ATTRIBUTE, loginTextField.getValue());
+                VaadinSession.getCurrent().setAttribute(VaadinUI.MESSAGE_ATTRIBUTE, "Welcome " + loginTextField.getValue() + "!");
                 getUI().getNavigator().addView(VaadinUI.PROFILE_VIEW, ProfileView.class);
                 Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
             } else {

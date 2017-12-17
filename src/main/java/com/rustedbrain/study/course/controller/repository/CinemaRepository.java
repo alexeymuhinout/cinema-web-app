@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.Query;
 public interface CinemaRepository extends JpaRepository<Cinema, Long> {
 
     @Query("select c from Cinema c where c.name = ?1")
-    Cinema findCinemaByName(String name);
+    Cinema findByName(String name);
 }

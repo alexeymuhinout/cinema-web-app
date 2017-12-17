@@ -5,6 +5,7 @@ import com.rustedbrain.study.course.controller.service.CinemaService;
 import com.rustedbrain.study.course.model.authorization.Member;
 import com.rustedbrain.study.course.model.cinema.City;
 import com.rustedbrain.study.course.view.VaadinUI;
+import com.rustedbrain.study.course.view.components.CityComboBox;
 import com.vaadin.data.Result;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -17,7 +18,6 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 
 @SpringView(name = VaadinUI.REGISTRATION_VIEW)
 public class RegistrationView extends VerticalLayout implements View {
@@ -34,8 +34,15 @@ public class RegistrationView extends VerticalLayout implements View {
     private TextField mailTextField;
     private TextField passwordTextField;
 
+    private String getNonEmptyFieldValue(TextField field, String nullCaseError) {
+        if (field.isEmpty()) {
+            throw new IllegalArgumentException(nullCaseError);
+        }
+        return field.getValue();
+    }
 
-    public RegistrationView() {
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
         Panel panel = new Panel("Registration");
         panel.setSizeUndefined();
         addComponent(panel);
@@ -53,12 +60,8 @@ public class RegistrationView extends VerticalLayout implements View {
         surnameTextField = new TextField("Surname");
         content.addComponent(surnameTextField);
 
-        cityComboBox = new ComboBox<>("City");
-
-        cityComboBox.setItemCaptionGenerator(City::getName);
-
+        cityComboBox = new CityComboBox(cinemaService.getCities());
         content.addComponent(cityComboBox);
-
 
         birthdayDateField = new DateField("Birthday") {
             @Override
@@ -116,33 +119,5 @@ public class RegistrationView extends VerticalLayout implements View {
         content.setMargin(true);
         panel.setContent(content);
         setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
-    }
-
-    private String getNonEmptyFieldValue(TextField field, String nullCaseError) {
-        if (field.isEmpty()) {
-            throw new IllegalArgumentException(nullCaseError);
-        }
-        return field.getValue();
-    }
-
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-        List<City> cities = cinemaService.getCities();
-
-        cityComboBox.setItems(cities);
-
-        // Allow adding new items and add
-        // handling for new items
-        cityComboBox.setNewItemHandler(inputString -> {
-
-            City newPlanet = new City(inputString);
-            cities.add(newPlanet);
-
-            // Update combobox content
-            cityComboBox.setItems(cities);
-
-            // Remember to set the selection to the new item
-            cityComboBox.setSelectedItem(newPlanet);
-        });
     }
 }

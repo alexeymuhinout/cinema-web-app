@@ -19,6 +19,11 @@ public class VaadinUI extends UI {
     public static final String PROFILE_VIEW = "profile_view";
     public static final String LOGIN_VIEW = "login_view";
     public static final String REGISTRATION_VIEW = "registration_view";
+    public static final String CINEMA_VIEW = "cinema_view";
+    public static final String CITY_VIEW = "city_view";
+    public static final String MOVIE_VIEW = "movie_view";
+    public static final String CITY_CREATION_VIEW = "city_creation_view";
+    public static final String MESSAGE_ATTRIBUTE = "message";
     public Navigator navigator;
     @Autowired
     private SpringViewProvider viewProvider;

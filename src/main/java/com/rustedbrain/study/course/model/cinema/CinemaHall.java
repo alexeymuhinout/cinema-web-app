@@ -19,6 +19,13 @@ public class CinemaHall extends DatabaseEntity {
     @OneToMany(mappedBy = "cinemaHall")
     private List<FilmScreeningEvent> filmScreeningEvents;
 
+    public CinemaHall(String name) {
+        this.name = name;
+    }
+
+    public CinemaHall() {
+    }
+
     public List<FilmScreeningEvent> getFilmScreeningEvents() {
         return filmScreeningEvents;
     }
