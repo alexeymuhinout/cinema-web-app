@@ -4,7 +4,7 @@ import com.rustedbrain.study.course.model.DatabaseEntity;
 import com.rustedbrain.study.course.model.authorization.User;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "city")
@@ -12,10 +12,10 @@ public class City extends DatabaseEntity {
 
     @Column(name = "name", length = 64, nullable = false, unique = true)
     private String name;
-    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Cinema> cinemas;
     @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
-    private List<User> users;
+    private Set<Cinema> cinemas;
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
+    private Set<User> users;
 
     public City() {
     }
@@ -24,11 +24,11 @@ public class City extends DatabaseEntity {
         this.name = name;
     }
 
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
     }
 
@@ -40,11 +40,11 @@ public class City extends DatabaseEntity {
         this.name = name;
     }
 
-    public List<Cinema> getCinemas() {
+    public Set<Cinema> getCinemas() {
         return cinemas;
     }
 
-    public void setCinemas(List<Cinema> cinemas) {
+    public void setCinemas(Set<Cinema> cinemas) {
         this.cinemas = cinemas;
     }
 

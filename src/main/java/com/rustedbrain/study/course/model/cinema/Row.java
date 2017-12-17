@@ -3,8 +3,8 @@ package com.rustedbrain.study.course.model.cinema;
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "row")
@@ -15,10 +15,10 @@ public class Row extends DatabaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinemaHallId")
     private CinemaHall cinemaHall;
-    @OneToMany(mappedBy = "row", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Seat> seats;
+    @OneToMany(mappedBy = "row", cascade = {CascadeType.ALL})
+    private Set<Seat> seats;
 
-    public Row(int number, List<Seat> seats) {
+    public Row(int number, Set<Seat> seats) {
         this.number = number;
         this.seats = seats;
     }
@@ -42,11 +42,11 @@ public class Row extends DatabaseEntity {
         this.number = number;
     }
 
-    public List<Seat> getSeats() {
+    public Set<Seat> getSeats() {
         return seats;
     }
 
-    public void setSeats(List<Seat> seats) {
+    public void setSeats(Set<Seat> seats) {
         this.seats = seats;
     }
 
@@ -80,7 +80,7 @@ public class Row extends DatabaseEntity {
         Row clonedRow = (Row) super.clone();
 
         if (seats != null) {
-            List<Seat> copy = new ArrayList<>(seats.size());
+            Set<Seat> copy = new HashSet<>(seats.size());
 
             for (Seat seat : seats) {
                 copy.add(seat.clone());

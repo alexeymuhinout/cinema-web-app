@@ -3,8 +3,8 @@ package com.rustedbrain.study.course.model.cinema;
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "cinemaHall")
@@ -12,13 +12,13 @@ public class CinemaHall extends DatabaseEntity {
 
     @Column(name = "name", length = 64, nullable = false)
     private String name;
-    @OneToMany(mappedBy = "cinemaHall", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Row> rows;
+    @OneToMany(mappedBy = "cinemaHall", cascade = {CascadeType.ALL})
+    private Set<Row> rows;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinemaId")
     private Cinema cinema;
     @OneToMany(mappedBy = "cinemaHall")
-    private List<FilmScreeningEvent> filmScreeningEvents;
+    private Set<FilmScreeningEvent> filmScreeningEvents;
 
     public CinemaHall(String name) {
         this.name = name;
@@ -27,11 +27,11 @@ public class CinemaHall extends DatabaseEntity {
     public CinemaHall() {
     }
 
-    public List<FilmScreeningEvent> getFilmScreeningEvents() {
+    public Set<FilmScreeningEvent> getFilmScreeningEvents() {
         return filmScreeningEvents;
     }
 
-    public void setFilmScreeningEvents(List<FilmScreeningEvent> filmScreeningEvents) {
+    public void setFilmScreeningEvents(Set<FilmScreeningEvent> filmScreeningEvents) {
         this.filmScreeningEvents = filmScreeningEvents;
     }
 
@@ -51,11 +51,11 @@ public class CinemaHall extends DatabaseEntity {
         this.name = name;
     }
 
-    public List<Row> getRows() {
+    public Set<Row> getRows() {
         return rows;
     }
 
-    public void setRows(List<Row> rows) {
+    public void setRows(Set<Row> rows) {
         this.rows = rows;
     }
 
@@ -91,7 +91,7 @@ public class CinemaHall extends DatabaseEntity {
         CinemaHall clonedCinemaHall = (CinemaHall) super.clone();
 
         if (this.rows != null) {
-            List<Row> rowsCopy = new ArrayList<>(rows.size());
+            Set<Row> rowsCopy = new HashSet<>(rows.size());
 
             for (Row row : rows) {
                 rowsCopy.add(row.clone());
@@ -101,7 +101,7 @@ public class CinemaHall extends DatabaseEntity {
         }
 
         if (this.filmScreeningEvents != null) {
-            List<FilmScreeningEvent> filmScreeningEventsCopy = new ArrayList<>(filmScreeningEvents.size());
+            Set<FilmScreeningEvent> filmScreeningEventsCopy = new HashSet<>(filmScreeningEvents.size());
 
             for (FilmScreeningEvent filmScreeningEvent : filmScreeningEvents) {
                 filmScreeningEventsCopy.add(filmScreeningEvent.clone());

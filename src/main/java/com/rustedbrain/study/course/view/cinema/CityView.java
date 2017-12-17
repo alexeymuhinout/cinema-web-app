@@ -31,15 +31,13 @@ public class CityView extends NavigationView {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        VerticalLayout layout = new VerticalLayout();
         String cityName = (String) VaadinSession.getCurrent().getAttribute(CityView.CITY_ATTRIBUTE);
         if (cityName != null && !cityName.isEmpty()) {
             City city = cinemaService.getCity(cityName);
-            layout.addComponentsAndExpand(createCityPanel(city));
+            addComponentsAndExpand(createCityPanel(city));
         } else {
             Notification.show("City is not selected");
         }
-        addComponentsAndExpand(layout);
     }
 
     private Component createCityPanel(City city) {

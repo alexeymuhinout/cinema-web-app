@@ -3,28 +3,25 @@ package com.rustedbrain.study.course.model.cinema;
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "actor")
 public class Actor extends DatabaseEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", length = 64)
     private String name;
-    @Column(name = "surname")
+    @Column(name = "surname", length = 64)
     private String surname;
-    @ManyToMany
-    @JoinTable(
-            name = "actorMovie",
-            joinColumns = @JoinColumn(name = "actorId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "movieId", referencedColumnName = "id"))
-    private List<Movie> movies;
+    @ManyToMany(mappedBy = "actors", fetch = FetchType.EAGER)
+    private Set<Movie> movies = new HashSet<>();
 
-    public List<Movie> getMovies() {
+    public Set<Movie> getMovies() {
         return movies;
     }
 
-    public void setMovies(List<Movie> movies) {
+    public void setMovies(Set<Movie> movies) {
         this.movies = movies;
     }
 

@@ -3,29 +3,23 @@ package com.rustedbrain.study.course.model.cinema;
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "genre")
 public class Genre extends DatabaseEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", length = 64, nullable = false)
     private String name;
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(name = "movieGenre",
-            joinColumns = @JoinColumn(name = "genre_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_id", referencedColumnName = "id")
-    )
-    private List<Movie> movies;
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.EAGER)
+    private Set<Movie> movies = new HashSet<>();
 
-    public List<Movie> getMovies() {
+    public Set<Movie> getMovies() {
         return movies;
     }
 
-    public void setMovies(List<Movie> movies) {
+    public void setMovies(Set<Movie> movies) {
         this.movies = movies;
     }
 

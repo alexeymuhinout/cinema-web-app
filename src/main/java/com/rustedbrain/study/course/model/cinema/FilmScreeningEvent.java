@@ -4,8 +4,8 @@ import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "filmScreeningEvent")
@@ -15,18 +15,18 @@ public class FilmScreeningEvent extends DatabaseEntity {
     @JoinColumn(name = "filmScreeningId")
     private FilmScreening filmScreening;
     @OneToMany(mappedBy = "event")
-    private List<Ticket> tickets;
+    private Set<Ticket> tickets;
     @Column(name = "time")
     private Time time;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinemaHallId", referencedColumnName = "id")
     private CinemaHall cinemaHall;
 
-    public List<Ticket> getTickets() {
+    public Set<Ticket> getTickets() {
         return tickets;
     }
 
-    public void setTickets(List<Ticket> tickets) {
+    public void setTickets(Set<Ticket> tickets) {
         this.tickets = tickets;
     }
 
@@ -84,7 +84,7 @@ public class FilmScreeningEvent extends DatabaseEntity {
         FilmScreeningEvent filmScreeningEventCopy = (FilmScreeningEvent) super.clone();
 
         if (tickets != null) {
-            List<Ticket> ticketsCopy = new ArrayList<>(tickets.size());
+            Set<Ticket> ticketsCopy = new HashSet<>(tickets.size());
 
             for (Ticket ticket : tickets) {
                 ticketsCopy.add(ticket.clone());

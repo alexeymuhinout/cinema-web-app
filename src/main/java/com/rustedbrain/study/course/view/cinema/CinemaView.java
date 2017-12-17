@@ -1,10 +1,7 @@
 package com.rustedbrain.study.course.view.cinema;
 
 import com.rustedbrain.study.course.controller.service.CinemaService;
-import com.rustedbrain.study.course.model.cinema.Actor;
-import com.rustedbrain.study.course.model.cinema.Cinema;
-import com.rustedbrain.study.course.model.cinema.FilmScreening;
-import com.rustedbrain.study.course.model.cinema.Movie;
+import com.rustedbrain.study.course.model.cinema.*;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.users.LoginView;
 import com.vaadin.navigator.ViewChangeListener;
@@ -15,7 +12,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import java.util.Set;
 
 @SpringView(name = VaadinUI.CINEMA_VIEW)
 public class CinemaView extends NavigationView {
@@ -30,59 +27,88 @@ public class CinemaView extends NavigationView {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        VerticalLayout layout = new VerticalLayout();
         String cinemaName = (String) VaadinSession.getCurrent().getAttribute(CinemaView.CINEMA_ATTRIBUTE);
         if (cinemaName != null && !cinemaName.isEmpty()) {
             Cinema cinema = cinemaService.getCinema(cinemaName);
-            layout.addComponentsAndExpand(createCinemaPanel(cinema));
+            Panel panel = createCinemaPanel(cinema);
+            panel.setSizeFull();
+            addComponentsAndExpand(panel);
         } else {
             Notification.show("Cinema is not selected");
         }
-        addComponent(layout);
     }
 
-    private Component createCinemaPanel(Cinema cinema) {
-        VerticalLayout layout = new VerticalLayout();
+    private Panel createCinemaPanel(Cinema cinema) {
+        VerticalLayout cinemaPanelLayout = new VerticalLayout();
 
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        HorizontalLayout cinemaNameLayout = new HorizontalLayout();
 
-        Label cinemaNameLabel = new Label(cinema.getName());
+        Label cinemaNameLabel = new Label("Showing at a " + cinema.getName() + " now");
 
-        horizontalLayout.addComponentsAndExpand(cinemaNameLabel);
+        cinemaNameLayout.addComponentsAndExpand(cinemaNameLabel);
 
         if (VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
-            horizontalLayout.addComponentsAndExpand(new Button("Delete Cinema", (Button.ClickListener) event -> deleteCinema(cinema)));
+            cinemaNameLayout.addComponentsAndExpand(new Button("Delete Cinema", (Button.ClickListener) event -> deleteCinema(cinema)));
         }
 
-        layout.addComponentsAndExpand(horizontalLayout);
+        cinemaPanelLayout.addComponent(cinemaNameLayout);
 
-        List<FilmScreening> filmScreenings = cinema.getFilmScreenings();
+        Set<FilmScreening> filmScreenings = cinema.getFilmScreenings();
 
         if (!filmScreenings.isEmpty()) {
 
-            Accordion accordion = new Accordion();
-            accordion.setHeight(100.0f, Unit.PERCENTAGE);
-
+            HorizontalLayout filmScreeningsHorizontalLayout = new HorizontalLayout();
             for (FilmScreening filmScreening : filmScreenings) {
+                VerticalLayout verticalLayout = new VerticalLayout();
+                Panel panel = new Panel(verticalLayout);
+
                 Movie movie = filmScreening.getMovie();
+
+                Label movieNameLabel = new Label(movie.getLocalizedName() + "<br />" + "(" + movie.getOriginalName() + ", " + movie.getReleaseDate().getYear() + ")", ContentMode.HTML);
+                verticalLayout.addComponent(movieNameLabel);
+
+                Accordion accordion = new Accordion();
+                accordion.setHeight(100.0f, Unit.PERCENTAGE);
+
+                StringBuilder genresStringBuilder = new StringBuilder();
+                for (Genre genre : movie.getGenres()) {
+                    genresStringBuilder.append(genre.getName()).append("<br />");
+                }
+                final Label genresLabel = new Label(genresStringBuilder.toString(), ContentMode.HTML);
+                genresLabel.setWidth(100.0f, Unit.PERCENTAGE);
+
+                final VerticalLayout accordionGenresVerticalLayout = new VerticalLayout(genresLabel);
+                accordionGenresVerticalLayout.setMargin(true);
+
+                accordion.addTab(accordionGenresVerticalLayout, "Genres");
 
                 StringBuilder actorsStringBuilder = new StringBuilder();
                 for (Actor actor : movie.getActors()) {
                     actorsStringBuilder.append(actor.getName()).append(" ").append(actor.getSurname()).append("<br />");
                 }
-                final Label label = new Label(actorsStringBuilder.toString(), ContentMode.HTML);
-                label.setWidth(100.0f, Unit.PERCENTAGE);
+                final Label actorsLabel = new Label(actorsStringBuilder.toString(), ContentMode.HTML);
+                actorsLabel.setWidth(100.0f, Unit.PERCENTAGE);
 
-                final VerticalLayout accordionVerticalLayout = new VerticalLayout(label);
-                layout.setMargin(true);
+                final VerticalLayout accordionVerticalLayout = new VerticalLayout(actorsLabel);
+                accordionVerticalLayout.setMargin(true);
 
                 accordion.addTab(accordionVerticalLayout, "Actors");
-            }
 
-            layout.addComponentsAndExpand(accordion);
+                final Label descriptionLabel = new Label(movie.getDescription());
+                descriptionLabel.setWidth(100.0f, Unit.PERCENTAGE);
+
+                final VerticalLayout descriptionVerticalLayout = new VerticalLayout(descriptionLabel);
+                descriptionVerticalLayout.setMargin(true);
+
+                accordion.addTab(descriptionVerticalLayout, "Description");
+
+                verticalLayout.addComponentsAndExpand(accordion);
+                filmScreeningsHorizontalLayout.addComponentsAndExpand(panel);
+            }
+            cinemaPanelLayout.addComponentsAndExpand(filmScreeningsHorizontalLayout);
         }
 
-        return new Panel(layout);
+        return new Panel(cinemaPanelLayout);
     }
 
     private void deleteCinema(Cinema cinema) {

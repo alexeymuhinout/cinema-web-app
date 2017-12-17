@@ -4,7 +4,7 @@ import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "filmScreening")
@@ -13,12 +13,12 @@ public class FilmScreening extends DatabaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cinemaId", referencedColumnName = "id")
     private Cinema cinema;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Movie movie;
     @Column(name = "startDate")
     private Date startDate;
     @OneToMany(mappedBy = "filmScreening")
-    private List<FilmScreeningEvent> times;
+    private Set<FilmScreeningEvent> times;
     @Column(name = "endDate")
     private Date endDate;
 
@@ -54,11 +54,11 @@ public class FilmScreening extends DatabaseEntity {
         this.endDate = endDate;
     }
 
-    public List<FilmScreeningEvent> getTimes() {
+    public Set<FilmScreeningEvent> getTimes() {
         return times;
     }
 
-    public void setTimes(List<FilmScreeningEvent> times) {
+    public void setTimes(Set<FilmScreeningEvent> times) {
         this.times = times;
     }
 

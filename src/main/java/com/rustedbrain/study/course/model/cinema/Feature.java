@@ -13,10 +13,7 @@ public class Feature extends DatabaseEntity {
     private String name;
     @Column(name = "featureDescription", length = 256, unique = true)
     private String featureDescription;
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
+    @ManyToMany
     @JoinTable(name = "cinemaFeature",
             joinColumns = @JoinColumn(name = "feature_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "cinema_id", referencedColumnName = "id")

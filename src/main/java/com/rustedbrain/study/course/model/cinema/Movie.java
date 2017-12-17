@@ -1,10 +1,12 @@
 package com.rustedbrain.study.course.model.cinema;
 
+
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "movie")
@@ -14,20 +16,28 @@ public class Movie extends DatabaseEntity {
     private String localizedName;
     @Column(name = "originalName", length = 128, nullable = false)
     private String originalName;
-    @Column(name = "releaseDate")
+    @Column(name = "releaseDate", nullable = false)
     private Date releaseDate;
-    @ManyToMany(mappedBy = "movies", cascade = CascadeType.PERSIST)
-    private List<Genre> genres;
-    @Column(name = "description", length = 512)
+    @ManyToMany
+    @JoinTable(name = "movieGenre",
+            joinColumns = @JoinColumn(name = "movieId"),
+            inverseJoinColumns = @JoinColumn(name = "genreId")
+    )
+    private Set<Genre> genres = new HashSet<>();
+    @Column(name = "description", length = 2048)
     private String description;
     @Column(name = "minAge")
     private int minAge;
     @Column(name = "timeMinutes")
     private int timeMinutes;
-    @ManyToMany(mappedBy = "movies")
-    private List<Actor> actors;
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "movieActor",
+            joinColumns = @JoinColumn(name = "movieId"),
+            inverseJoinColumns = @JoinColumn(name = "actorId"))
+    private Set<Actor> actors = new HashSet<>();
+    @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private Set<Comment> comments = new HashSet<>();
 
     public Date getReleaseDate() {
         return releaseDate;
@@ -53,11 +63,11 @@ public class Movie extends DatabaseEntity {
         this.originalName = originalName;
     }
 
-    public List<Genre> getGenres() {
+    public Set<Genre> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<Genre> genres) {
+    public void setGenres(Set<Genre> genres) {
         this.genres = genres;
     }
 
@@ -85,19 +95,19 @@ public class Movie extends DatabaseEntity {
         this.timeMinutes = timeMinutes;
     }
 
-    public List<Actor> getActors() {
+    public Set<Actor> getActors() {
         return actors;
     }
 
-    public void setActors(List<Actor> actors) {
+    public void setActors(Set<Actor> actors) {
         this.actors = actors;
     }
 
-    public List<Comment> getComments() {
+    public Set<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
 
@@ -105,6 +115,7 @@ public class Movie extends DatabaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         Movie movie = (Movie) o;
 
@@ -113,7 +124,8 @@ public class Movie extends DatabaseEntity {
 
     @Override
     public int hashCode() {
-        int result = originalName.hashCode();
+        int result = super.hashCode();
+        result = 31 * result + originalName.hashCode();
         result = 31 * result + releaseDate.hashCode();
         return result;
     }

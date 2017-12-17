@@ -8,7 +8,7 @@ import java.util.Date;
 public class DatabaseEntity implements Serializable, Cloneable {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private long id;
     @Column(name = "registrationDate")
