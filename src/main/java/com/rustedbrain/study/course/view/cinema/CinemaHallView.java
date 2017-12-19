@@ -58,53 +58,63 @@ public class CinemaHallView extends NavigationView {
 
     private Component createTicketBuyPanel(FilmScreeningEvent filmScreeningEvent) {
         VerticalLayout verticalLayout = new VerticalLayout();
-        Label label = new Label(SELECT_SEAT_FOR_BUYING_TICKET_WARNING, ContentMode.HTML);
-        label.setSizeFull();
-        SeatSelectionListener seatSelectionListener = new SeatSelectionListener() {
-            @Override
-            public void fireSeatSelected() {
-                StringBuilder stringBuilder = new StringBuilder(selectedSeats.size());
-                for (Seat seat : selectedSeats) {
-                    stringBuilder.append("Row ").append(seat.getRow().getNumber()).append(", ").append("seat ").append(seat.getNumber()).append("</br>");
-                }
-                label.setValue(stringBuilder.toString());
-            }
 
-            @Override
-            public void fireSeatReleased() {
-                if (selectedSeats.isEmpty()) {
-                    label.setValue(SELECT_SEAT_FOR_BUYING_TICKET_WARNING);
-                } else {
+        if (VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
+            Set<Ticket> tickets = filmScreeningEvent.getTickets();
+            StringBuilder stringBuilder = new StringBuilder(tickets.size());
+            for (Ticket ticket : tickets) {
+                stringBuilder.append("Seat row ").append(ticket.getSeat().getRow().getNumber()).append(", seat number ").append(ticket.getSeat().getNumber()).append(", ").append(ticket.getClientName()).append(" ").append(ticket.getClientSurname()).append("</br>");
+            }
+            verticalLayout.addComponentsAndExpand(new Label(stringBuilder.toString(), ContentMode.HTML));
+        } else {
+            Label label = new Label(SELECT_SEAT_FOR_BUYING_TICKET_WARNING, ContentMode.HTML);
+            label.setSizeFull();
+            SeatSelectionListener seatSelectionListener = new SeatSelectionListener() {
+                @Override
+                public void fireSeatSelected() {
                     StringBuilder stringBuilder = new StringBuilder(selectedSeats.size());
                     for (Seat seat : selectedSeats) {
-                        stringBuilder.append("Seat number: ").append(seat.getNumber()).append("</br>");
+                        stringBuilder.append("Row ").append(seat.getRow().getNumber()).append(", ").append("seat ").append(seat.getNumber()).append("</br>");
                     }
                     label.setValue(stringBuilder.toString());
                 }
-            }
-        };
-        seatSelectionListeners.add(seatSelectionListener);
 
-        Button buttonBuyTicket = new Button("Buy", (Button.ClickListener) event -> {
-            try {
-                if (VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_USER_ATTRIBUTE) != null) {
-                    try {
-                        Member member = (Member) authorizationService.getUser((String) VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_USER_ATTRIBUTE));
-                        buyTicketClicked(member, filmScreeningEvent, selectedSeats);
-                        new PageNavigator().navigateToMainView(getUI());
-                    } catch (ClassCastException ex) {
-                        Notification.show("Administrator not able to buy tickets");
+                @Override
+                public void fireSeatReleased() {
+                    if (selectedSeats.isEmpty()) {
+                        label.setValue(SELECT_SEAT_FOR_BUYING_TICKET_WARNING);
+                    } else {
+                        StringBuilder stringBuilder = new StringBuilder(selectedSeats.size());
+                        for (Seat seat : selectedSeats) {
+                            stringBuilder.append("Seat number: ").append(seat.getNumber()).append("</br>");
+                        }
+                        label.setValue(stringBuilder.toString());
                     }
-                } else {
-                    new PageNavigator().navigateToTicketUserInfo(getUI(), filmScreeningEvent.getId(), selectedSeats);
                 }
-            } catch (Exception ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-            }
-        });
-        buttonBuyTicket.setSizeFull();
+            };
+            seatSelectionListeners.add(seatSelectionListener);
 
-        verticalLayout.addComponentsAndExpand(label, buttonBuyTicket);
+            Button buttonBuyTicket = new Button("Buy", (Button.ClickListener) event -> {
+                try {
+                    if (VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_USER_ATTRIBUTE) != null) {
+                        try {
+                            Member member = (Member) authorizationService.getUser((String) VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_USER_ATTRIBUTE));
+                            buyTicketClicked(member, filmScreeningEvent, selectedSeats);
+                            new PageNavigator().navigateToMainView(getUI());
+                        } catch (ClassCastException ex) {
+                            Notification.show("Administrator not able to buy tickets");
+                        }
+                    } else {
+                        new PageNavigator().navigateToTicketUserInfo(getUI(), filmScreeningEvent.getId(), selectedSeats);
+                    }
+                } catch (Exception ex) {
+                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                }
+            });
+            buttonBuyTicket.setSizeFull();
+
+            verticalLayout.addComponentsAndExpand(label, buttonBuyTicket);
+        }
         return new Panel(verticalLayout);
     }
 
