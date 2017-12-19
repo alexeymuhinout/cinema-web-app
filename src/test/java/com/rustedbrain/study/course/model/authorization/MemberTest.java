@@ -4,9 +4,11 @@ import com.rustedbrain.study.course.model.cinema.Comment;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class MemberTest {
 
@@ -19,7 +21,7 @@ public class MemberTest {
 
     @Test
     public void testSetGetComments() {
-        List<Comment> commentList = new ArrayList<>();
+        Set<Comment> commentList = new HashSet<>();
         Comment first = new Comment();
         first.setMessage("first");
         Comment notFirst = new Comment();
@@ -27,7 +29,7 @@ public class MemberTest {
         commentList.add(first);
         commentList.add(notFirst);
         member.setComments(commentList);
-        assertEquals("NotFirst", member.getComments().get(1).getMessage());
+        assertEquals("NotFirst", member.getComments().toArray(new Comment[0])[0].getMessage());
     }
 
     @Test

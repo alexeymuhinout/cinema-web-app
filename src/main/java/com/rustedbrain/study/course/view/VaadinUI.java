@@ -25,9 +25,15 @@ public class VaadinUI extends UI {
     public static final String MOVIE_VIEW = "movie_view";
     public static final String CITY_CREATION_VIEW = "city_creation_view";
     public static final String MESSAGE_ATTRIBUTE = "message";
+    public static final String TICKET_USER_INFO_VIEW = "ticket_user_info";
     public Navigator navigator;
-    @Autowired
+
     private SpringViewProvider viewProvider;
+
+    @Autowired
+    public void setViewProvider(SpringViewProvider viewProvider) {
+        this.viewProvider = viewProvider;
+    }
 
     @Override
     protected void init(VaadinRequest request) {

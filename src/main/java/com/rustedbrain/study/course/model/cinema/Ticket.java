@@ -1,6 +1,7 @@
 package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
+import com.rustedbrain.study.course.model.authorization.Member;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -16,6 +17,36 @@ public class Ticket extends DatabaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seatId")
     private Seat seat;
+    @ManyToOne
+    private Member member;
+    @Column(name = "clientName", length = 128)
+    private String clientName;
+    @Column(name = "clientSurname", length = 128)
+    private String clientSurname;
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public String getClientSurname() {
+        return clientSurname;
+    }
+
+    public void setClientSurname(String clientSurname) {
+        this.clientSurname = clientSurname;
+    }
 
     public FilmScreeningEvent getEvent() {
         return event;

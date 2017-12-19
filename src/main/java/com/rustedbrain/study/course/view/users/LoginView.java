@@ -2,9 +2,9 @@ package com.rustedbrain.study.course.view.users;
 
 import com.rustedbrain.study.course.controller.service.AuthorizationService;
 import com.rustedbrain.study.course.view.VaadinUI;
+import com.rustedbrain.study.course.view.util.PageNavigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
@@ -15,7 +15,7 @@ public class LoginView extends VerticalLayout implements View {
 
     public static final String LOGGED_USER_ATTRIBUTE = "user";
     public static final String LOGGED_ADMINISTRATOR_ATTRIBUTE = "administrator";
-    @Autowired
+
     private AuthorizationService authorizationService;
     private TextField loginTextField;
     private TextField passwordTextField;
@@ -39,12 +39,12 @@ public class LoginView extends VerticalLayout implements View {
                 VaadinSession.getCurrent().setAttribute(VaadinUI.MESSAGE_ATTRIBUTE, "Welcome " + loginTextField.getValue() + "!");
                 getUI().getNavigator().addView(VaadinUI.PROFILE_VIEW, ProfileView.class);
                 getUI().getNavigator().addView(VaadinUI.CITY_CREATION_VIEW, ProfileView.class);
-                Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
+                new PageNavigator().navigateToMainView(getUI());
             } else if (authorizationService.isRegisteredMember(loginTextField.getValue(), passwordTextField.getValue())) {
                 VaadinSession.getCurrent().setAttribute(LOGGED_USER_ATTRIBUTE, loginTextField.getValue());
                 VaadinSession.getCurrent().setAttribute(VaadinUI.MESSAGE_ATTRIBUTE, "Welcome " + loginTextField.getValue() + "!");
                 getUI().getNavigator().addView(VaadinUI.PROFILE_VIEW, ProfileView.class);
-                Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
+                new PageNavigator().navigateToMainView(getUI());
             } else {
                 Notification.show("Invalid credentials", Notification.Type.ERROR_MESSAGE);
             }
@@ -58,9 +58,13 @@ public class LoginView extends VerticalLayout implements View {
 
     }
 
+    @Autowired
+    public void setAuthorizationService(AuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
+
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
 
     }
-
 }

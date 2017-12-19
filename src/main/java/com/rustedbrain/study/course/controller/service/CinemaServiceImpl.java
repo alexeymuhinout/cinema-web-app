@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.controller.service;
 import com.rustedbrain.study.course.controller.repository.CinemaRepository;
 import com.rustedbrain.study.course.controller.repository.CityRepository;
 import com.rustedbrain.study.course.controller.repository.FilmScreeningEventRepository;
+import com.rustedbrain.study.course.controller.repository.TicketRepository;
 import com.rustedbrain.study.course.model.authorization.User;
 import com.rustedbrain.study.course.model.cinema.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,13 @@ public class CinemaServiceImpl implements CinemaService {
     private CinemaRepository cinemaRepository;
 
     private FilmScreeningEventRepository filmScreeningEventRepository;
+
+    private TicketRepository ticketRepository;
+
+    @Autowired
+    public void setTicketRepository(TicketRepository ticketRepository) {
+        this.ticketRepository = ticketRepository;
+    }
 
     @Autowired
     public void setCityRepository(CityRepository cityRepository) {
@@ -148,6 +156,6 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public void buyTickets(List<Ticket> boughtTickets) {
-
+        ticketRepository.saveAll(boughtTickets);
     }
 }

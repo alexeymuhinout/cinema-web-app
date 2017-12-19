@@ -2,9 +2,13 @@ package com.rustedbrain.study.course.model.authorization;
 
 
 import com.rustedbrain.study.course.model.cinema.Comment;
+import com.rustedbrain.study.course.model.cinema.Ticket;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.Set;
 
 @Entity
 @Table(name = "member")
@@ -12,8 +16,10 @@ public class Member extends User {
 
     @Column(name = "permanentlyBanned")
     private boolean permanentlyBanned;
-    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "member")
+    private Set<Comment> comments;
+    @OneToMany(mappedBy = "member")
+    private Set<Ticket> tickets;
 
     public Member(String login, String password, String mail) {
         super(login, password, mail);
@@ -22,11 +28,11 @@ public class Member extends User {
     public Member() {
     }
 
-    public List<Comment> getComments() {
+    public Set<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
 

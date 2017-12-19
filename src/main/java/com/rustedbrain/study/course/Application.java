@@ -179,7 +179,7 @@ public class Application {
             cinemaHall.setName(String.valueOf(i));
 
             Set<Row> rows = new HashSet<>();
-            for (int j = 1; j <= 10; j++) {
+            for (int j = 1; j <= 8; j++) {
                 Row row = new Row();
                 row.setCinemaHall(cinemaHall);
                 row.setNumber(j);
