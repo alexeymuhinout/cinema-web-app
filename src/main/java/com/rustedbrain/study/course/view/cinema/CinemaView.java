@@ -4,20 +4,24 @@ import com.rustedbrain.study.course.controller.service.CinemaService;
 import com.rustedbrain.study.course.model.cinema.*;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.users.LoginView;
+import com.rustedbrain.study.course.view.util.PageNavigator;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.util.Set;
 
 @SpringView(name = VaadinUI.CINEMA_VIEW)
 public class CinemaView extends NavigationView {
 
-    public static final String CINEMA_ATTRIBUTE = "cinema";
+    public static final String CINEMA_ID_ATTRIBUTE = "cinema";
     private CinemaService cinemaService;
 
     @Autowired
@@ -27,9 +31,9 @@ public class CinemaView extends NavigationView {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        String cinemaName = (String) VaadinSession.getCurrent().getAttribute(CinemaView.CINEMA_ATTRIBUTE);
-        if (cinemaName != null && !cinemaName.isEmpty()) {
-            Cinema cinema = cinemaService.getCinema(cinemaName);
+        Long cinemaId = (Long) VaadinSession.getCurrent().getAttribute(CinemaView.CINEMA_ID_ATTRIBUTE);
+        Cinema cinema = cinemaService.getCinema(cinemaId);
+        if (cinema != null) {
             Panel panel = createCinemaPanel(cinema);
             panel.setSizeFull();
             addComponentsAndExpand(panel);
@@ -66,6 +70,27 @@ public class CinemaView extends NavigationView {
 
                 Label movieNameLabel = new Label(movie.getLocalizedName() + "<br />" + "(" + movie.getOriginalName() + ", " + movie.getReleaseDate().getYear() + ")", ContentMode.HTML);
                 verticalLayout.addComponent(movieNameLabel);
+
+
+                FileResource resource = new FileResource(new File(movie.getPosterPath()));
+                Image image = new Image("", resource);
+                image.setWidth(400, Unit.PIXELS);
+                image.setHeight(500, Unit.PIXELS);
+                HorizontalLayout horizontalLayout = new HorizontalLayout(image);
+
+                for (FilmScreeningEvent filmScreeningEvent : filmScreening.getFilmScreeningEvents()) {
+                    Button buttonFilmViewTime = new Button(filmScreeningEvent.getTime().getHours() + ":" + filmScreeningEvent.getTime().getMinutes(), new Button.ClickListener() {
+                        @Override
+                        public void buttonClick(Button.ClickEvent event) {
+                            new PageNavigator().navigateToTicketView(getUI(), filmScreeningEvent.getId());
+                        }
+                    });
+                    buttonFilmViewTime.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+                    horizontalLayout.addComponent(buttonFilmViewTime);
+                }
+
+
+                verticalLayout.addComponent(horizontalLayout);
 
                 Accordion accordion = new Accordion();
                 accordion.setHeight(100.0f, Unit.PERCENTAGE);
@@ -115,5 +140,4 @@ public class CinemaView extends NavigationView {
         cinemaService.deleteCinema(cinema);
         Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
     }
-
 }

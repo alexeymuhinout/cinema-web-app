@@ -1,6 +1,8 @@
 package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -10,15 +12,15 @@ import java.util.Set;
 @Table(name = "filmScreening")
 public class FilmScreening extends DatabaseEntity {
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cinemaId", referencedColumnName = "id")
+    @ManyToOne
     private Cinema cinema;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Movie movie;
     @Column(name = "startDate")
     private Date startDate;
     @OneToMany(mappedBy = "filmScreening")
-    private Set<FilmScreeningEvent> times;
+    @Cascade({CascadeType.ALL})
+    private Set<FilmScreeningEvent> filmScreeningEvents;
     @Column(name = "endDate")
     private Date endDate;
 
@@ -54,27 +56,34 @@ public class FilmScreening extends DatabaseEntity {
         this.endDate = endDate;
     }
 
-    public Set<FilmScreeningEvent> getTimes() {
-        return times;
+    public Set<FilmScreeningEvent> getFilmScreeningEvents() {
+        return filmScreeningEvents;
     }
 
-    public void setTimes(Set<FilmScreeningEvent> times) {
-        this.times = times;
+    public void setFilmScreeningEvents(Set<FilmScreeningEvent> filmScreeningEvents) {
+        this.filmScreeningEvents = filmScreeningEvents;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         FilmScreening that = (FilmScreening) o;
 
-        return movie.equals(that.movie);
+        if (movie != null ? !movie.equals(that.movie) : that.movie != null) return false;
+        if (!startDate.equals(that.startDate)) return false;
+        return endDate.equals(that.endDate);
     }
 
     @Override
     public int hashCode() {
-        return movie.hashCode();
+        int result = super.hashCode();
+        result = 31 * result + (movie != null ? movie.hashCode() : 0);
+        result = 31 * result + startDate.hashCode();
+        result = 31 * result + endDate.hashCode();
+        return result;
     }
 
     @Override
@@ -82,7 +91,7 @@ public class FilmScreening extends DatabaseEntity {
         return "FilmScreening{" +
                 "movie=" + movie +
                 ", startDate=" + startDate +
-                ", times=" + times +
+                ", filmScreeningEvents=" + filmScreeningEvents +
                 ", endDate=" + endDate +
                 '}';
     }

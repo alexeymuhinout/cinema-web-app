@@ -1,6 +1,8 @@
 package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -12,13 +14,14 @@ public class CinemaHall extends DatabaseEntity {
 
     @Column(name = "name", length = 64, nullable = false)
     private String name;
-    @OneToMany(mappedBy = "cinemaHall", cascade = {CascadeType.ALL})
-    private Set<Row> rows;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cinemaId")
+    @OneToMany(mappedBy = "cinemaHall")
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
+    private Set<Row> rows = new HashSet<>();
+    @ManyToOne
     private Cinema cinema;
     @OneToMany(mappedBy = "cinemaHall")
-    private Set<FilmScreeningEvent> filmScreeningEvents;
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
+    private Set<FilmScreeningEvent> filmScreeningEvents = new HashSet<>();
 
     public CinemaHall(String name) {
         this.name = name;
@@ -67,14 +70,13 @@ public class CinemaHall extends DatabaseEntity {
 
         CinemaHall that = (CinemaHall) o;
 
-        return name.equals(that.name) && rows.equals(that.rows);
+        return name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + name.hashCode();
-        result = 31 * result + rows.hashCode();
         return result;
     }
 
@@ -84,32 +86,5 @@ public class CinemaHall extends DatabaseEntity {
                 "name='" + name + '\'' +
                 ", rows=" + rows +
                 '}';
-    }
-
-    @Override
-    public CinemaHall clone() throws CloneNotSupportedException {
-        CinemaHall clonedCinemaHall = (CinemaHall) super.clone();
-
-        if (this.rows != null) {
-            Set<Row> rowsCopy = new HashSet<>(rows.size());
-
-            for (Row row : rows) {
-                rowsCopy.add(row.clone());
-            }
-
-            clonedCinemaHall.setRows(rowsCopy);
-        }
-
-        if (this.filmScreeningEvents != null) {
-            Set<FilmScreeningEvent> filmScreeningEventsCopy = new HashSet<>(filmScreeningEvents.size());
-
-            for (FilmScreeningEvent filmScreeningEvent : filmScreeningEvents) {
-                filmScreeningEventsCopy.add(filmScreeningEvent.clone());
-            }
-
-            clonedCinemaHall.setFilmScreeningEvents(filmScreeningEventsCopy);
-        }
-
-        return clonedCinemaHall;
     }
 }

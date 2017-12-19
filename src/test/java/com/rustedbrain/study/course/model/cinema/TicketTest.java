@@ -3,14 +3,12 @@ package com.rustedbrain.study.course.model.cinema;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class TicketTest {
 
@@ -40,7 +38,7 @@ public class TicketTest {
         seat.setId(11);
         seat.setClientCount(8);
         seat.setNumber(10);
-        seat.setPrice(BigDecimal.TEN);
+        seat.setPrice(10);
         return seat;
     }
 
@@ -66,7 +64,7 @@ public class TicketTest {
         rowList.add(setUpSeatList(row));
         row.setId(1);
         row.setNumber(9);
-        cinemaHall.setRows(rowList);
+        cinemaHall.setRows(new HashSet<>(rowList));
     }
 
     private static Row setUpSeatList(Row row) {
@@ -75,9 +73,9 @@ public class TicketTest {
         seat.setId(1);
         seat.setClientCount(11);
         seat.setNumber(13);
-        seat.setPrice(BigDecimal.TEN);
+        seat.setPrice(10);
         seatList.add(setUpSeat());
-        row.setSeats(seatList);
+        row.setSeats(new HashSet<>(seatList));
         return row;
     }
 

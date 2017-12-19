@@ -1,25 +1,27 @@
 package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.sql.Time;
-import java.util.HashSet;
 import java.util.Set;
+
 
 @Entity
 @Table(name = "filmScreeningEvent")
 public class FilmScreeningEvent extends DatabaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "filmScreeningId")
     private FilmScreening filmScreening;
     @OneToMany(mappedBy = "event")
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
     private Set<Ticket> tickets;
     @Column(name = "time")
     private Time time;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cinemaHallId", referencedColumnName = "id")
+    @ManyToOne
     private CinemaHall cinemaHall;
 
     public Set<Ticket> getTickets() {
@@ -77,22 +79,5 @@ public class FilmScreeningEvent extends DatabaseEntity {
                 "time=" + time +
                 ", cinemaHall=" + cinemaHall +
                 '}';
-    }
-
-    @Override
-    protected FilmScreeningEvent clone() throws CloneNotSupportedException {
-        FilmScreeningEvent filmScreeningEventCopy = (FilmScreeningEvent) super.clone();
-
-        if (tickets != null) {
-            Set<Ticket> ticketsCopy = new HashSet<>(tickets.size());
-
-            for (Ticket ticket : tickets) {
-                ticketsCopy.add(ticket.clone());
-            }
-
-            filmScreeningEventCopy.setTickets(ticketsCopy);
-        }
-
-        return filmScreeningEventCopy;
     }
 }

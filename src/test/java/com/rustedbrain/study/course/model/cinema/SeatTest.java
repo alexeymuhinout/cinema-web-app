@@ -3,11 +3,7 @@ package com.rustedbrain.study.course.model.cinema;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class SeatTest {
 
@@ -19,19 +15,19 @@ public class SeatTest {
     public static void setUpBeforeClass() {
         seat1 = new Seat();
         seat1.setId(1);
-        seat1.setPrice(BigDecimal.TEN);
+        seat1.setPrice(10);
         seat1.setNumber(20);
         seat1.setClientCount(7);
 
         seat2 = new Seat();
         seat2.setId(1);
-        seat2.setPrice(BigDecimal.TEN);
+        seat2.setPrice(10);
         seat2.setNumber(20);
         seat2.setClientCount(7);
 
         seat3 = new Seat();
         seat3.setId(6);
-        seat3.setPrice(BigDecimal.TEN);
+        seat3.setPrice(10);
         seat3.setNumber(13);
         seat3.setClientCount(66);
     }
@@ -49,7 +45,7 @@ public class SeatTest {
     @Test
     public void testEqualsConsistency() {
         assertEquals(seat1.equals(seat2), seat1.equals(seat2));
-        seat1.setPrice(BigDecimal.ZERO);
+        seat1.setPrice(0);
         assertFalse(seat1.equals(seat2));
     }
 

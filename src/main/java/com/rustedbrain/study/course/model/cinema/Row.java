@@ -1,6 +1,8 @@
 package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -8,15 +10,15 @@ import java.util.Set;
 
 @Entity
 @Table(name = "row")
-public class Row extends DatabaseEntity {
+public class Row extends DatabaseEntity implements Comparable<Row> {
 
-    @Column(name = "number")
+    @Column(name = "number", nullable = false)
     private int number;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cinemaHallId")
+    @ManyToOne
     private CinemaHall cinemaHall;
-    @OneToMany(mappedBy = "row", cascade = {CascadeType.ALL})
-    private Set<Seat> seats;
+    @OneToMany(mappedBy = "row")
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
+    private Set<Seat> seats = new HashSet<>();
 
     public Row(int number, Set<Seat> seats) {
         this.number = number;
@@ -54,16 +56,17 @@ public class Row extends DatabaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         Row row = (Row) o;
 
-        return number == row.number && seats.equals(row.seats);
+        return number == row.number;
     }
 
     @Override
     public int hashCode() {
-        int result = number;
-        result = 31 * result + seats.hashCode();
+        int result = super.hashCode();
+        result = 31 * result + number;
         return result;
     }
 
@@ -76,19 +79,7 @@ public class Row extends DatabaseEntity {
     }
 
     @Override
-    public Row clone() throws CloneNotSupportedException {
-        Row clonedRow = (Row) super.clone();
-
-        if (seats != null) {
-            Set<Seat> copy = new HashSet<>(seats.size());
-
-            for (Seat seat : seats) {
-                copy.add(seat.clone());
-            }
-
-            clonedRow.setSeats(copy);
-        }
-
-        return clonedRow;
+    public int compareTo(Row o) {
+        return Integer.compare(this.number, o.number);
     }
 }

@@ -3,23 +3,22 @@ package com.rustedbrain.study.course.model.cinema;
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "seat")
-public class Seat extends DatabaseEntity {
+public class Seat extends DatabaseEntity implements Comparable<Seat> {
 
     @ManyToOne
-    @JoinColumn(name = "rowId", referencedColumnName = "id")
+    @JoinColumn(name = "rowId")
     private Row row;
     @Column(name = "number", nullable = false)
     private int number;
     @Column(name = "clientCount", nullable = false)
     private int clientCount;
     @Column(name = "price", nullable = false)
-    private BigDecimal price;
+    private double price;
 
-    public Seat(int number, int clientCount, BigDecimal price) {
+    public Seat(int number, int clientCount, double price) {
         this.number = number;
         this.clientCount = clientCount;
         this.price = price;
@@ -52,11 +51,11 @@ public class Seat extends DatabaseEntity {
         this.clientCount = clientCount;
     }
 
-    public BigDecimal getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -68,15 +67,13 @@ public class Seat extends DatabaseEntity {
 
         Seat seat = (Seat) o;
 
-        return number == seat.number && clientCount == seat.clientCount && price.equals(seat.price);
+        return number == seat.number;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + number;
-        result = 31 * result + clientCount;
-        result = 31 * result + price.hashCode();
         return result;
     }
 
@@ -90,9 +87,7 @@ public class Seat extends DatabaseEntity {
     }
 
     @Override
-    public Seat clone() throws CloneNotSupportedException {
-        Seat clonedSeat = (Seat) super.clone();
-        clonedSeat.setPrice(new BigDecimal(this.price.toString()));
-        return clonedSeat;
+    public int compareTo(Seat o) {
+        return Integer.compare(this.number, o.number);
     }
 }

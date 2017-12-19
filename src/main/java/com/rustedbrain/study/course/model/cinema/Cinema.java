@@ -1,24 +1,27 @@
 package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "cinema")
 public class Cinema extends DatabaseEntity {
 
-    @Column(name = "name", length = 128)
+    @Column(name = "name", length = 128, nullable = false)
     private String name;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private Set<FilmScreening> filmScreenings;
+    @OneToMany(mappedBy = "cinema")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE})
+    private Set<FilmScreening> filmScreenings = new HashSet<>();
     @ManyToMany(mappedBy = "cinemas")
-    private Set<Feature> features;
-    @OneToMany(mappedBy = "cinema", cascade = {CascadeType.ALL})
-    private Set<CinemaHall> cinemaHalls;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cityId")
+    private Set<Feature> features = new HashSet<>();
+    @OneToMany(mappedBy = "cinema")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE})
+    private Set<CinemaHall> cinemaHalls = new HashSet<>();
+    @ManyToOne
     private City city;
     @Column(name = "location", length = 512, nullable = false)
     private String location;

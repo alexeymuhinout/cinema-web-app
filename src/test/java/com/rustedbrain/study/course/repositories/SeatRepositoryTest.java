@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Optional;
 
@@ -30,7 +29,7 @@ public class SeatRepositoryTest {
         seat = new Seat();
         seat.setRegistrationDate(new Date());
         seat.setLastAccessDate(new Date());
-        seat.setPrice(BigDecimal.TEN);
+        seat.setPrice(10);
         seat.setClientCount(10);
         seat.setNumber(13);
     }

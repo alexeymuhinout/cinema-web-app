@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SpringView(name = VaadinUI.CITY_VIEW)
 public class CityView extends NavigationView {
 
-    public static final String CITY_ATTRIBUTE = "cityName";
+    public static final String CITY_ID_ATTRIBUTE = "cityName";
 
     private CinemaService cinemaService;
 
@@ -31,9 +31,9 @@ public class CityView extends NavigationView {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        String cityName = (String) VaadinSession.getCurrent().getAttribute(CityView.CITY_ATTRIBUTE);
-        if (cityName != null && !cityName.isEmpty()) {
-            City city = cinemaService.getCity(cityName);
+        Long cityId = (Long) VaadinSession.getCurrent().getAttribute(CityView.CITY_ID_ATTRIBUTE);
+        City city = cinemaService.getCity(cityId);
+        if (city != null) {
             addComponentsAndExpand(createCityPanel(city));
         } else {
             Notification.show("City is not selected");
@@ -88,7 +88,7 @@ public class CityView extends NavigationView {
 
     private void fillLayoutByCinemas(VerticalLayout layout, City city) {
         for (Cinema cinema : city.getCinemas()) {
-            Button button = new Button(cinema.getName() + ", " + cinema.getLocation(), (Button.ClickListener) clickEvent -> new PageNavigator().navigateToCinemaView(getUI(), cinema.getName()));
+            Button button = new Button(cinema.getName() + ", " + cinema.getLocation(), (Button.ClickListener) clickEvent -> new PageNavigator().navigateToCinemaView(getUI(), cinema.getId()));
             button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
             layout.addComponentsAndExpand(button);
         }

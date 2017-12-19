@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
 
 
@@ -79,7 +80,7 @@ public class MovieRepositoryTest {
         genre4.setRegistrationDate(date);
         genre4.setLastAccessDate(date);
 
-        movie.setGenres(Arrays.asList(genre1, genre2, genre3, genre4));
+        movie.setGenres(new HashSet<>(Arrays.asList(genre1, genre2, genre3, genre4)));
 
         repository.save(movie);
 
@@ -102,7 +103,7 @@ public class MovieRepositoryTest {
         actor2.setRegistrationDate(date);
         actor2.setLastAccessDate(date);
 
-        movie.setActors(Arrays.asList(actor1, actor2));
+        movie.setActors(new HashSet<>(Arrays.asList(actor1, actor2)));
 
         repository.save(movie);
 

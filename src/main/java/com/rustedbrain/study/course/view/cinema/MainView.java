@@ -63,7 +63,7 @@ public class MainView extends NavigationView {
         HorizontalLayout layoutLabelAndFind = new HorizontalLayout();
         layoutLabelAndFind.addComponentsAndExpand(cityComboBox);
 
-        Button button = new Button("Go", (Button.ClickListener) event -> new PageNavigator().navigateToCityView(getUI(), cityComboBox.getValue().getName()));
+        Button button = new Button("Go", (Button.ClickListener) event -> new PageNavigator().navigateToCityView(getUI(), cityComboBox.getValue().getId()));
         button.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         layoutLabelAndFind.addComponent(button);
 
@@ -95,14 +95,14 @@ public class MainView extends NavigationView {
             String name = event.getItem();
             City city = cinemaService.getCity(name);
             if (city != null) {
-                new PageNavigator().navigateToCityView(getUI(), city.getName());
+                new PageNavigator().navigateToCityView(getUI(), city.getId());
             } else {
                 Matcher matcher = patternCinemaStreet.matcher(name);
                 if (matcher.find()) {
                     name = matcher.replaceAll("").trim();
                 }
                 Cinema cinema = cinemaService.getCinema(name);
-                new PageNavigator().navigateToCinemaView(getUI(), cinema.getName());
+                new PageNavigator().navigateToCinemaView(getUI(), cinema.getId());
             }
         });
 

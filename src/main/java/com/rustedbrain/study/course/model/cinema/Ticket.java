@@ -9,8 +9,7 @@ import java.util.Date;
 @Table(name = "ticket")
 public class Ticket extends DatabaseEntity {
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "eventId")
+    @ManyToOne
     private FilmScreeningEvent event;
     @Column(name = "soldDate")
     private Date soldDate;
@@ -68,14 +67,5 @@ public class Ticket extends DatabaseEntity {
                 ", soldDate=" + soldDate +
                 ", seat=" + seat +
                 '}';
-    }
-
-    @Override
-    protected Ticket clone() throws CloneNotSupportedException {
-        Ticket ticket = (Ticket) super.clone();
-        if (this.soldDate != null) {
-            ticket.setSoldDate((Date) this.soldDate.clone());
-        }
-        return ticket;
     }
 }

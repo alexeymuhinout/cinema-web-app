@@ -2,6 +2,8 @@ package com.rustedbrain.study.course.model.cinema;
 
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -26,6 +28,8 @@ public class Movie extends DatabaseEntity {
     private Set<Genre> genres = new HashSet<>();
     @Column(name = "description", length = 2048)
     private String description;
+    @Column(name = "posterPath", length = 2048)
+    private String posterPath;
     @Column(name = "minAge")
     private int minAge;
     @Column(name = "timeMinutes")
@@ -36,8 +40,17 @@ public class Movie extends DatabaseEntity {
             joinColumns = @JoinColumn(name = "movieId"),
             inverseJoinColumns = @JoinColumn(name = "actorId"))
     private Set<Actor> actors = new HashSet<>();
-    @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "movie")
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
     private Set<Comment> comments = new HashSet<>();
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
 
     public Date getReleaseDate() {
         return releaseDate;

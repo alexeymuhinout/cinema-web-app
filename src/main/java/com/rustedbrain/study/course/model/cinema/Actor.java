@@ -2,7 +2,10 @@ package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +17,7 @@ public class Actor extends DatabaseEntity {
     private String name;
     @Column(name = "surname", length = 64)
     private String surname;
-    @ManyToMany(mappedBy = "actors", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "actors")
     private Set<Movie> movies = new HashSet<>();
 
     public Set<Movie> getMovies() {

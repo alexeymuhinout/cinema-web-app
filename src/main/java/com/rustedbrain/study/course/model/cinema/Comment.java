@@ -3,17 +3,18 @@ package com.rustedbrain.study.course.model.cinema;
 import com.rustedbrain.study.course.model.DatabaseEntity;
 import com.rustedbrain.study.course.model.authorization.Member;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "message")
 public class Comment extends DatabaseEntity {
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "memberId")
+    @ManyToOne
     private Member member;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "movieId")
+    @ManyToOne
     private Movie movie;
     @Column(name = "message", length = 512, nullable = false)
     private String message;

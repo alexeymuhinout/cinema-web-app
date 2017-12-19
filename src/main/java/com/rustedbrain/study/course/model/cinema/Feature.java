@@ -3,7 +3,7 @@ package com.rustedbrain.study.course.model.cinema;
 import com.rustedbrain.study.course.model.DatabaseEntity;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "feature")
@@ -18,13 +18,13 @@ public class Feature extends DatabaseEntity {
             joinColumns = @JoinColumn(name = "feature_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "cinema_id", referencedColumnName = "id")
     )
-    private List<Cinema> cinemas;
+    private Set<Cinema> cinemas;
 
-    public List<Cinema> getCinemas() {
+    public Set<Cinema> getCinemas() {
         return cinemas;
     }
 
-    public void setCinemas(List<Cinema> cinemas) {
+    public void setCinemas(Set<Cinema> cinemas) {
         this.cinemas = cinemas;
     }
 
@@ -40,8 +40,8 @@ public class Feature extends DatabaseEntity {
         return featureDescription;
     }
 
-    public void setFeatureDescription(String featuredescription) {
-        this.featureDescription = featuredescription;
+    public void setFeatureDescription(String featureDescription) {
+        this.featureDescription = featureDescription;
     }
 
     @Override

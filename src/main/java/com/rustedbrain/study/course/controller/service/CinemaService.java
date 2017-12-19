@@ -41,4 +41,12 @@ public interface CinemaService {
     void deleteCinema(Cinema cinema);
 
     void createCinema(City city, String name, String street);
+
+    Cinema getCinema(Long cinemaId);
+
+    City getCity(Long cityId);
+
+    FilmScreeningEvent getFilmScreeningEvent(Long filmScreeningEventId);
+
+    void buyTickets(List<Ticket> boughtTickets);
 }

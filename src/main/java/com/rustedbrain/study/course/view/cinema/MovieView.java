@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SpringView(name = VaadinUI.MOVIE_VIEW)
 public class MovieView extends NavigationView {
 
-    public static final String MOVIE_ATTRIBUTE = "movie";
+    public static final String MOVIE_ID_ATTRIBUTE = "movie";
     @Autowired
     CinemaService cinemaService;
 

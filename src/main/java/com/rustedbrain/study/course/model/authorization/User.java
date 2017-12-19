@@ -2,6 +2,7 @@ package com.rustedbrain.study.course.model.authorization;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
 import com.rustedbrain.study.course.model.cinema.City;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -24,8 +25,8 @@ public class User extends DatabaseEntity {
     protected String mail;
     @Column(name = "birthday")
     protected Date birthday;
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinColumn(name = "cityId", referencedColumnName = "id")
+    @ManyToOne
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
     protected City city;
 
     public User(String login, String password, String mail) {

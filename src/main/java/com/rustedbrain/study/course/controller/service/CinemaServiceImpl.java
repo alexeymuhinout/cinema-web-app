@@ -2,6 +2,7 @@ package com.rustedbrain.study.course.controller.service;
 
 import com.rustedbrain.study.course.controller.repository.CinemaRepository;
 import com.rustedbrain.study.course.controller.repository.CityRepository;
+import com.rustedbrain.study.course.controller.repository.FilmScreeningEventRepository;
 import com.rustedbrain.study.course.model.authorization.User;
 import com.rustedbrain.study.course.model.cinema.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,27 @@ import java.util.List;
 @Service
 public class CinemaServiceImpl implements CinemaService {
 
-    @Autowired
+
     private CityRepository cityRepository;
-    @Autowired
+
     private CinemaRepository cinemaRepository;
+
+    private FilmScreeningEventRepository filmScreeningEventRepository;
+
+    @Autowired
+    public void setCityRepository(CityRepository cityRepository) {
+        this.cityRepository = cityRepository;
+    }
+
+    @Autowired
+    public void setCinemaRepository(CinemaRepository cinemaRepository) {
+        this.cinemaRepository = cinemaRepository;
+    }
+
+    @Autowired
+    public void setFilmScreeningEventRepository(FilmScreeningEventRepository filmScreeningEventRepository) {
+        this.filmScreeningEventRepository = filmScreeningEventRepository;
+    }
 
     @Override
     public List<Movie> getMovies(Cinema cinema, Date date) {
@@ -111,5 +129,25 @@ public class CinemaServiceImpl implements CinemaService {
         } else {
             cinemaRepository.save(new Cinema(city, name, street));
         }
+    }
+
+    @Override
+    public Cinema getCinema(Long cinemaId) {
+        return cinemaRepository.getOne(cinemaId);
+    }
+
+    @Override
+    public City getCity(Long cityId) {
+        return cityRepository.getOne(cityId);
+    }
+
+    @Override
+    public FilmScreeningEvent getFilmScreeningEvent(Long filmScreeningEventId) {
+        return filmScreeningEventRepository.getOne(filmScreeningEventId);
+    }
+
+    @Override
+    public void buyTickets(List<Ticket> boughtTickets) {
+
     }
 }

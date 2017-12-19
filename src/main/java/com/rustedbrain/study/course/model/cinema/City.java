@@ -2,8 +2,13 @@ package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
 import com.rustedbrain.study.course.model.authorization.User;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.Set;
 
 @Entity
@@ -12,9 +17,10 @@ public class City extends DatabaseEntity {
 
     @Column(name = "name", length = 64, nullable = false, unique = true)
     private String name;
-    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "city")
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
     private Set<Cinema> cinemas;
-    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "city")
     private Set<User> users;
 
     public City() {
