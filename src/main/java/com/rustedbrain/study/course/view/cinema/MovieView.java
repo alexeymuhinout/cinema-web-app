@@ -1,6 +1,6 @@
 package com.rustedbrain.study.course.view.cinema;
 
-import com.rustedbrain.study.course.controller.service.CinemaService;
+import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;

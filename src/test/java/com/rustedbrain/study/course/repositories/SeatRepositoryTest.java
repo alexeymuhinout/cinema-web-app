@@ -1,7 +1,7 @@
 package com.rustedbrain.study.course.repositories;
 
-import com.rustedbrain.study.course.controller.repository.SeatRepository;
 import com.rustedbrain.study.course.model.cinema.Seat;
+import com.rustedbrain.study.course.service.repository.SeatRepository;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

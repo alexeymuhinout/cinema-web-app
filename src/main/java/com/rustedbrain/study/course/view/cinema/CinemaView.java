@@ -1,9 +1,9 @@
 package com.rustedbrain.study.course.view.cinema;
 
-import com.rustedbrain.study.course.controller.service.CinemaService;
 import com.rustedbrain.study.course.model.cinema.*;
+import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.VaadinUI;
-import com.rustedbrain.study.course.view.users.LoginView;
+import com.rustedbrain.study.course.view.auth.LoginViewImpl;
 import com.rustedbrain.study.course.view.util.PageNavigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
@@ -51,7 +51,7 @@ public class CinemaView extends NavigationView {
 
         cinemaNameLayout.addComponentsAndExpand(cinemaNameLabel);
 
-        if (VaadinSession.getCurrent().getAttribute(LoginView.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
+        if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
             cinemaNameLayout.addComponentsAndExpand(new Button("Delete Cinema", (Button.ClickListener) event -> deleteCinema(cinema)));
         }
 

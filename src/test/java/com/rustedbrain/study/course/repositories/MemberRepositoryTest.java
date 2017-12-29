@@ -1,7 +1,7 @@
 package com.rustedbrain.study.course.repositories;
 
-import com.rustedbrain.study.course.controller.repository.MemberRepository;
 import com.rustedbrain.study.course.model.authorization.Member;
+import com.rustedbrain.study.course.service.repository.MemberRepository;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

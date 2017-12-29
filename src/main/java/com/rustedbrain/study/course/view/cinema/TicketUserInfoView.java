@@ -1,9 +1,9 @@
 package com.rustedbrain.study.course.view.cinema;
 
-import com.rustedbrain.study.course.controller.service.AuthorizationService;
-import com.rustedbrain.study.course.controller.service.CinemaService;
 import com.rustedbrain.study.course.model.cinema.Seat;
 import com.rustedbrain.study.course.model.cinema.Ticket;
+import com.rustedbrain.study.course.service.AuthorizationUserService;
+import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.util.PageNavigator;
 import com.vaadin.navigator.View;
@@ -22,7 +22,7 @@ import java.util.Set;
 public class TicketUserInfoView extends VerticalLayout implements View {
 
     private CinemaService cinemaService;
-    private AuthorizationService authorizationService;
+    private AuthorizationUserService authorizationUserService;
     private TextField nameTextField;
     private TextField surnameTextField;
 
@@ -32,8 +32,8 @@ public class TicketUserInfoView extends VerticalLayout implements View {
     }
 
     @Autowired
-    public void setAuthorizationService(AuthorizationService authorizationService) {
-        this.authorizationService = authorizationService;
+    public void setAuthorizationUserService(AuthorizationUserService authorizationUserService) {
+        this.authorizationUserService = authorizationUserService;
     }
 
     @Override

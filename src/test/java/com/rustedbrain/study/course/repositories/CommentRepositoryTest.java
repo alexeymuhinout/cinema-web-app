@@ -1,12 +1,12 @@
 package com.rustedbrain.study.course.repositories;
 
-import com.rustedbrain.study.course.controller.repository.CityRepository;
-import com.rustedbrain.study.course.controller.repository.CommentRepository;
-import com.rustedbrain.study.course.controller.repository.MemberRepository;
 import com.rustedbrain.study.course.model.authorization.Member;
 import com.rustedbrain.study.course.model.cinema.City;
 import com.rustedbrain.study.course.model.cinema.Comment;
 import com.rustedbrain.study.course.model.cinema.Movie;
+import com.rustedbrain.study.course.service.repository.CityRepository;
+import com.rustedbrain.study.course.service.repository.CommentRepository;
+import com.rustedbrain.study.course.service.repository.MemberRepository;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -1,10 +1,10 @@
 package com.rustedbrain.study.course;
 
 
-import com.rustedbrain.study.course.controller.repository.*;
 import com.rustedbrain.study.course.model.authorization.Administrator;
 import com.rustedbrain.study.course.model.authorization.Member;
 import com.rustedbrain.study.course.model.cinema.*;
+import com.rustedbrain.study.course.service.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;

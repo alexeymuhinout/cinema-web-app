@@ -1,7 +1,4 @@
 package com.rustedbrain.study.course.view.cinema;
 
-public interface CityView {
-
-
-
+public class CinemaViewImpl {
 }

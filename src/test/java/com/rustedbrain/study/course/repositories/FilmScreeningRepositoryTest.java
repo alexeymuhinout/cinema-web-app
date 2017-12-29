@@ -1,7 +1,7 @@
 package com.rustedbrain.study.course.repositories;
 
-import com.rustedbrain.study.course.controller.repository.FilmScreeningRepository;
 import com.rustedbrain.study.course.model.cinema.FilmScreening;
+import com.rustedbrain.study.course.service.repository.FilmScreeningRepository;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

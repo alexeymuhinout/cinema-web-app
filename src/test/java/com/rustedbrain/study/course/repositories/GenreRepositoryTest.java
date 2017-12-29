@@ -1,7 +1,7 @@
 package com.rustedbrain.study.course.repositories;
 
-import com.rustedbrain.study.course.controller.repository.GenreRepository;
 import com.rustedbrain.study.course.model.cinema.Genre;
+import com.rustedbrain.study.course.service.repository.GenreRepository;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
