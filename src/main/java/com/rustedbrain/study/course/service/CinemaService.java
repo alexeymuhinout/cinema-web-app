@@ -3,12 +3,14 @@ package com.rustedbrain.study.course.service;
 import com.rustedbrain.study.course.model.authorization.User;
 import com.rustedbrain.study.course.model.cinema.*;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface CinemaService {
 
-    List<Movie> getMovies(Cinema cinema, Date date);
+    List<Movie> getCurrentMovies(Cinema cinema, Date date);
 
     List<Cinema> getCinemas(City city);
 
@@ -26,15 +28,12 @@ public interface CinemaService {
 
     List<Cinema> getCinemas();
 
-    boolean isCityExist(String name);
 
     boolean isCinemaExist(String name);
 
-    City getCity(String name);
-
     Cinema getCinema(String name);
 
-    void deleteCity(City city);
+    void deleteCity(String city);
 
     void createCity(String name);
 
@@ -49,4 +48,10 @@ public interface CinemaService {
     FilmScreeningEvent getFilmScreeningEvent(Long filmScreeningEventId);
 
     void buyTickets(List<Ticket> boughtTickets);
+
+    List<Movie> getCurrentMovies();
+
+    Optional<City> getCity(String ipAddress) throws IOException;
+
+    Optional<Cinema> getNearestCinema(float latitude, float longitude) throws IOException;
 }

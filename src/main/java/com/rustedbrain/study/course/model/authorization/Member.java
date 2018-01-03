@@ -44,5 +44,11 @@ public class Member extends User {
         this.permanentlyBanned = permanentlyBanned;
     }
 
+    public Set<Ticket> getTickets() {
+        return tickets;
+    }
 
+    public void setTickets(Set<Ticket> tickets) {
+        this.tickets = tickets;
+    }
 }

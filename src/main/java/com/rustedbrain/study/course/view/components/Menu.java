@@ -1,7 +1,7 @@
 package com.rustedbrain.study.course.view.components;
 
 import com.rustedbrain.study.course.view.VaadinUI;
-import com.rustedbrain.study.course.view.auth.LoginViewImpl;
+import com.rustedbrain.study.course.view.authentication.LoginViewImpl;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;

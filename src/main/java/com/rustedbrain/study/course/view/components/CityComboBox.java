@@ -38,7 +38,7 @@ public class CityComboBox extends ComboBox<City> {
         });
     }
 
-    private CityComboBox() {
+    public CityComboBox() {
         super();
     }
 

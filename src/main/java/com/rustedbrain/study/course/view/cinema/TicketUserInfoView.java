@@ -38,8 +38,8 @@ public class TicketUserInfoView extends VerticalLayout implements View {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        Object filmScreeningEventId = VaadinSession.getCurrent().getAttribute(CinemaHallView.FILM_SCREENING_EVENT_ID_ATTRIBUTE);
-        Object selectedSeats = VaadinSession.getCurrent().getAttribute(CinemaHallView.SELECTED_SEATS_ATTRIBUTE);
+        Object filmScreeningEventId = VaadinSession.getCurrent().getAttribute(CinemaHallViewImpl.FILM_SCREENING_EVENT_ID_ATTRIBUTE);
+        Object selectedSeats = VaadinSession.getCurrent().getAttribute(CinemaHallViewImpl.SELECTED_SEATS_ATTRIBUTE);
         if (filmScreeningEventId != null && selectedSeats != null) {
 
             Panel panel = new Panel("Ticket Info");
@@ -68,7 +68,7 @@ public class TicketUserInfoView extends VerticalLayout implements View {
                     boughtTickets.add(ticket);
                 }
                 cinemaService.buyTickets(boughtTickets);
-                new PageNavigator().navigateToMainView(getUI());
+                new PageNavigator().navigateToMainView();
             });
 
             content.addComponent(buyTicketButton);

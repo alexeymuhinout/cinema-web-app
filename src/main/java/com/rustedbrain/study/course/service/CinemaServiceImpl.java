@@ -1,5 +1,7 @@
 package com.rustedbrain.study.course.service;
 
+import com.maxmind.geoip.Location;
+import com.maxmind.geoip.LookupService;
 import com.rustedbrain.study.course.model.authorization.User;
 import com.rustedbrain.study.course.model.cinema.*;
 import com.rustedbrain.study.course.service.repository.CinemaRepository;
@@ -9,12 +11,18 @@ import com.rustedbrain.study.course.service.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class CinemaServiceImpl implements CinemaService {
 
+    private static final String IP_GEO_DATABASE_RESOURCE = "GeoLiteCity.dat";
+
+    private final Logger logger = Logger.getLogger(CinemaServiceImpl.class.getName());
 
     private CityRepository cityRepository;
 
@@ -45,7 +53,7 @@ public class CinemaServiceImpl implements CinemaService {
     }
 
     @Override
-    public List<Movie> getMovies(Cinema cinema, Date date) {
+    public List<Movie> getCurrentMovies(Cinema cinema, Date date) {
         return null;
     }
 
@@ -89,20 +97,12 @@ public class CinemaServiceImpl implements CinemaService {
         return cinemaRepository.findAll();
     }
 
-    @Override
-    public boolean isCityExist(String name) {
-        return getCity(name) != null;
-    }
 
     @Override
     public boolean isCinemaExist(String name) {
         return getCinema(name) != null;
     }
 
-    @Override
-    public City getCity(String name) {
-        return cityRepository.findByName(name);
-    }
 
     @Override
     public Cinema getCinema(String name) {
@@ -110,8 +110,17 @@ public class CinemaServiceImpl implements CinemaService {
     }
 
     @Override
-    public void deleteCity(City city) {
-        cityRepository.delete(city);
+    public void deleteCity(String cityName) {
+        if (cityName == null || cityName.isEmpty()) {
+            throw new IllegalArgumentException("City name cannot be empty");
+        } else {
+            Optional<City> optionalCity = Optional.ofNullable(cityRepository.findByName(cityName));
+            if (optionalCity.isPresent()) {
+                cityRepository.delete(optionalCity.get());
+            } else {
+                throw new IllegalArgumentException("City with specified name not found");
+            }
+        }
     }
 
     @Override
@@ -157,5 +166,46 @@ public class CinemaServiceImpl implements CinemaService {
     @Override
     public void buyTickets(List<Ticket> boughtTickets) {
         ticketRepository.saveAll(boughtTickets);
+    }
+
+    @Override
+    public List<Movie> getCurrentMovies() {
+
+
+        return null;
+    }
+
+    public Location getUserLocation(String ipAddress) throws IOException {
+        try {
+            LookupService lookupService = new LookupService(getResourceFile(IP_GEO_DATABASE_RESOURCE),
+                    LookupService.GEOIP_MEMORY_CACHE | LookupService.GEOIP_CHECK_CACHE);
+            Optional<Location> optionalLocation = Optional.ofNullable(lookupService.getLocation(ipAddress));
+            if (optionalLocation.isPresent()) {
+                return optionalLocation.get();
+            }
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "Error occurred while getting location by user's IP address", e);
+            throw e;
+        }
+        throw new NoSuchElementException("Location for entered IP address not found");
+    }
+
+    @Override
+    public Optional<City> getCity(String cityName) {
+        for (City city : getCities()) {
+            if (city.getName().equalsIgnoreCase(cityName)) {
+                return Optional.of(city);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Cinema> getNearestCinema(float latitude, float longitude) {
+        return Optional.empty();
+    }
+
+    private File getResourceFile(String fileName) {
+        return new File(Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).getFile());
     }
 }

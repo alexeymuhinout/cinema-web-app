@@ -1,42 +1,32 @@
 package com.rustedbrain.study.course.view.cinema;
 
-import com.rustedbrain.study.course.model.cinema.Cinema;
 import com.rustedbrain.study.course.model.cinema.City;
-import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.VaadinUI;
-import com.rustedbrain.study.course.view.auth.LoginViewImpl;
-import com.rustedbrain.study.course.view.util.PageNavigator;
+import com.rustedbrain.study.course.view.authentication.LoginViewImpl;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringView(name = VaadinUI.CITY_VIEW)
 public class CityViewImpl extends NavigationView implements CityView {
 
-    public static final String CITY_ID_ATTRIBUTE = "cityName";
+    public static final String CITY_ATTRIBUTE = "cityName";
 
 
     private TextField textFieldCinemaName;
     private TextField textFieldCinemaStreet;
 
-    @Autowired
-    public void setCinemaService(CinemaService cinemaService) {
-        this.cinemaService = cinemaService;
-    }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        Long cityId = (Long) VaadinSession.getCurrent().getAttribute(CityView.CITY_ID_ATTRIBUTE);
-        City city = cinemaService.getCity(cityId);
-        if (city != null) {
-            addComponentsAndExpand(createCityPanel(city));
-        } else {
-            Notification.show("City is not selected");
-        }
+//        Long cityId = (Long) VaadinSession.getCurrent().getAttribute(CityView.CITY_ID_ATTRIBUTE);
+//        City city = cinemaService.getCity(cityId);
+//        if (city != null) {
+//            addComponentsAndExpand(createCityPanel(city));
+//        } else {
+//            Notification.show("City is not selected");
+//        }
     }
 
     private Component createCityPanel(City city) {
@@ -75,27 +65,27 @@ public class CityViewImpl extends NavigationView implements CityView {
     }
 
     private void createCinema(City city) {
-        try {
-            cinemaService.createCinema(city, textFieldCinemaName.getValue(), textFieldCinemaStreet.getValue());
-            Page.getCurrent().reload();
-        } catch (IllegalArgumentException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.WARNING_MESSAGE);
-        } catch (Exception ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
+//        try {
+//            cinemaService.createCinema(city, textFieldCinemaName.getValue(), textFieldCinemaStreet.getValue());
+//            Page.getCurrent().reload();
+//        } catch (IllegalArgumentException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.WARNING_MESSAGE);
+//        } catch (Exception ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
     }
 
     private void fillLayoutByCinemas(VerticalLayout layout, City city) {
-        for (Cinema cinema : city.getCinemas()) {
-            Button button = new Button(cinema.getName() + ", " + cinema.getLocation(), (Button.ClickListener) clickEvent -> new PageNavigator().navigateToCinemaView(getUI(), cinema.getId()));
-            button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-            layout.addComponentsAndExpand(button);
-        }
+//        for (Cinema cinema : city.getCinemas()) {
+//            Button button = new Button(cinema.getName() + ", " + cinema.getLocation(), (Button.ClickListener) clickEvent -> new PageNavigator().navigateToCinemaView(getUI(), cinema.getId()));
+//            button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+//            layout.addComponentsAndExpand(button);
+//        }
     }
 
     private void deleteCity(City city) {
-        cinemaService.deleteCity(city);
-        Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
+//        cinemaService.deleteCity(city);
+//        Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
     }
 
 }

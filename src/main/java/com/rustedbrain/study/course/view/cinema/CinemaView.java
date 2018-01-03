@@ -3,8 +3,7 @@ package com.rustedbrain.study.course.view.cinema;
 import com.rustedbrain.study.course.model.cinema.*;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.VaadinUI;
-import com.rustedbrain.study.course.view.auth.LoginViewImpl;
-import com.rustedbrain.study.course.view.util.PageNavigator;
+import com.rustedbrain.study.course.view.authentication.LoginViewImpl;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
@@ -12,7 +11,6 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -21,7 +19,7 @@ import java.util.Set;
 @SpringView(name = VaadinUI.CINEMA_VIEW)
 public class CinemaView extends NavigationView {
 
-    public static final String CINEMA_ID_ATTRIBUTE = "cinema";
+    public static final String CINEMA_ATTRIBUTE = "cinema";
     private CinemaService cinemaService;
 
     @Autowired
@@ -31,7 +29,7 @@ public class CinemaView extends NavigationView {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        Long cinemaId = (Long) VaadinSession.getCurrent().getAttribute(CinemaView.CINEMA_ID_ATTRIBUTE);
+        Long cinemaId = (Long) VaadinSession.getCurrent().getAttribute(CinemaView.CINEMA_ATTRIBUTE);
         Cinema cinema = cinemaService.getCinema(cinemaId);
         if (cinema != null) {
             Panel panel = createCinemaPanel(cinema);
@@ -78,16 +76,16 @@ public class CinemaView extends NavigationView {
                 image.setHeight(500, Unit.PIXELS);
                 HorizontalLayout horizontalLayout = new HorizontalLayout(image);
 
-                for (FilmScreeningEvent filmScreeningEvent : filmScreening.getFilmScreeningEvents()) {
-                    Button buttonFilmViewTime = new Button(filmScreeningEvent.getTime().getHours() + ":" + filmScreeningEvent.getTime().getMinutes(), new Button.ClickListener() {
-                        @Override
-                        public void buttonClick(Button.ClickEvent event) {
-                            new PageNavigator().navigateToTicketView(getUI(), filmScreeningEvent.getId());
-                        }
-                    });
-                    buttonFilmViewTime.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-                    horizontalLayout.addComponent(buttonFilmViewTime);
-                }
+//                for (FilmScreeningEvent filmScreeningEvent : filmScreening.getFilmScreeningEvents()) {
+//                    Button buttonFilmViewTime = new Button(filmScreeningEvent.getTime().getHours() + ":" + filmScreeningEvent.getTime().getMinutes(), new Button.ClickListener() {
+//                        @Override
+//                        public void buttonClick(Button.ClickEvent event) {
+//                            new PageNavigator().navigateToFilmScreeningTicketView(getUI(), filmScreeningEvent.getId());
+//                        }
+//                    });
+//                    buttonFilmViewTime.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+//                    horizontalLayout.addComponent(buttonFilmViewTime);
+//                }
 
 
                 verticalLayout.addComponent(horizontalLayout);

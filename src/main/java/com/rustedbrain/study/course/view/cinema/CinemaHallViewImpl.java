@@ -5,8 +5,7 @@ import com.rustedbrain.study.course.model.cinema.*;
 import com.rustedbrain.study.course.service.AuthorizationUserService;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.VaadinUI;
-import com.rustedbrain.study.course.view.auth.LoginViewImpl;
-import com.rustedbrain.study.course.view.util.PageNavigator;
+import com.rustedbrain.study.course.view.authentication.LoginViewImpl;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
@@ -44,18 +43,18 @@ public class CinemaHallViewImpl extends NavigationView implements CinemaHallView
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        selectedSeats = new HashSet<>();
-        Long filmScreeningEventId = (Long) VaadinSession.getCurrent().getAttribute(CinemaHallView.FILM_SCREENING_EVENT_ID_ATTRIBUTE);
-        FilmScreeningEvent filmScreeningEvent = cinemaService.getFilmScreeningEvent(filmScreeningEventId);
-        if (filmScreeningEvent != null) {
-            VerticalLayout verticalLayout = new VerticalLayout();
-            verticalLayout.addComponentsAndExpand(createMovieInfoPanel(filmScreeningEvent));
-            HorizontalLayout horizontalLayout = new HorizontalLayout();
-            horizontalLayout.addComponentsAndExpand(createSeatSelectionPanel(filmScreeningEvent));
-            horizontalLayout.addComponentsAndExpand(createTicketBuyPanel(filmScreeningEvent));
-            verticalLayout.addComponentsAndExpand(horizontalLayout);
-            addComponentsAndExpand(new Panel(verticalLayout));
-        }
+//        selectedSeats = new HashSet<>();
+//        Long filmScreeningEventId = (Long) VaadinSession.getCurrent().getAttribute(CinemaHallView.FILM_SCREENING_EVENT_ID_ATTRIBUTE);
+//        FilmScreeningEvent filmScreeningEvent = cinemaService.getFilmScreeningEvent(filmScreeningEventId);
+//        if (filmScreeningEvent != null) {
+//            VerticalLayout verticalLayout = new VerticalLayout();
+//            verticalLayout.addComponentsAndExpand(createMovieInfoPanel(filmScreeningEvent));
+//            HorizontalLayout horizontalLayout = new HorizontalLayout();
+//            horizontalLayout.addComponentsAndExpand(createSeatSelectionPanel(filmScreeningEvent));
+//            horizontalLayout.addComponentsAndExpand(createTicketBuyPanel(filmScreeningEvent));
+//            verticalLayout.addComponentsAndExpand(horizontalLayout);
+//            addComponentsAndExpand(new Panel(verticalLayout));
+//        }
     }
 
     private Component createTicketBuyPanel(FilmScreeningEvent filmScreeningEvent) {
@@ -97,21 +96,21 @@ public class CinemaHallViewImpl extends NavigationView implements CinemaHallView
             seatSelectionListeners.add(seatSelectionListener);
 
             Button buttonBuyTicket = new Button("Buy", (Button.ClickListener) event -> {
-                try {
-                    if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_USER_ATTRIBUTE) != null) {
-                        try {
-                            Member member = (Member) authorizationUserService.getUser((String) VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_USER_ATTRIBUTE));
-                            buyTicketClicked(member, filmScreeningEvent, selectedSeats);
-                            new PageNavigator().navigateToMainView(getUI());
-                        } catch (ClassCastException ex) {
-                            Notification.show("Administrator not able to buy tickets");
-                        }
-                    } else {
-                        new PageNavigator().navigateToTicketUserInfo(getUI(), filmScreeningEvent.getId(), selectedSeats);
-                    }
-                } catch (Exception ex) {
-                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                }
+//                try {
+//                    if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_USER_ATTRIBUTE) != null) {
+//                        try {
+//                            Member member = (Member) authorizationUserService.getUser((String) VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_USER_ATTRIBUTE));
+//                            buyTicketClicked(member, filmScreeningEvent, selectedSeats);
+//                            new PageNavigator().navigateToMainView(getUI());
+//                        } catch (ClassCastException ex) {
+//                            Notification.show("Administrator not able to buy tickets");
+//                        }
+//                    } else {
+//                        new PageNavigator().navigateToFilmScreeningTicketUserInfo(getUI(), filmScreeningEvent.getId(), selectedSeats);
+//                    }
+//                } catch (Exception ex) {
+//                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                }
             });
             buttonBuyTicket.setSizeFull();
 
