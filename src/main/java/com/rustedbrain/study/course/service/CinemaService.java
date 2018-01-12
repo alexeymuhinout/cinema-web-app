@@ -4,6 +4,7 @@ import com.rustedbrain.study.course.model.authorization.User;
 import com.rustedbrain.study.course.model.cinema.*;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -43,15 +44,15 @@ public interface CinemaService {
 
     Cinema getCinema(Long cinemaId);
 
-    City getCity(Long cityId);
-
     FilmScreeningEvent getFilmScreeningEvent(Long filmScreeningEventId);
 
     void buyTickets(List<Ticket> boughtTickets);
 
     List<Movie> getCurrentMovies();
 
-    Optional<City> getCity(String ipAddress) throws IOException;
+    Optional<City> getCityByName(String ipAddress) throws IOException;
 
     Optional<Cinema> getNearestCinema(float latitude, float longitude) throws IOException;
+
+    Optional<City> getCityByInetAddress(InetAddress address) throws IOException;
 }

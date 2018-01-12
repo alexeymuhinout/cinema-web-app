@@ -12,6 +12,9 @@ import com.vaadin.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,12 +69,19 @@ public class MainViewPresenter implements Presenter, MainView.MainViewListener {
     public void bind() {
         try {
 
-            City city = cinemaService.getCity(Page.getCurrent().getWebBrowser().getAddress());
+            InetAddress address = InetAddress.getByName(Page.getCurrent().getWebBrowser().getAddress());
+            address = InetAddress.getByName("46.149.89.61");
+            Optional<City> city = cinemaService.getCityByInetAddress(address);
+            if (city.isPresent()) {
 
+            } else {
+
+            }
         } catch (IOException ex) {
             logger.log(Level.WARNING, "Error occured while binding " + MainViewPresenter.class.getSimpleName() + " to " + MainView.class.getSimpleName(), ex);
-        } catch (IllegalArgumentException ex) {
+        } catch (NoSuchElementException ex) {
             logger.log(Level.INFO, "User location was not identified", ex);
+
         } finally {
 
         }

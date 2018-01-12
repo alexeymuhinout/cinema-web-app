@@ -3,8 +3,7 @@ package com.rustedbrain.study.course.model.authorization;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.rustedbrain.study.course.model.authorization.AdministratorRole.MODERATOR;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotEquals;
 
 public class AdministratorTest {
 
@@ -17,15 +16,8 @@ public class AdministratorTest {
 
     @Test
     public void testConstructor() {
-        administrator = new Administrator("login", "password", "mail@mail.ukr");
+        administrator = new Administrator("login", "password", "email@email.ukr");
         assertNotEquals(null, administrator);
     }
-
-    @Test
-    public void testSetRole() {
-        administrator.setRole(MODERATOR);
-        assertEquals(MODERATOR, administrator.getRole());
-    }
-
 
 }

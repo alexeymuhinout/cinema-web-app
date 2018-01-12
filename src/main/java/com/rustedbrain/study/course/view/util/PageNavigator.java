@@ -6,9 +6,9 @@ import com.rustedbrain.study.course.model.cinema.Movie;
 import com.rustedbrain.study.course.model.cinema.Seat;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.cinema.CinemaHallViewImpl;
-import com.rustedbrain.study.course.view.cinema.CinemaView;
+import com.rustedbrain.study.course.view.cinema.CinemaViewImpl;
 import com.rustedbrain.study.course.view.cinema.CityViewImpl;
-import com.rustedbrain.study.course.view.cinema.MovieView;
+import com.rustedbrain.study.course.view.cinema.MovieViewImpl;
 import com.vaadin.server.VaadinSession;
 
 import java.util.Set;
@@ -17,13 +17,13 @@ public class PageNavigator {
 
     public void navigateToCinemaView(Cinema cinema, String message) {
         NotificationUtil.setMessage(message);
-        VaadinSession.getCurrent().setAttribute(CinemaView.CINEMA_ATTRIBUTE, cinema);
+        VaadinSession.getCurrent().setAttribute(CinemaViewImpl.CINEMA_ATTRIBUTE, cinema);
         VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.CINEMA_VIEW);
     }
 
     public void navigateToCinemaView(Cinema cinema) {
         NotificationUtil.clearMessage();
-        VaadinSession.getCurrent().setAttribute(CinemaView.CINEMA_ATTRIBUTE, cinema);
+        VaadinSession.getCurrent().setAttribute(CinemaViewImpl.CINEMA_ATTRIBUTE, cinema);
         VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.CINEMA_VIEW);
     }
 
@@ -41,13 +41,13 @@ public class PageNavigator {
 
     public void navigateToMovieView(Movie movie, String message) {
         NotificationUtil.setMessage(message);
-        VaadinSession.getCurrent().setAttribute(MovieView.MOVIE_ATTRIBUTE, movie);
+        VaadinSession.getCurrent().setAttribute(MovieViewImpl.MOVIE_ATTRIBUTE, movie);
         VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.MOVIE_VIEW);
     }
 
     public void navigateToMovieView(Movie movie) {
         NotificationUtil.clearMessage();
-        VaadinSession.getCurrent().setAttribute(MovieView.MOVIE_ATTRIBUTE, movie);
+        VaadinSession.getCurrent().setAttribute(MovieViewImpl.MOVIE_ATTRIBUTE, movie);
         VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.MOVIE_VIEW);
     }
 

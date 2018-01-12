@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 @SpringView(name = VaadinUI.CINEMA_HALL_VIEW)
-public class CinemaHallViewImpl extends NavigationView implements CinemaHallView {
+public class CinemaHallViewImpl extends NavigableView implements CinemaHallView {
 
     public static final String FILM_SCREENING_EVENT_ID_ATTRIBUTE = "film_screening_event_id";
     public static final String SELECTED_SEATS_ATTRIBUTE = "selected_seats";
@@ -40,6 +40,7 @@ public class CinemaHallViewImpl extends NavigationView implements CinemaHallView
     public void setCinemaService(CinemaService cinemaService) {
         this.cinemaService = cinemaService;
     }
+
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

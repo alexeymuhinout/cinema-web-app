@@ -4,12 +4,11 @@ import com.rustedbrain.study.course.model.cinema.City;
 import com.rustedbrain.study.course.model.cinema.Movie;
 import com.rustedbrain.study.course.presenter.cinema.MainViewPresenter;
 import com.rustedbrain.study.course.view.authentication.LoginViewImpl;
-import com.rustedbrain.study.course.view.cinema.NavigationView;
+import com.rustedbrain.study.course.view.cinema.NavigableView;
 import com.rustedbrain.study.course.view.components.CityComboBox;
 import com.rustedbrain.study.course.view.util.NotificationUtil;
 import com.rustedbrain.study.course.view.util.PageNavigator;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -23,7 +22,7 @@ import java.util.List;
 
 @UIScope
 @SpringView(name = VaadinUI.MAIN_VIEW)
-public class MainViewImpl extends NavigationView implements MainView {
+public class MainViewImpl extends NavigableView implements MainView {
 
     private Collection<MainViewListener> mainViewListeners = new ArrayList<>();
 
@@ -96,7 +95,7 @@ public class MainViewImpl extends NavigationView implements MainView {
     }
 
     @Override
-    public void fillCinemasPanel(List<Movie> movies) {
+    public void fillMoviesPanel(List<Movie> movies) {
 
     }
 
@@ -106,18 +105,5 @@ public class MainViewImpl extends NavigationView implements MainView {
         this.mainViewListeners.add(mainViewListener);
     }
 
-    @Override
-    public void showWarning(String message) {
-        Notification.show(message, Notification.Type.WARNING_MESSAGE);
-    }
 
-    @Override
-    public void showError(String message) {
-        Notification.show(message, Notification.Type.ERROR_MESSAGE);
-    }
-
-    @Override
-    public void reloadPage() {
-        Page.getCurrent().reload();
-    }
 }

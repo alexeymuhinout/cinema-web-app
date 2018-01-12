@@ -3,19 +3,17 @@ package com.rustedbrain.study.course.model.authorization;
 import com.rustedbrain.study.course.model.cinema.Cinema;
 import com.rustedbrain.study.course.model.cinema.Ticket;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(name = "paymaster")
 public class Paymaster extends User {
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cinemaId")
     private Cinema cinema;
-    @OneToMany
+    @OneToMany(mappedBy = "paymaster")
     private Set<Ticket> tickets;
 
     public Cinema getCinema() {

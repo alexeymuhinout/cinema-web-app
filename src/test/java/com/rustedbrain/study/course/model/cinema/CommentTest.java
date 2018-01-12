@@ -4,9 +4,7 @@ import com.rustedbrain.study.course.model.authorization.Member;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CommentTest {
 
@@ -36,7 +34,7 @@ public class CommentTest {
         Member member = new Member();
         member.setId(2);
         member.setName("User1");
-        member.setMail("user@mail.com");
+        member.setEmail("user@email.com");
         return member;
     }
 

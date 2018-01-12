@@ -2,6 +2,7 @@ package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
 import com.rustedbrain.study.course.model.authorization.Member;
+import com.rustedbrain.study.course.model.authorization.Paymaster;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -19,10 +20,20 @@ public class Ticket extends DatabaseEntity {
     private Seat seat;
     @ManyToOne
     private Member member;
+    @ManyToOne
+    private Paymaster paymaster;
     @Column(name = "clientName", length = 128)
     private String clientName;
     @Column(name = "clientSurname", length = 128)
     private String clientSurname;
+
+    public Paymaster getPaymaster() {
+        return paymaster;
+    }
+
+    public void setPaymaster(Paymaster paymaster) {
+        this.paymaster = paymaster;
+    }
 
     public Member getMember() {
         return member;

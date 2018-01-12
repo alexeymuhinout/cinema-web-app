@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -153,10 +154,6 @@ public class CinemaServiceImpl implements CinemaService {
         return cinemaRepository.getOne(cinemaId);
     }
 
-    @Override
-    public City getCity(Long cityId) {
-        return cityRepository.getOne(cityId);
-    }
 
     @Override
     public FilmScreeningEvent getFilmScreeningEvent(Long filmScreeningEventId) {
@@ -175,7 +172,7 @@ public class CinemaServiceImpl implements CinemaService {
         return null;
     }
 
-    public Location getUserLocation(String ipAddress) throws IOException {
+    private Location getUserLocation(String ipAddress) throws IOException {
         try {
             LookupService lookupService = new LookupService(getResourceFile(IP_GEO_DATABASE_RESOURCE),
                     LookupService.GEOIP_MEMORY_CACHE | LookupService.GEOIP_CHECK_CACHE);
@@ -191,18 +188,20 @@ public class CinemaServiceImpl implements CinemaService {
     }
 
     @Override
-    public Optional<City> getCity(String cityName) {
-        for (City city : getCities()) {
-            if (city.getName().equalsIgnoreCase(cityName)) {
-                return Optional.of(city);
-            }
-        }
-        return Optional.empty();
+    public Optional<City> getCityByName(String cityName) {
+        return Optional.ofNullable(cityRepository.findByName(cityName));
     }
 
     @Override
     public Optional<Cinema> getNearestCinema(float latitude, float longitude) {
+
+
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<City> getCityByInetAddress(InetAddress address) throws IOException {
+        return getCityByName(getUserLocation(address.getHostAddress()).city);
     }
 
     private File getResourceFile(String fileName) {

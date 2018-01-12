@@ -49,7 +49,7 @@ public class CommentRepositoryTest {
         city.setRegistrationDate(date);
 
         Member member = new Member();
-        member.setMail("alexeymuhinout@gmail.com");
+        member.setEmail("alexeymuhinout@gmail.com");
         member.setSurname("Muhin");
         member.setName("Alexey");
         member.setBirthday(new GregorianCalendar(1996, 5, 29).getTime());

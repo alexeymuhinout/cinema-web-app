@@ -9,7 +9,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 
 @SpringView(name = VaadinUI.CITY_VIEW)
-public class CityViewImpl extends NavigationView implements CityView {
+public class CityViewImpl extends NavigableView implements CityView {
 
     public static final String CITY_ATTRIBUTE = "cityName";
 
@@ -21,7 +21,7 @@ public class CityViewImpl extends NavigationView implements CityView {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
 //        Long cityId = (Long) VaadinSession.getCurrent().getAttribute(CityView.CITY_ID_ATTRIBUTE);
-//        City city = cinemaService.getCity(cityId);
+//        City city = cinemaService.getCityByName(cityId);
 //        if (city != null) {
 //            addComponentsAndExpand(createCityPanel(city));
 //        } else {
@@ -88,4 +88,18 @@ public class CityViewImpl extends NavigationView implements CityView {
 //        Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
     }
 
+    @Override
+    public void showWarning(String message) {
+
+    }
+
+    @Override
+    public void showError(String message) {
+
+    }
+
+    @Override
+    public void reloadPage() {
+
+    }
 }

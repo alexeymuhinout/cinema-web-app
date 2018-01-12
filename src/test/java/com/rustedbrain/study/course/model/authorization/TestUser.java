@@ -14,15 +14,15 @@ public class TestUser {
     @BeforeClass
     public static void setUpBeforeClass() {
         user1 = new User();
-        user1.setMail("user@gmail.com");
+        user1.setEmail("user@gmail.com");
         user1.setId(1);
 
         user2 = new User();
-        user2.setMail("user@gmail.com");
+        user2.setEmail("user@gmail.com");
         user2.setId(1);
 
         user3 = new User();
-        user3.setMail("test@gmail.com");
+        user3.setEmail("test@gmail.com");
         user3.setId(3);
     }
 
@@ -39,7 +39,7 @@ public class TestUser {
     @Test
     public void testEqualsConsistency() {
         assertEquals(user1.equals(user2), user1.equals(user2));
-        user1.setMail("consistency@test.com");
+        user1.setEmail("consistency@test.com");
         assertFalse(user1.equals(user2));
     }
 

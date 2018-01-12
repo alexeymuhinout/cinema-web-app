@@ -1,7 +1,7 @@
 package com.rustedbrain.study.course.presenter.authentication;
 
 import com.rustedbrain.study.course.service.AuthenticationService;
-import com.rustedbrain.study.course.view.authentication.RegistrationView;
+import com.rustedbrain.study.course.view.authentication.RegistrationViewImpl;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SpringComponent
 public class RegistrationPresenter {
 
-    private RegistrationView registrationView;
+    private RegistrationViewImpl registrationViewImpl;
     private AuthenticationService authenticationService;
 
     @Autowired
-    public RegistrationPresenter(RegistrationView registrationView, AuthenticationService authenticationService) {
-        this.registrationView = registrationView;
+    public RegistrationPresenter(RegistrationViewImpl registrationViewImpl, AuthenticationService authenticationService) {
+        this.registrationViewImpl = registrationViewImpl;
         this.authenticationService = authenticationService;
     }
 }

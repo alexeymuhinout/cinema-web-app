@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 @SpringView(name = VaadinUI.TICKET_USER_INFO_VIEW)
-public class TicketUserInfoView extends VerticalLayout implements View {
+public class TicketBuyingViewImpl extends VerticalLayout implements View {
 
     private CinemaService cinemaService;
     private AuthorizationUserService authorizationUserService;

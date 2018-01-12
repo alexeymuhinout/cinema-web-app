@@ -7,4 +7,10 @@ import javax.persistence.Table;
 @Table(name = "administrator")
 public class Administrator extends User {
 
+    public Administrator() {
+    }
+
+    public Administrator(String login, String password, String mail) {
+        super(login, password, mail);
+    }
 }

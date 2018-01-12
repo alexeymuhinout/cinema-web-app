@@ -1,6 +1,7 @@
 package com.rustedbrain.study.course.model.cinema;
 
 import com.rustedbrain.study.course.model.DatabaseEntity;
+import com.rustedbrain.study.course.model.authorization.Manager;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
@@ -21,6 +22,8 @@ public class Cinema extends DatabaseEntity {
     @OneToMany(mappedBy = "cinema")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE})
     private Set<CinemaHall> cinemaHalls = new HashSet<>();
+    @ManyToOne
+    private Manager manager;
     @ManyToOne
     private City city;
     @Column(name = "location", length = 512, nullable = false)
@@ -46,6 +49,14 @@ public class Cinema extends DatabaseEntity {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Manager getManager() {
+        return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
     }
 
     @Override

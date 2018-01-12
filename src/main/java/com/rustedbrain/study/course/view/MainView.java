@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MainView extends ApplicationView {
 
-    void fillCinemasPanel(List<Movie> movies);
+    void fillMoviesPanel(List<Movie> movies);
 
     void addMainViewListener(MainViewListener mainViewListener);
 

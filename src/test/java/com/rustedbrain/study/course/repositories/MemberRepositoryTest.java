@@ -29,7 +29,7 @@ public class MemberRepositoryTest {
         member.setRegistrationDate(new Date());
         member.setLastAccessDate(new Date());
         member.setBirthday(new Date(1995, 10, 12));
-        member.setMail("member@gmail.com");
+        member.setEmail("member@gmail.com");
         member.setName("Member");
         member.setSurname("MemberSurname");
         member.setLogin("member123");

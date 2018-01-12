@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.model.authorization;
 import com.rustedbrain.study.course.model.DatabaseEntity;
 import com.rustedbrain.study.course.model.cinema.City;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -21,18 +22,18 @@ public class User extends DatabaseEntity {
     protected String name;
     @Column(name = "surname", length = 64)
     protected String surname;
-    @Column(name = "mail", length = 64, nullable = false, unique = true)
-    protected String mail;
+    @Column(name = "email", length = 64, nullable = false, unique = true)
+    protected String email;
     @Column(name = "birthday")
     protected Date birthday;
     @ManyToOne
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
     protected City city;
 
-    public User(String login, String password, String mail) {
+    public User(String login, String password, String email) {
         this.login = login;
         this.password = password;
-        this.mail = mail;
+        this.email = email;
     }
 
     public User() {
@@ -78,12 +79,12 @@ public class User extends DatabaseEntity {
         this.surname = surname;
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Date getBirthday() {
@@ -102,13 +103,13 @@ public class User extends DatabaseEntity {
 
         User user = (User) o;
 
-        return mail.equals(user.mail);
+        return email.equals(user.email);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + mail.hashCode();
+        result = 31 * result + email.hashCode();
         return result;
     }
 
