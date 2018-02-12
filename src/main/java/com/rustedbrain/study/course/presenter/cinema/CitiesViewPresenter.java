@@ -1,40 +1,62 @@
 package com.rustedbrain.study.course.presenter.cinema;
 
 
-import com.rustedbrain.study.course.model.cinema.City;
-import com.rustedbrain.study.course.presenter.Presenter;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.cinema.CitiesView;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
-import java.util.Comparator;
-import java.util.List;
+import java.io.Serializable;
 import java.util.logging.Logger;
 
 @UIScope
 @SpringComponent
-public class CitiesViewPresenter implements Presenter {
+public class CitiesViewPresenter implements CitiesView.CitiesViewListener, Serializable {
 
-    private Logger logger = Logger.getLogger(CitiesViewPresenter.class.getName());
+    private static final Logger logger = Logger.getLogger(CitiesViewPresenter.class.getName());
+
+    private static final int START_CINEMAS_PAGE = 1;
+    private static final int CINEMAS_PER_PAGE = 10;
 
     private CitiesView view;
     private CinemaService cinemaService;
+
+    private int currentCitiesPageNumber = START_CINEMAS_PAGE;
+    private int currentCitiesPerPageCount = CINEMAS_PER_PAGE;
 
     @Autowired
     public CitiesViewPresenter(CinemaService cinemaService) {
         this.cinemaService = cinemaService;
     }
 
-    @Override
-    public void bind() {
-        List<City> cities = cinemaService.getCities();
-        cities.sort(Comparator.comparing(City::getName));
-        view.fillCitiesPanel(cities);
-    }
-
     public void setView(CitiesView view) {
         this.view = view;
+    }
+
+    @Override
+    public void buttonDeleteCityClicked(Long id) {
+        cinemaService.deleteCity(id);
+        reloadCities();
+    }
+
+    @Override
+    public void buttonCitiesPerPageCountClicked(int citiesPerPageCount) {
+        currentCitiesPerPageCount = citiesPerPageCount;
+        reloadCities();
+    }
+
+    @Override
+    public void buttonPageClicked(int page) {
+        currentCitiesPageNumber = page;
+        reloadCities();
+    }
+
+    private void reloadCities() {
+        Page<City> cinemaPage = cinemaService.getCitiesPage(currentCitiesPageNumber, currentCitiesPerPageCount);
+        view.setCurrentCitiesPageNumber(currentCitiesPageNumber, cinemaPage.getTotalPages());
+        view.fillCitiesPanel(cinemaPage.getContent());
     }
 }

@@ -1,8 +1,8 @@
 package com.rustedbrain.study.course.repositories;
 
-import com.rustedbrain.study.course.model.cinema.Actor;
-import com.rustedbrain.study.course.model.cinema.Genre;
-import com.rustedbrain.study.course.model.cinema.Movie;
+import com.rustedbrain.study.course.model.persistence.cinema.Actor;
+import com.rustedbrain.study.course.model.persistence.cinema.Genre;
+import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.service.repository.MovieRepository;
 import org.junit.After;
 import org.junit.Assert;

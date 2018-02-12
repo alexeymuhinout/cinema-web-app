@@ -1,6 +1,6 @@
 package com.rustedbrain.study.course.service;
 
-import com.rustedbrain.study.course.model.authorization.User;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.service.repository.AdministratorRepository;
 import com.rustedbrain.study.course.service.repository.MemberRepository;
 import com.rustedbrain.study.course.service.util.Validator;
@@ -23,7 +23,6 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
     private SecureRandom random = new SecureRandom();
 
     private Map<String, String> rememberedUsers = new HashMap<>();
-
 
     public boolean isAuthenticUser(String login, String password) {
         for (Validator validator : Validator.values()) {

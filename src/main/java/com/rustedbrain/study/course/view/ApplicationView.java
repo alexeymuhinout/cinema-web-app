@@ -1,6 +1,8 @@
 package com.rustedbrain.study.course.view;
 
-public interface ApplicationView {
+import com.vaadin.navigator.View;
+
+public interface ApplicationView extends View {
 
     void showWarning(String message);
 

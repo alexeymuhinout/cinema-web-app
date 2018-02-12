@@ -1,6 +1,22 @@
 package com.rustedbrain.study.course.view.cinema;
 
-public interface HelpView {
+import com.rustedbrain.study.course.view.ApplicationView;
+import com.vaadin.navigator.ViewChangeListener;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Map;
 
+public interface HelpView extends ApplicationView {
+
+    void setHelpTittleTextMap(Map<String, String> helpTittleTextMap);
+
+    @Autowired
+    void addHelpViewListener(HelpViewListener helpViewListener);
+
+    interface HelpViewListener {
+
+        void entered(ViewChangeListener.ViewChangeEvent event);
+
+        void setView(HelpView helpView);
+    }
 }

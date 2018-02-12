@@ -1,6 +1,6 @@
 package com.rustedbrain.study.course.view.authentication;
 
-import com.rustedbrain.study.course.model.authorization.User;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.service.AuthorizationUserService;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.VaadinUI;

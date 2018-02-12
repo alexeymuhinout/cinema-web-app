@@ -1,13 +1,10 @@
 package com.rustedbrain.study.course.model;
 
+import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Date;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class DatabaseEntityTest {
 

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Theme("valo")
 public class VaadinUI extends UI {
 
-    public static final String MAIN_VIEW = "";
     public static final String HELP_VIEW = "help_view";
     public static final String PROFILE_VIEW = "profile_view";
     public static final String LOGIN_VIEW = "login_view";
@@ -26,6 +25,9 @@ public class VaadinUI extends UI {
     public static final String CITY_CREATION_VIEW = "city_creation_view";
     public static final String MESSAGE_ATTRIBUTE = "message";
     public static final String TICKET_USER_INFO_VIEW = "ticket_user_info";
+    public static final String CITY_CINEMAS_VIEW = "city_cinemas_view";
+    public static final String CITIES_VIEW = "cities_view";
+    public static final String MAIN_VIEW = "";
     public Navigator navigator;
 
     private SpringViewProvider viewProvider;

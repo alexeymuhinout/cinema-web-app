@@ -1,6 +1,6 @@
 package com.rustedbrain.study.course.service.repository;
 
-import com.rustedbrain.study.course.model.authorization.User;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;

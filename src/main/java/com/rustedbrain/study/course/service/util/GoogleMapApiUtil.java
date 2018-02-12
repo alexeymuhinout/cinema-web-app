@@ -2,7 +2,7 @@ package com.rustedbrain.study.course.service.util;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-import com.rustedbrain.study.course.model.geolocation.Coordinate;
+import com.rustedbrain.study.course.model.geolocation.Point;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class GoogleMapApiUtil {
                 }).collect(Collectors.toList()));
     }
 
-    public Coordinate getCoordinatesByAddress(String address) throws IOException {
+    public static Point getCoordinatesByAddress(String address) throws IOException {
         final Map<String, String> params = Maps.newHashMap();
         params.put("sensor", "false");// исходит ли запрос на геокодирование от устройства с датчиком местоположения
         params.put("address", address);// адрес, который нужно геокодировать
@@ -42,10 +42,10 @@ public class GoogleMapApiUtil {
         JSONObject location = response.getJSONArray("results").getJSONObject(0);
         location = location.getJSONObject("geometry");
         location = location.getJSONObject("location");
-        return new Coordinate(location.getDouble("lng"), location.getDouble("lat"));
+        return new Point(location.getDouble("lng"), location.getDouble("lat"));
     }
 
-    public String getAddressByCoordinates(double longitude, double latitude) throws IOException {
+    public static String getAddressByCoordinates(double longitude, double latitude) throws IOException {
         final Map<String, String> params = Maps.newHashMap();
         params.put("language", "ru");// язык данных, на котором мы хотим получить
         params.put("sensor", "false");// исходит ли запрос на геокодирование от устройства с датчиком местоположения
@@ -67,9 +67,9 @@ public class GoogleMapApiUtil {
      * @param address2 the second address
      * @return distance between two addresses in kilometers
      */
-    public double getDistanceBetweenAddresses(String address1, String address2) throws IOException {
-        final Coordinate subwayStationPoint = getCoordinatesByAddress(address1);
-        final Coordinate addressPoint = getCoordinatesByAddress(address2);
+    public static double getDistanceBetweenAddresses(String address1, String address2) throws IOException {
+        final Point subwayStationPoint = getCoordinatesByAddress(address1);
+        final Point addressPoint = getCoordinatesByAddress(address2);
         // Рассчитываем расстояние между точками
         final double dlng = Math.toRadians(subwayStationPoint.getLongitude() - addressPoint.getLongitude());
         final double dlat = Math.toRadians(subwayStationPoint.getLatitude() - addressPoint.getLatitude());

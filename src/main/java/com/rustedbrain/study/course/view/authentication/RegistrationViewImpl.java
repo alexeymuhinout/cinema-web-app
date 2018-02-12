@@ -1,6 +1,6 @@
 package com.rustedbrain.study.course.view.authentication;
 
-import com.rustedbrain.study.course.model.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.service.AuthorizationUserService;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.VaadinUI;
@@ -100,7 +100,7 @@ public class RegistrationViewImpl extends VerticalLayout implements View {
 //                    member.setBirthday(Date.valueOf(birthday));
 //
 //                    authorizationUserService.registerMember(member);
-//                    Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
+//                    Page.getCurrent().setUriFragment("!" + VaadinUI.NAVIGATION_MENU_VIEW);
 //                } catch (IllegalArgumentException ex) {
 //                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
 //                }

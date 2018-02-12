@@ -1,6 +1,6 @@
 package com.rustedbrain.study.course.service.repository;
 
-import com.rustedbrain.study.course.model.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

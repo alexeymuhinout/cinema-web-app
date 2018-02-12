@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Service
-public class AuthenticationServiceImpl {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     private static final String SESSION_USERNAME = "username";
     private static final String COOKIE_NAME = "remember-me";

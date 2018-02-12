@@ -1,6 +1,6 @@
 package com.rustedbrain.study.course.repositories;
 
-import com.rustedbrain.study.course.model.cinema.FilmScreeningEvent;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
 import com.rustedbrain.study.course.service.repository.FilmScreeningEventRepository;
 import org.junit.After;
 import org.junit.Assert;

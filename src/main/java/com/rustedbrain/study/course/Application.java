@@ -1,9 +1,9 @@
 package com.rustedbrain.study.course;
 
 
-import com.rustedbrain.study.course.model.authorization.Administrator;
-import com.rustedbrain.study.course.model.authorization.Member;
-import com.rustedbrain.study.course.model.cinema.*;
+import com.rustedbrain.study.course.model.persistence.authorization.Administrator;
+import com.rustedbrain.study.course.model.persistence.authorization.Member;
+import com.rustedbrain.study.course.model.persistence.cinema.*;
 import com.rustedbrain.study.course.service.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +80,14 @@ public class Application {
                 }
             }
 
+            Set<Actor> hellBoyActorSet = getActorSet(
+                    "Ron Perlman",
+                    "Selma Blair",
+                    "Jeffrey Tambor",
+                    "Karel Roden",
+                    "Rupert Evans",
+                    "John Hurt");
+            actorRepository.saveAll(hellBoyActorSet);
 
             Set<Actor> theGreatGatsbyActorSet = getActorSet(
                     "Leonardo DiCaprio",
@@ -101,51 +109,85 @@ public class Application {
             Set<Genre> genreSet = getGenreSet("adventure", "comedy", "drama", "horror", "historical");
             genreRepository.saveAll(genreSet);
 
-            Movie movie1 = new Movie();
-            movie1.setLocalizedName("Великий Гэтсби");
-            movie1.setOriginalName("The Great Gatsby");
-            movie1.setMinAge(13);
-            movie1.setDescription("Ник Кэррауэй, выпускник Йельского университета, находится в санатории, где лечится от алкоголизма. Он рассказывает о человеке по имени Гэтсби, с которым его свела судьба в Нью-Йорке. Нику трудно говорить об этом, и врач предлагает ему описать эту историю на бумаге.\n" +
-                    "Свой рассказ Ник начинает воспоминанием о том, как в 1922 году переехал со Среднего Запада в Нью-Йорк и арендовал дом в Уэст Эгге на Лонг-Айленде. Ник посещает роскошное поместье Тома и Дэйзи Бьюкененов. Дэйзи была троюродной сестрой Ника, а её муж, Том, некогда играл в поло в Йеле, а ныне наслаждается богатством. Дейзи знакомит Ника со своей подругой, известной гольфисткой Джордан Бейкер. За ужином внезапно начинает звонить телефон: это звонит любовница Тома, о которой всем уже давно известно.\n" +
-                    "Для встреч с этой любовницей, Миртл Уилсон, женой ничего не подозревающего автомеханика Джорджа из шахтёрского района штата Нью-Йорк, Том арендует квартиру в городе. Том приглашает туда Ника, где тот также знакомится с Кэтрин, сестрой Миртл, и с четой МакКи, друзьями Миртл. Ночь заканчивается всеобщей попойкой и разбитым носом Миртл, раздражавшей Тома упоминанием имени Дэйзи.");
-            movie1.setRegistrationDate(new Date());
-            movie1.setLastAccessDate(new Date());
-            movie1.setReleaseDate(new Date(2013, 1, 1));
-            movie1.setActors(theTerminatorActorSet);
-            movie1.setGenres(genreSet);
-            movie1.setPosterPath("/home/alexey/Downloads/bigi.jpg");
+            Movie movie1 = createMovie("Великий Гэтсби",
+                    "The Great Gatsby",
+                    13,
+                    "Ник Кэррауэй, выпускник Йельского университета, находится в санатории, где лечится от алкоголизма. Он рассказывает о человеке по имени Гэтсби, с которым его свела судьба в Нью-Йорке. Нику трудно говорить об этом, и врач предлагает ему описать эту историю на бумаге.\n" +
+                            "Свой рассказ Ник начинает воспоминанием о том, как в 1922 году переехал со Среднего Запада в Нью-Йорк и арендовал дом в Уэст Эгге на Лонг-Айленде. Ник посещает роскошное поместье Тома и Дэйзи Бьюкененов. Дэйзи была троюродной сестрой Ника, а её муж, Том, некогда играл в поло в Йеле, а ныне наслаждается богатством. Дейзи знакомит Ника со своей подругой, известной гольфисткой Джордан Бейкер. За ужином внезапно начинает звонить телефон: это звонит любовница Тома, о которой всем уже давно известно.\n" +
+                            "Для встреч с этой любовницей, Миртл Уилсон, женой ничего не подозревающего автомеханика Джорджа из шахтёрского района штата Нью-Йорк, Том арендует квартиру в городе. Том приглашает туда Ника, где тот также знакомится с Кэтрин, сестрой Миртл, и с четой МакКи, друзьями Миртл. Ночь заканчивается всеобщей попойкой и разбитым носом Миртл, раздражавшей Тома упоминанием имени Дэйзи.",
+                    new Date(),
+                    new Date(),
+                    new Date(2013, 1, 1),
+                    theTerminatorActorSet,
+                    genreSet,
+                    130,
+                    "/home/alexey/Downloads/greatgatsby.jpg"
+            );
             movieRepository.saveAndFlush(movie1);
 
-            Movie movie2 = new Movie();
-            movie2.setLocalizedName("Терминатор ");
-            movie2.setOriginalName("The Terminator");
-            movie2.setMinAge(18);
-            movie2.setDescription("Созданный в недалеком будущем военный компьютер Скайнет развязал ядерную войну, а затем поработил остатки человечества. Однако у людей появился великий лидер — Джон Коннор, организовавший Сопротивление и сумевший выиграть Войну. Поверженный Скайнет отправляет в прошлое робота-терминатора с целью убить мать Джона Коннора — Сару Коннор. Сара работает обычной официанткой и не подозревает о своей великой миссии. На её защиту люди посылают человека — сержанта Сопротивления Кайла Риз. Силы противников не равны. Ризу противостоит чрезвычайно мощная боевая машина, неуязвимая для огнестрельного оружия. Терминатор внешне неотличим от человека: он специально предназначен для внедрения в человеческое общество и уничтожения людей. Ризу приходится не только бороться с роботом, но и убеждать шокированную Сару, а также полицию, которая принимает его за сумасшедшего террориста. В тяжёлых испытаниях недоверие, возникшее между Сарой и Ризом, уступает место симпатии и сменяется пылкой страстью. В результате на свет появляется Джон. В финале Риз погибает, но Саре удаётся уничтожить терминатора. При этом остатки его процессора и часть металлической руки попадают к сотрудникам компании «Кибердайн Системс» — будущей создательнице Скайнет. Таким образом, попытка коррекции будущего приводит к противоположному результату — всё встаёт на свои места.");
-            movie2.setRegistrationDate(new Date());
-            movie2.setLastAccessDate(new Date());
-            movie2.setReleaseDate(new Date(1984, 1, 1));
-            movie2.setActors(theTerminatorActorSet);
-            movie2.setGenres(genreSet);
-            movie2.setTimeMinutes(130);
-            movie2.setPosterPath("/home/alexey/Downloads/terminator.jpg");
+
+            Movie movie2 = createMovie("Терминатор",
+                    "The Terminator",
+                    18,
+                    "Созданный в недалеком будущем военный компьютер Скайнет развязал ядерную войну, а затем поработил остатки человечества. Однако у людей появился великий лидер — Джон Коннор, организовавший Сопротивление и сумевший выиграть Войну. Поверженный Скайнет отправляет в прошлое робота-терминатора с целью убить мать Джона Коннора — Сару Коннор. Сара работает обычной официанткой и не подозревает о своей великой миссии. На её защиту люди посылают человека — сержанта Сопротивления Кайла Риз. Силы противников не равны. Ризу противостоит чрезвычайно мощная боевая машина, неуязвимая для огнестрельного оружия. Терминатор внешне неотличим от человека: он специально предназначен для внедрения в человеческое общество и уничтожения людей. Ризу приходится не только бороться с роботом, но и убеждать шокированную Сару, а также полицию, которая принимает его за сумасшедшего террориста. В тяжёлых испытаниях недоверие, возникшее между Сарой и Ризом, уступает место симпатии и сменяется пылкой страстью. В результате на свет появляется Джон. В финале Риз погибает, но Саре удаётся уничтожить терминатора. При этом остатки его процессора и часть металлической руки попадают к сотрудникам компании «Кибердайн Системс» — будущей создательнице Скайнет. Таким образом, попытка коррекции будущего приводит к противоположному результату — всё встаёт на свои места.",
+                    new Date(),
+                    new Date(),
+                    new Date(1984, 1, 1),
+                    theTerminatorActorSet,
+                    genreSet,
+                    130,
+                    "/home/alexey/Downloads/terminator.jpg"
+            );
             movieRepository.saveAndFlush(movie2);
+
+            Movie movie3 = createMovie("Hellboy",
+                    "Hellboy ",
+                    13,
+                    "In 1944, with the help of Russian mystic Grigori Rasputin, the Nazis build a dimensional portal off the coast of Scotland and intend to free the Ogdru Jahad—monstrous entities imprisoned in deep space—to aid them in defeating the Allies. Rasputin opens the portal with the aid of his disciples, Ilsa von Haupstein and Obersturmbannführer Karl Ruprecht Kroenen, member of the Thule Society and Adolf Hitler's top assassin. An Allied team is sent to destroy the portal, guided by a young scientist named Trevor Bruttenholm, who is well-versed in the occult. The German team is killed and the portal is destroyed—in the process absorbing Rasputin—while Haupstein and Kroenen escape. The Allied team discovers that an infant demon with a right hand of stone came through the portal; they dub him \"Hellboy\" and Bruttenholm adopts him.",
+                    new Date(),
+                    new Date(),
+                    new Date(2004, 4, 30),
+                    hellBoyActorSet,
+                    genreSet,
+                    122,
+                    "/home/alexey/Downloads/hellboy.jpeg"
+            );
+            movieRepository.saveAndFlush(movie3);
 
             FilmScreening filmScreening = createFilmScreening(cinemaRepository.getOne(cinema6.getId()), movieRepository.getOne(movie1.getId()));
             FilmScreening filmScreening2 = createFilmScreening(cinemaRepository.getOne(cinema6.getId()), movieRepository.getOne(movie2.getId()));
+            FilmScreening filmScreening3 = createFilmScreening(cinemaRepository.getOne(cinema6.getId()), movieRepository.getOne(movie3.getId()));
             filmScreeningRepository.save(filmScreening);
             filmScreeningRepository.save(filmScreening2);
+            filmScreeningRepository.save(filmScreening3);
 
             FilmScreeningEvent filmScreeningEvent = createFilmScreeningEvent(filmScreeningRepository.getOne(filmScreening.getId()), (CinemaHall) cinemaHalls2.toArray()[0], new Time(14, 30, 00));
             FilmScreeningEvent filmScreeningEvent2 = createFilmScreeningEvent(filmScreeningRepository.getOne(filmScreening2.getId()), (CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00));
+            FilmScreeningEvent filmScreeningEvent3 = createFilmScreeningEvent(filmScreeningRepository.getOne(filmScreening2.getId()), (CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00));
 
-
-            filmScreeningEventRepository.saveAll(Arrays.asList(filmScreeningEvent, filmScreeningEvent2));
+            filmScreeningEventRepository.saveAll(Arrays.asList(filmScreeningEvent, filmScreeningEvent2, filmScreeningEvent3));
 
 
             List<FilmScreening> filmScreenings1 = filmScreeningRepository.findAll();
             List<FilmScreeningEvent> filmScreeningsEvents = filmScreeningEventRepository.findAll();
             Set<FilmScreening> filmScreenings2 = cinemaRepository.getOne(cinema6.getId()).getFilmScreenings();
         };
+    }
+
+    private Movie createMovie(String localizedName, String originalName, int minAge, String description, Date registrationDate, Date lastAccesDate, Date releaseDate, Set<Actor> actors, Set<Genre> genres, int timeMinutes, String posterPath) {
+        Movie movie = new Movie();
+        movie.setLocalizedName(localizedName);
+        movie.setOriginalName(originalName);
+        movie.setMinAge(minAge);
+        movie.setDescription(description);
+        movie.setRegistrationDate(registrationDate);
+        movie.setLastAccessDate(lastAccesDate);
+        movie.setReleaseDate(releaseDate);
+        movie.setActors(actors);
+        movie.setGenres(genres);
+        movie.setPosterPath(posterPath);
+        movie.setTimeMinutes(timeMinutes);
+        return movie;
     }
 
     private FilmScreening createFilmScreening(Cinema cinema, Movie movie) {

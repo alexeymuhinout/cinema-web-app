@@ -1,22 +1,26 @@
 package com.rustedbrain.study.course.view.cinema;
 
-import com.rustedbrain.study.course.model.cinema.Cinema;
-import com.rustedbrain.study.course.model.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.view.ApplicationView;
 
 import java.util.List;
 
-public interface CitiesView {
+public interface CitiesView extends ApplicationView {
 
     void fillCitiesPanel(List<City> cities);
 
     void addCitiesViewListener(CitiesView.CitiesViewListener listener);
 
+    void setCurrentCitiesPageNumber(int currentCitiesPageNumber, int totalPages);
+
     interface CitiesViewListener {
 
-        void buttonDeleteCityClicked(String cityName);
+        void buttonDeleteCityClicked(Long id);
 
-        void buttonCreateCityClicked(String cityName);
+        void buttonCitiesPerPageCountClicked(int citiesPerPageCount);
 
-        void buttonShowCinemasClicked(Cinema cinema);
+        void buttonPageClicked(int page);
+
+        void setView(CitiesView citiesView);
     }
 }

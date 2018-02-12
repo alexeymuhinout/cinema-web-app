@@ -1,6 +1,6 @@
 package com.rustedbrain.study.course.view.components;
 
-import com.rustedbrain.study.course.model.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.vaadin.ui.ComboBox;
 
 import java.util.Collection;

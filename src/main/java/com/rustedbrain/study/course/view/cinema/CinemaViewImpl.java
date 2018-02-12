@@ -1,39 +1,53 @@
 package com.rustedbrain.study.course.view.cinema;
 
-import com.rustedbrain.study.course.model.cinema.*;
-import com.rustedbrain.study.course.service.CinemaService;
+import com.rustedbrain.study.course.model.persistence.cinema.*;
+import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.authentication.LoginViewImpl;
+import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.rustedbrain.study.course.view.util.NotificationUtil;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+@UIScope
 @SpringView(name = VaadinUI.CINEMA_VIEW)
-public class CinemaViewImpl extends NavigableView {
+public class CinemaViewImpl extends VerticalLayout implements CinemaView {
 
-    public static final String CINEMA_ATTRIBUTE = "cinema";
-    private CinemaService cinemaService;
+    private List<CinemaViewListener> listeners = new ArrayList<>();
+    private Panel cinemaPanel;
 
     @Autowired
-    public void setCinemaService(CinemaService cinemaService) {
-        this.cinemaService = cinemaService;
+    public CinemaViewImpl(AuthenticationService authenticationService) {
+        addComponentsAndExpand(new Panel(new MenuComponent(authenticationService)));
+        addComponentsAndExpand(getCinemaPanel());
+    }
+
+    private Panel getCinemaPanel() {
+        if (cinemaPanel == null) {
+            cinemaPanel = new Panel();
+        }
+        return cinemaPanel;
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         NotificationUtil.showAvailableMessage();
+        listeners.forEach(listener -> listener.entered(event));
     }
 
-    private Panel createCinemaPanel(Cinema cinema) {
+    private Component createAndFillCinemaLayout(Cinema cinema) {
         VerticalLayout cinemaPanelLayout = new VerticalLayout();
 
         HorizontalLayout cinemaNameLayout = new HorizontalLayout();
@@ -43,7 +57,8 @@ public class CinemaViewImpl extends NavigableView {
         cinemaNameLayout.addComponentsAndExpand(cinemaNameLabel);
 
         if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
-            cinemaNameLayout.addComponentsAndExpand(new Button("Delete Cinema", (Button.ClickListener) event -> deleteCinema(cinema)));
+            cinemaNameLayout.addComponentsAndExpand(new Button("Delete Cinema", (Button.ClickListener) event -> {
+            }));
         }
 
         cinemaPanelLayout.addComponent(cinemaNameLayout);
@@ -69,17 +84,16 @@ public class CinemaViewImpl extends NavigableView {
                 image.setHeight(500, Unit.PIXELS);
                 HorizontalLayout horizontalLayout = new HorizontalLayout(image);
 
-//                for (FilmScreeningEvent filmScreeningEvent : filmScreening.getFilmScreeningEvents()) {
-//                    Button buttonFilmViewTime = new Button(filmScreeningEvent.getTime().getHours() + ":" + filmScreeningEvent.getTime().getMinutes(), new Button.ClickListener() {
-//                        @Override
-//                        public void buttonClick(Button.ClickEvent event) {
-//                            new PageNavigator().navigateToFilmScreeningTicketView(getUI(), filmScreeningEvent.getId());
-//                        }
-//                    });
-//                    buttonFilmViewTime.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-//                    horizontalLayout.addComponent(buttonFilmViewTime);
-//                }
-
+                for (FilmScreeningEvent filmScreeningEvent : filmScreening.getFilmScreeningEvents()) {
+                    Button buttonFilmViewTime = new Button(filmScreeningEvent.getTime().getHours() + ":" + filmScreeningEvent.getTime().getMinutes(), new Button.ClickListener() {
+                        @Override
+                        public void buttonClick(Button.ClickEvent event) {
+                            listeners.forEach(listener -> listener.buttonFilmViewTimeClicked(filmScreeningEvent.getId()));
+                        }
+                    });
+                    buttonFilmViewTime.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+                    horizontalLayout.addComponent(buttonFilmViewTime);
+                }
 
                 verticalLayout.addComponent(horizontalLayout);
 
@@ -117,18 +131,43 @@ public class CinemaViewImpl extends NavigableView {
                 descriptionVerticalLayout.setMargin(true);
 
                 accordion.addTab(descriptionVerticalLayout, "Description");
-
-                verticalLayout.addComponentsAndExpand(accordion);
-                filmScreeningsHorizontalLayout.addComponentsAndExpand(panel);
+                accordion.setSizeUndefined();
+                verticalLayout.addComponent(accordion);
+                verticalLayout.setSizeUndefined();
+                filmScreeningsHorizontalLayout.addComponent(panel);
+                filmScreeningsHorizontalLayout.setSizeUndefined();
             }
-            cinemaPanelLayout.addComponentsAndExpand(filmScreeningsHorizontalLayout);
+            cinemaPanelLayout.addComponent(filmScreeningsHorizontalLayout);
         }
-
-        return new Panel(cinemaPanelLayout);
+        return cinemaPanelLayout;
     }
 
-    private void deleteCinema(Cinema cinema) {
-        cinemaService.deleteCinema(cinema);
-        Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
+    @Override
+    @Autowired
+    public void addCinemaViewListener(CinemaViewListener listener) {
+        listener.setView(this);
+        this.listeners.add(listener);
+    }
+
+    @Override
+    public void fillCinemaPanel(Cinema cinema) {
+        Component layout = createAndFillCinemaLayout(cinema);
+        layout.setSizeUndefined();
+        cinemaPanel.setContent(layout);
+    }
+
+    @Override
+    public void showWarning(String message) {
+
+    }
+
+    @Override
+    public void showError(String message) {
+
+    }
+
+    @Override
+    public void reloadPage() {
+
     }
 }

@@ -1,15 +1,18 @@
 package com.rustedbrain.study.course.view;
 
-import com.rustedbrain.study.course.model.cinema.Cinema;
-import com.rustedbrain.study.course.model.cinema.Movie;
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 
 import java.util.List;
 
 public interface MainView extends ApplicationView {
 
-    void fillMoviesPanel(List<Movie> movies);
+    void fillFilmScreeningsPanel(List<FilmScreening> screenings);
 
     void addMainViewListener(MainViewListener mainViewListener);
+
+    void showCitySelectionPanel(List<City> cities);
 
     interface MainViewListener {
 
@@ -18,5 +21,11 @@ public interface MainView extends ApplicationView {
         void buttonCreateCityClicked(String cityName);
 
         void buttonShowCinemaClicked(Cinema cinema);
+
+        void entered();
+
+        void comboBoxCitySelectionValueSelected(City city);
+
+        void setView(MainView mainView);
     }
 }

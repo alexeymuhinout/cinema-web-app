@@ -1,21 +1,30 @@
 package com.rustedbrain.study.course.view.cinema;
 
-import com.rustedbrain.study.course.model.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.authentication.LoginViewImpl;
+import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@UIScope
 @SpringView(name = VaadinUI.CITY_VIEW)
-public class CityViewImpl extends NavigableView implements CityView {
+public class CityViewImpl extends VerticalLayout implements CityView {
 
     public static final String CITY_ATTRIBUTE = "cityName";
 
 
     private TextField textFieldCinemaName;
     private TextField textFieldCinemaStreet;
+
+    @Autowired
+    public CityViewImpl(MenuComponent menuComponentView) {
+        addComponentsAndExpand(menuComponentView);
+    }
 
 
     @Override
@@ -76,7 +85,7 @@ public class CityViewImpl extends NavigableView implements CityView {
     }
 
     private void fillLayoutByCinemas(VerticalLayout layout, City city) {
-//        for (Cinema cinema : city.getCinemas()) {
+//        for (Cinema cinema : city.getCityCinemas()) {
 //            Button button = new Button(cinema.getName() + ", " + cinema.getLocation(), (Button.ClickListener) clickEvent -> new PageNavigator().navigateToCinemaView(getUI(), cinema.getId()));
 //            button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
 //            layout.addComponentsAndExpand(button);
@@ -85,7 +94,7 @@ public class CityViewImpl extends NavigableView implements CityView {
 
     private void deleteCity(City city) {
 //        cinemaService.deleteCity(city);
-//        Page.getCurrent().setUriFragment("!" + VaadinUI.MAIN_VIEW);
+//        Page.getCurrent().setUriFragment("!" + VaadinUI.NAVIGATION_MENU_VIEW);
     }
 
     @Override

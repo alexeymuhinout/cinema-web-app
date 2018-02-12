@@ -125,6 +125,7 @@
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.txt</include>
+                    <include>**/*.xml</include>
                     <include>**/*.rtf</include>
                     <include>**/*.dat</include>
                     <include>**/*.properties</include>

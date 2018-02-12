@@ -1,21 +1,26 @@
 package com.rustedbrain.study.course.service;
 
-import com.rustedbrain.study.course.model.authorization.User;
-import com.rustedbrain.study.course.model.cinema.*;
+import com.rustedbrain.study.course.model.exception.ResourceException;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.model.persistence.cinema.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public interface CinemaService {
 
     List<Movie> getCurrentMovies(Cinema cinema, Date date);
 
-    List<Cinema> getCinemas(City city);
+    Set<Cinema> getCityCinemas(City city);
 
     List<City> getCities();
+
+    Page<City> getCitiesPage(int page, int pageSize);
 
     List<Comment> getMessages(Movie movie);
 
@@ -27,12 +32,15 @@ public interface CinemaService {
 
     void unlockTicket(User user, FilmScreeningEvent event);
 
-    List<Cinema> getCinemas();
+    List<Cinema> getCityCinemas();
 
+    Page<Cinema> getCinemasPage(int page, int pageSize);
 
-    boolean isCinemaExist(String name);
+    Page<Cinema> getCinemasPage(int page, int pageSize, Sort sort);
 
-    Cinema getCinema(String name);
+    boolean isCinemaExist(long id);
+
+    Cinema getCinema(long id);
 
     void deleteCity(String city);
 
@@ -52,7 +60,19 @@ public interface CinemaService {
 
     Optional<City> getCityByName(String ipAddress) throws IOException;
 
-    Optional<Cinema> getNearestCinema(float latitude, float longitude) throws IOException;
+    Optional<Cinema> getNearestCinema(InetAddress address) throws IOException;
 
     Optional<City> getCityByInetAddress(InetAddress address) throws IOException;
+
+    List<FilmScreening> getTodayCinemaFilmScreenings(Cinema cinema);
+
+    Optional<Cinema> getNearestCinema(InetAddress address, City city) throws IOException;
+
+    void deleteCinema(Long id);
+
+    void deleteCity(Long id);
+
+    Map<String, String> getHelpTittleTextMap() throws ParserConfigurationException, ResourceException, SAXException, IOException;
+
+    List<Cinema> getCityCinemas(Long id);
 }

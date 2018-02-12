@@ -1,4 +1,6 @@
 package com.rustedbrain.study.course.view.cinema;
 
-public interface MovieView {
+import com.rustedbrain.study.course.view.ApplicationView;
+
+public interface MovieView extends ApplicationView {
 }
