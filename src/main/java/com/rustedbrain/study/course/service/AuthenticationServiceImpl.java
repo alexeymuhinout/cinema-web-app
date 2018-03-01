@@ -1,5 +1,7 @@
 package com.rustedbrain.study.course.service;
 
+import com.rustedbrain.study.course.model.dto.AuthUser;
+import com.rustedbrain.study.course.model.dto.UserRole;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
@@ -14,6 +16,7 @@ import java.util.Optional;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private static final String SESSION_USERNAME = "username";
+    private static final String SESSION_USER_ROLE = "user_role";
     private static final String COOKIE_NAME = "remember-me";
 
     private AuthorizationUserService authorizationUserService;
@@ -26,9 +29,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .findFirst();
     }
 
+    public UserRole getUserRole() {
+        if (isAuthenticated()) {
+            return UserRole.valueOf(VaadinSession.getCurrent().getAttribute(SESSION_USER_ROLE).toString());
+        } else {
+            return UserRole.NOT_AUTHORIZED;
+        }
+    }
+
+    public String getUserLogin() {
+        return VaadinSession.getCurrent().getAttribute(SESSION_USERNAME).toString();
+    }
+
+    @Override
     public boolean isAuthenticated() {
-        return VaadinSession.getCurrent()
-                .getAttribute(SESSION_USERNAME) != null
+        return (VaadinSession.getCurrent()
+                .getAttribute(SESSION_USERNAME) != null && VaadinSession.getCurrent()
+                .getAttribute(SESSION_USER_ROLE) != null)
                 || loginRememberedUser();
     }
 
@@ -49,20 +66,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (rememberMeCookie.isPresent()) {
             String id = rememberMeCookie.get().getValue();
-            String username = authorizationUserService.getRememberedUser(id);
+            AuthUser authUser = authorizationUserService.getRememberedUser(id);
 
-            if (username != null) {
+            if (authUser != null) {
                 VaadinSession.getCurrent()
-                        .setAttribute(SESSION_USERNAME, username);
+                        .setAttribute(SESSION_USERNAME, authUser.getLogin());
+                VaadinSession.getCurrent()
+                        .setAttribute(SESSION_USER_ROLE, authUser.getUserRole().name());
                 return true;
             }
         }
-
         return false;
     }
 
-    private void rememberUser(String username) {
-        String id = authorizationUserService.rememberUser(username);
+    private void rememberUser(String username, UserRole role) {
+        String id = authorizationUserService.rememberUser(username, role);
 
         Cookie cookie = new Cookie(COOKIE_NAME, id);
         cookie.setPath("/");
@@ -77,17 +95,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         VaadinService.getCurrentResponse().addCookie(cookie);
     }
 
-    public boolean login(String username, String password,
-                         boolean rememberMe) {
-        if (authorizationUserService.isAuthenticUser(username, password)) {
-            VaadinSession.getCurrent().setAttribute(
-                    SESSION_USERNAME, username);
+    @Override
+    public boolean login(String username, String password, boolean rememberMe) {
+        Optional<AuthUser> optionalUser = authorizationUserService.getAuthenticUser(username, password);
+        if (optionalUser.isPresent()) {
+            AuthUser user = optionalUser.get();
+            VaadinSession.getCurrent().setAttribute(SESSION_USERNAME, user.getLogin());
+            VaadinSession.getCurrent().setAttribute(SESSION_USER_ROLE, user.getUserRole().name());
             if (rememberMe) {
-                rememberUser(username);
+                rememberUser(user.getLogin(), user.getUserRole());
             }
             return true;
         }
-
         return false;
     }
 

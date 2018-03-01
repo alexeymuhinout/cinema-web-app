@@ -6,7 +6,7 @@ public enum Validator {
 
     MAIL_VALIDATOR("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"),
-    LOGIN_VALIDATOR("");
+    LOGIN_VALIDATOR(""); // TODO create pattern to validate users by login
 
     private Pattern pattern;
 

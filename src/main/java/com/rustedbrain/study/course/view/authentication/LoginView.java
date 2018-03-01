@@ -4,11 +4,14 @@ import com.vaadin.navigator.View;
 
 public interface LoginView extends View {
 
-    public void addListener(LoginViewListener listener);
+    void addListener(LoginViewListener listener);
 
     void showInvalidCredentialsNotification();
 
     interface LoginViewListener {
+
         void loginButtonClicked(String login, String password, boolean rememberMe);
+
+        void setLoginView(LoginView loginView);
     }
 }

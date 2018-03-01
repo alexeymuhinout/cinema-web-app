@@ -1,6 +1,7 @@
 package com.rustedbrain.study.course.presenter.cinema;
 
 import com.rustedbrain.study.course.model.exception.ResourceException;
+import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.cinema.HelpView;
 import com.vaadin.navigator.ViewChangeListener;
@@ -23,15 +24,18 @@ public class HelpViewPresenter implements HelpView.HelpViewListener, Serializabl
     private static final Logger logger = Logger.getLogger(HelpViewPresenter.class.getName());
 
     private final CinemaService cinemaService;
+    private final AuthenticationService authenticationService;
     private HelpView helpView;
 
     @Autowired
-    public HelpViewPresenter(CinemaService cinemaService) {
+    public HelpViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
         this.cinemaService = cinemaService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
     public void entered(ViewChangeListener.ViewChangeEvent event) {
+        this.helpView.fillMenuPanel(authenticationService);
         try {
             Map<String, String> helpTittleTextMap = cinemaService.getHelpTittleTextMap();
             helpView.setHelpTittleTextMap(helpTittleTextMap);

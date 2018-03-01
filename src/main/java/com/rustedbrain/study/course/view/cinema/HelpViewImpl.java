@@ -20,13 +20,13 @@ import java.util.Map;
 @SpringView(name = VaadinUI.HELP_VIEW)
 public class HelpViewImpl extends VerticalLayout implements HelpView {
 
-    private Accordion helpAccordion;
+    private Panel helpPanel;
+    private Panel menuPanel;
     private List<HelpViewListener> helpViewListeners = new ArrayList<>();
 
-    @Autowired
-    public HelpViewImpl(AuthenticationService authenticationService) {
-        addComponentsAndExpand(new Panel(new MenuComponent(authenticationService)));
-        addComponentsAndExpand(createHelpPanel());
+    public HelpViewImpl() {
+        addComponentsAndExpand(getMenuPanel());
+        addComponentsAndExpand(getHelpPanel());
     }
 
     @Override
@@ -35,9 +35,18 @@ public class HelpViewImpl extends VerticalLayout implements HelpView {
         helpViewListeners.forEach(listener -> listener.entered(event));
     }
 
-    private Panel createHelpPanel() {
-        this.helpAccordion = new Accordion();
-        return new Panel(this.helpAccordion);
+    private Panel getMenuPanel() {
+        if (menuPanel == null) {
+            menuPanel = new Panel();
+        }
+        return menuPanel;
+    }
+
+    private Panel getHelpPanel() {
+        if (helpPanel == null) {
+            helpPanel = new Panel();
+        }
+        return helpPanel;
     }
 
     @Override
@@ -57,6 +66,7 @@ public class HelpViewImpl extends VerticalLayout implements HelpView {
 
     @Override
     public void setHelpTittleTextMap(Map<String, String> helpTittleTextMap) {
+        Accordion helpAccordion = new Accordion();
         for (Map.Entry<String, String> entry : helpTittleTextMap.entrySet()) {
             Label label = new Label(entry.getValue(), ContentMode.HTML);
             label.setWidth(100.0f, Unit.PERCENTAGE);
@@ -66,6 +76,7 @@ public class HelpViewImpl extends VerticalLayout implements HelpView {
 
             helpAccordion.addTab(layout, entry.getKey());
         }
+        getHelpPanel().setContent(helpAccordion);
     }
 
     @Override
@@ -73,5 +84,10 @@ public class HelpViewImpl extends VerticalLayout implements HelpView {
     public void addHelpViewListener(HelpViewListener helpViewListener) {
         helpViewListener.setView(this);
         this.helpViewListeners.add(helpViewListener);
+    }
+
+    @Override
+    public void fillMenuPanel(AuthenticationService authenticationService) {
+        getMenuPanel().setContent(new MenuComponent(authenticationService));
     }
 }

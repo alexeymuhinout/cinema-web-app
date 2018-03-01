@@ -3,11 +3,9 @@ package com.rustedbrain.study.course.view.cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.*;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
-import com.rustedbrain.study.course.view.authentication.LoginViewImpl;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -15,7 +13,10 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.TreeSet;
 
 @UIScope
 @SpringView(name = VaadinUI.CINEMA_HALL_VIEW)
@@ -72,22 +73,22 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
     private Component createTicketBuyPanel(FilmScreeningEvent filmScreeningEvent) {
         VerticalLayout verticalLayout = new VerticalLayout();
 
-        if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
-            Set<Ticket> tickets = filmScreeningEvent.getTickets();
-            StringBuilder stringBuilder = new StringBuilder(tickets.size());
-            for (Ticket ticket : tickets) {
-                stringBuilder.append("Seat row ").append(ticket.getSeat().getRow().getNumber()).append(", seat number ").append(ticket.getSeat().getNumber()).append(", ").append(ticket.getClientName()).append(" ").append(ticket.getClientSurname()).append("</br>");
-            }
-            verticalLayout.addComponentsAndExpand(new Label(stringBuilder.toString(), ContentMode.HTML));
-        } else {
-            Label label = new Label(SELECT_SEAT_FOR_BUYING_TICKET_WARNING, ContentMode.HTML);
-            label.setSizeFull();
-
-            Button buttonBuyTicket = new Button("Buy", (Button.ClickListener) event -> cinemaHallViewListeners.forEach(CinemaHallViewListener::buttonBuyTicketClicked));
-            buttonBuyTicket.setSizeFull();
-
-            verticalLayout.addComponentsAndExpand(label, buttonBuyTicket);
-        }
+//        if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
+//            Set<Ticket> tickets = filmScreeningEvent.getTickets();
+//            StringBuilder stringBuilder = new StringBuilder(tickets.size());
+//            for (Ticket ticket : tickets) {
+//                stringBuilder.append("Seat row ").append(ticket.getSeat().getRow().getNumber()).append(", seat number ").append(ticket.getSeat().getNumber()).append(", ").append(ticket.getClientName()).append(" ").append(ticket.getClientSurname()).append("</br>");
+//            }
+//            verticalLayout.addComponentsAndExpand(new Label(stringBuilder.toString(), ContentMode.HTML));
+//        } else {
+//            Label label = new Label(SELECT_SEAT_FOR_BUYING_TICKET_WARNING, ContentMode.HTML);
+//            label.setSizeFull();
+//
+//            Button buttonBuyTicket = new Button("Buy", (Button.ClickListener) event -> cinemaHallViewListeners.forEach(CinemaHallViewListener::buttonBuyTicketClicked));
+//            buttonBuyTicket.setSizeFull();
+//
+//            verticalLayout.addComponentsAndExpand(label, buttonBuyTicket);
+//        }
         return new Panel(verticalLayout);
     }
 

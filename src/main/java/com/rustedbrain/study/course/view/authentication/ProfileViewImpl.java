@@ -69,9 +69,9 @@ public class ProfileViewImpl extends VerticalLayout implements View {
 
         tabSheet.addTab(createProfileInfoTab(), "Info");
         tabSheet.addTab(createProfileEditTab(), "Edit");
-        if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
-            tabSheet.addTab(createManagementTab(), "Management");
-        }
+//        if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
+//            tabSheet.addTab(createManagementTab(), "Management");
+//        }
         addComponentsAndExpand(tabSheet);
     }
 

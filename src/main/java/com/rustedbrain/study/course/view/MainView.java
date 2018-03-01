@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.view;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
+import com.rustedbrain.study.course.service.AuthenticationService;
 
 import java.util.List;
 
@@ -12,7 +13,13 @@ public interface MainView extends ApplicationView {
 
     void addMainViewListener(MainViewListener mainViewListener);
 
+    void fillMenuPanel(AuthenticationService authenticationService);
+
     void showCitySelectionPanel(List<City> cities);
+
+    void setSelectedCharacterButton(Character character);
+
+    void setSelectedCharacterCities(List<City> collect);
 
     interface MainViewListener {
 
@@ -27,5 +34,9 @@ public interface MainView extends ApplicationView {
         void comboBoxCitySelectionValueSelected(City city);
 
         void setView(MainView mainView);
+
+        void characterButtonClicked(Character character);
+
+        void cityButtonClicked(City city);
     }
 }

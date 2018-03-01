@@ -5,7 +5,6 @@ import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.components.CityComboBox;
 import com.rustedbrain.study.course.view.components.MenuComponent;
-import com.rustedbrain.study.course.view.util.NotificationUtil;
 import com.vaadin.event.selection.SingleSelectionListener;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
@@ -13,39 +12,42 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @UIScope
 @SpringView(name = VaadinUI.MAIN_VIEW)
 public class MainViewImpl extends VerticalLayout implements MainView {
 
     private Collection<MainViewListener> mainViewListeners = new ArrayList<>();
+    private Panel menuPanel;
     private Panel mainViewPanel;
+    private CharacterCitiesPanel panel;
 
-    @Autowired
-    public MainViewImpl(AuthenticationService authenticationService) {
-        addComponentsAndExpand(new Panel(new MenuComponent(authenticationService)));
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.addComponentsAndExpand(createMainViewPanel());
-        layout.setSizeFull();
-        addComponentsAndExpand(layout);
+    public MainViewImpl() {
+        addComponentsAndExpand(getMenuViewPanel());
+        addComponentsAndExpand(getMainViewPanel());
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        NotificationUtil.showAvailableMessage();
         mainViewListeners.forEach(MainViewListener::entered);
     }
 
-    private Panel createMainViewPanel() {
-        mainViewPanel = new Panel();
-        mainViewPanel.setWidth(100, Unit.PERCENTAGE);
-        mainViewPanel.setHeight(100, Unit.PERCENTAGE);
+    private Panel getMenuViewPanel() {
+        if (menuPanel == null) {
+            menuPanel = new Panel();
+        }
+        return menuPanel;
+    }
+
+    private Panel getMainViewPanel() {
+        if (mainViewPanel == null) {
+            mainViewPanel = new Panel();
+        }
         return mainViewPanel;
     }
 
@@ -59,6 +61,11 @@ public class MainViewImpl extends VerticalLayout implements MainView {
     public void addMainViewListener(MainViewListener mainViewListener) {
         mainViewListener.setView(this);
         this.mainViewListeners.add(mainViewListener);
+    }
+
+    @Override
+    public void fillMenuPanel(AuthenticationService authenticationService) {
+        getMenuViewPanel().setContent(new MenuComponent(authenticationService));
     }
 
     @Override
@@ -76,7 +83,14 @@ public class MainViewImpl extends VerticalLayout implements MainView {
             });
         });
         layout.addComponent(cityComboBox);
+        this.panel = new CharacterCitiesPanel(cities);
+        layout.addComponent(panel);
         mainViewPanel.setContent(layout);
+    }
+
+    @Override
+    public void setSelectedCharacterButton(Button characterButton, List<City> cities) {
+        this.panel.showCharacterButtonCities(characterButton, cities);
     }
 
     @Override
@@ -92,5 +106,47 @@ public class MainViewImpl extends VerticalLayout implements MainView {
     @Override
     public void reloadPage() {
         Page.getCurrent().reload();
+    }
+
+    private class CharacterCitiesPanel extends VerticalLayout {
+
+        private final Panel citiesLinksPanel = new Panel();
+        private final LinkedList<Button> characterButtons = new LinkedList<>();
+
+        public CharacterCitiesPanel(List<City> cities) {
+            super();
+            super.addComponent(createAlphabetLayout(cities));
+            super.addComponent(citiesLinksPanel);
+            showCharacterButtonCities(characterButtons.getFirst().getCaption().charAt(0), cities);
+        }
+
+        public void showCharacterButtonCities(Character character, List<City> cities) {
+            VerticalLayout verticalLayout = new VerticalLayout();
+            for (City city : cities) {
+                Button cityButton = new Button(city.getName());
+                cityButton.addClickListener((Button.ClickListener) clickEvent -> mainViewListeners.forEach(listener -> listener.cityButtonClicked(city)));
+                cityButton.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+                verticalLayout.addComponent(cityButton);
+            }
+            citiesLinksPanel.setContent(verticalLayout);
+        }
+
+        private HorizontalLayout createAlphabetLayout(List<City> cities) {
+            Set<Character> characters = new LinkedHashSet<>(
+                    cities.stream()
+                            .map(City::getName)
+                            .map(cityName -> cityName.charAt(0))
+                            .sorted(Character::compareTo)
+                            .collect(Collectors.toList()));
+            HorizontalLayout alphabetButtonsLayout = new HorizontalLayout();
+            for (Character character : characters) {
+                Button characterButton = new Button(character.toString());
+                characterButton.addClickListener((Button.ClickListener) clickEvent -> mainViewListeners.forEach(listener -> listener.characterButtonClicked(characterButton.getCaption())));
+                characterButton.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+                characterButtons.add(characterButton);
+                alphabetButtonsLayout.addComponent(characterButton);
+            }
+            return alphabetButtonsLayout;
+        }
     }
 }

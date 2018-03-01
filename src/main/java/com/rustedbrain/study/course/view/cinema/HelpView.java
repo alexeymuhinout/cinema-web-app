@@ -1,5 +1,6 @@
 package com.rustedbrain.study.course.view.cinema;
 
+import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.ApplicationView;
 import com.vaadin.navigator.ViewChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ public interface HelpView extends ApplicationView {
 
     @Autowired
     void addHelpViewListener(HelpViewListener helpViewListener);
+
+    void fillMenuPanel(AuthenticationService authenticationService);
 
     interface HelpViewListener {
 

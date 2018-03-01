@@ -1,11 +1,10 @@
 package com.rustedbrain.study.course.view.cinema;
 
+import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.view.VaadinUI;
-import com.rustedbrain.study.course.view.authentication.LoginViewImpl;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -38,22 +37,28 @@ public class CityViewImpl extends VerticalLayout implements CityView {
 //        }
     }
 
-    private Component createCityPanel(City city) {
+    private Component createCityPanel(City city, UserRole role) {
         VerticalLayout layout = new VerticalLayout();
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
 
         Label label = new Label("Cinemas in " + city.getName());
         horizontalLayout.addComponentsAndExpand(label);
-        if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
-            horizontalLayout.addComponentsAndExpand(new Button("Delete City", (Button.ClickListener) event -> deleteCity(city)));
+        switch (role) {
+            case ADMINISTRATOR: {
+                horizontalLayout.addComponentsAndExpand(new Button("Delete City", (Button.ClickListener) event -> deleteCity(city)));
+            }
+            break;
         }
         layout.addComponentsAndExpand(horizontalLayout);
 
         fillLayoutByCinemas(layout, city);
 
-        if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
-            layout.addComponentsAndExpand(createAdminCinemaAddingPanel(city));
+        switch (role) {
+            case ADMINISTRATOR: {
+                layout.addComponentsAndExpand(createAdminCinemaAddingPanel(city));
+            }
+            break;
         }
         return new Panel(layout);
     }
@@ -86,7 +91,7 @@ public class CityViewImpl extends VerticalLayout implements CityView {
 
     private void fillLayoutByCinemas(VerticalLayout layout, City city) {
 //        for (Cinema cinema : city.getCityCinemas()) {
-//            Button button = new Button(cinema.getName() + ", " + cinema.getLocation(), (Button.ClickListener) clickEvent -> new PageNavigator().navigateToCinemaView(getUI(), cinema.getId()));
+//            Button button = new Button(cinema.getLogin() + ", " + cinema.getLocation(), (Button.ClickListener) clickEvent -> new PageNavigator().navigateToCinemaView(getUI(), cinema.getId()));
 //            button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
 //            layout.addComponentsAndExpand(button);
 //        }

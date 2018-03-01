@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.presenter.cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
+import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.MainView;
 import com.rustedbrain.study.course.view.util.PageNavigator;
@@ -19,6 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @UIScope
 @SpringComponent
@@ -28,14 +30,28 @@ public class MainViewPresenter implements MainView.MainViewListener, Serializabl
 
     private MainView mainView;
     private CinemaService cinemaService;
+    private AuthenticationService authenticationService;
 
     @Autowired
-    public MainViewPresenter(CinemaService cinemaService) {
+    public MainViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
         this.cinemaService = cinemaService;
+        this.authenticationService = authenticationService;
     }
 
     public void setView(MainView mainView) {
         this.mainView = mainView;
+    }
+
+    @Override
+    public void characterButtonClicked(Character character) {
+        List<City> cities = cinemaService.getCities();
+        this.mainView.setSelectedCharacterButton(character);
+        this.mainView.setSelectedCharacterCities(cities.stream().filter(city -> character.equals(city.getName().charAt(0))).collect(Collectors.toList()));
+    }
+
+    @Override
+    public void cityButtonClicked(City city) {
+
     }
 
     @Override
@@ -69,6 +85,7 @@ public class MainViewPresenter implements MainView.MainViewListener, Serializabl
 
     @Override
     public void entered() {
+        mainView.fillMenuPanel(authenticationService);
         try {
             InetAddress address = InetAddress.getByName(Page.getCurrent().getWebBrowser().getAddress());
             address = InetAddress.getByName("46.149.89.61");
