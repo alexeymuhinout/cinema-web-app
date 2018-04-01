@@ -1,6 +1,7 @@
 package com.rustedbrain.study.course.presenter.cinema;
 
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.cinema.CinemaView;
@@ -11,7 +12,9 @@ import com.vaadin.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 
 @UIScope
@@ -19,9 +22,12 @@ import java.util.logging.Logger;
 public class CinemaViewPresenter implements Serializable, CinemaView.CinemaViewListener {
 
     private static final Logger logger = Logger.getLogger(CinemaViewPresenter.class.getName());
+    private static final int AVAILABLE_TO_ORDER_DAYS = 7;
     private final CinemaService cinemaService;
     private final AuthenticationService authenticationService;
+    private int selectedToOrderDay = 0;
     private CinemaView cinemaView;
+    private Cinema cinema;
 
     @Autowired
     public CinemaViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
@@ -36,8 +42,10 @@ public class CinemaViewPresenter implements Serializable, CinemaView.CinemaViewL
         if (optionalCinemaId.isPresent()) {
             logger.info("Cinema id parameter available. Retrieving cinema by id...");
             Long cinemaId = Long.parseLong(optionalCinemaId.get());
-            Cinema cinema = cinemaService.getCinema(cinemaId);
-            cinemaView.fillCinemaPanel(cinema, authenticationService.getUserRole());
+            cinema = cinemaService.getCinema(cinemaId);
+            cinemaView.fillCinemaPanel(cinema, authenticationService.getUserRole(), AVAILABLE_TO_ORDER_DAYS, selectedToOrderDay);
+            cinemaView.setFilmScreenings(cinemaService.getDayFilmScreenings(cinema.getId(), LocalDate.now().plusDays(selectedToOrderDay)));
+            cinemaView.setSelectedDay(LocalDate.now().plusDays(selectedToOrderDay));
         } else {
             logger.warning("Cinema id not available. Navigating to cinemas view...");
         }
@@ -55,7 +63,21 @@ public class CinemaViewPresenter implements Serializable, CinemaView.CinemaViewL
 
     @Override
     public void buttonDeleteCinemaClicked(long id) {
-        this.cinemaService.deleteCinema(id);
-        this.cinemaView.reloadPage();
+        long cityId = cinema.getCity().getId();
+        cinemaService.deleteCinema(id);
+        new PageNavigator().navigateToCityCinemasView(cityId);
+    }
+
+    @Override
+    public void buttonDayClicked(LocalDate day) {
+        Set<FilmScreening> filmScreenings = cinemaService.getDayFilmScreenings(cinema.getId(), day);
+        cinemaView.setFilmScreenings(filmScreenings);
+        cinemaView.setSelectedDay(day);
+    }
+
+    @Override
+    public void buttonRenameClicked(String value) {
+        cinemaService.renameCinema(cinema.getId(), value);
+        cinemaView.reloadPage();
     }
 }

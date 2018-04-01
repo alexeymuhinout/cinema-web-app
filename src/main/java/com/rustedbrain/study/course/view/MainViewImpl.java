@@ -16,7 +16,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @UIScope
 @SpringView(name = VaadinUI.MAIN_VIEW)
@@ -89,8 +88,8 @@ public class MainViewImpl extends VerticalLayout implements MainView {
     }
 
     @Override
-    public void setSelectedCharacterButton(Button characterButton, List<City> cities) {
-        this.panel.showCharacterButtonCities(characterButton, cities);
+    public void setSelectedCharacterCities(Character character) {
+        panel.setSelectedCharacterCities(character);
     }
 
     @Override
@@ -110,43 +109,71 @@ public class MainViewImpl extends VerticalLayout implements MainView {
 
     private class CharacterCitiesPanel extends VerticalLayout {
 
+        private final Map<Character, List<City>> charCityMap;
+        private final Panel citiesAlphabetPanel = new Panel();
         private final Panel citiesLinksPanel = new Panel();
-        private final LinkedList<Button> characterButtons = new LinkedList<>();
+        private final List<Button> characterButtons;
 
         public CharacterCitiesPanel(List<City> cities) {
-            super();
-            super.addComponent(createAlphabetLayout(cities));
-            super.addComponent(citiesLinksPanel);
-            showCharacterButtonCities(characterButtons.getFirst().getCaption().charAt(0), cities);
+            this.charCityMap = getCitiesMap(cities);
+            this.addComponents(citiesAlphabetPanel, citiesLinksPanel);
+            this.characterButtons = createAlphabetButtons();
+            this.showAlphabetButtons();
         }
 
-        public void showCharacterButtonCities(Character character, List<City> cities) {
+        private void setSelectedCharacter(Character character) {
+            Optional<Button> buttonOptional = characterButtons.stream().filter(button -> button.getCaption().charAt(0) == character).findAny();
+            if (buttonOptional.isPresent()) {
+                characterButtons.forEach(button -> button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED));
+                buttonOptional.get().setStyleName(ValoTheme.BUTTON_FRIENDLY);
+            }
+        }
+
+        private void showAlphabetButtons() {
+            HorizontalLayout layout = new HorizontalLayout();
+            for (Button button : characterButtons) {
+                layout.addComponent(button);
+            }
+            citiesAlphabetPanel.setContent(layout);
+        }
+
+        private Map<Character, List<City>> getCitiesMap(List<City> cities) {
+            Map<Character, List<City>> charCityMap = new TreeMap<>();
+            for (City city : cities) {
+                Character character = city.getName().charAt(0);
+                if (charCityMap.containsKey(character)) {
+                    charCityMap.get(character).add(city);
+                } else {
+                    charCityMap.put(character, new ArrayList<>(Collections.singletonList(city)));
+                }
+            }
+            return charCityMap;
+        }
+
+        private void showSelectedCharacterCitiesPanel(Character character) {
+            List<City> cities = charCityMap.get(character);
             VerticalLayout verticalLayout = new VerticalLayout();
             for (City city : cities) {
-                Button cityButton = new Button(city.getName());
-                cityButton.addClickListener((Button.ClickListener) clickEvent -> mainViewListeners.forEach(listener -> listener.cityButtonClicked(city)));
-                cityButton.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-                verticalLayout.addComponent(cityButton);
+                Button button = new Button(city.getName(), (Button.ClickListener) event -> mainViewListeners.forEach(listener -> listener.cityButtonClicked(city.getId())));
+                button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+                verticalLayout.addComponent(button);
             }
             citiesLinksPanel.setContent(verticalLayout);
         }
 
-        private HorizontalLayout createAlphabetLayout(List<City> cities) {
-            Set<Character> characters = new LinkedHashSet<>(
-                    cities.stream()
-                            .map(City::getName)
-                            .map(cityName -> cityName.charAt(0))
-                            .sorted(Character::compareTo)
-                            .collect(Collectors.toList()));
-            HorizontalLayout alphabetButtonsLayout = new HorizontalLayout();
-            for (Character character : characters) {
-                Button characterButton = new Button(character.toString());
-                characterButton.addClickListener((Button.ClickListener) clickEvent -> mainViewListeners.forEach(listener -> listener.characterButtonClicked(characterButton.getCaption())));
-                characterButton.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-                characterButtons.add(characterButton);
-                alphabetButtonsLayout.addComponent(characterButton);
+        private List<Button> createAlphabetButtons() {
+            List<Button> characterButtons = new LinkedList<>();
+            for (Character character : charCityMap.keySet()) {
+                Button button = new Button(character.toString(), (Button.ClickListener) event -> mainViewListeners.forEach(listener -> listener.alphabetButtonClicked(character)));
+                button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+                characterButtons.add(button);
             }
-            return alphabetButtonsLayout;
+            return characterButtons;
+        }
+
+        void setSelectedCharacterCities(Character character) {
+            this.setSelectedCharacter(character);
+            this.showSelectedCharacterCitiesPanel(character);
         }
     }
 }

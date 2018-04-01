@@ -3,7 +3,6 @@ package com.rustedbrain.study.course.view.cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.components.MenuComponent;
-import com.rustedbrain.study.course.view.util.NotificationUtil;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
@@ -47,7 +46,6 @@ public class CitiesViewImpl extends VerticalLayout implements CitiesView {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        NotificationUtil.showAvailableMessage();
     }
 
     @Override

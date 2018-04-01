@@ -3,7 +3,6 @@ package com.rustedbrain.study.course.view.cinema;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.components.MenuComponent;
-import com.rustedbrain.study.course.view.util.NotificationUtil;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
@@ -31,7 +30,6 @@ public class HelpViewImpl extends VerticalLayout implements HelpView {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        NotificationUtil.showAvailableMessage();
         helpViewListeners.forEach(listener -> listener.entered(event));
     }
 

@@ -14,4 +14,6 @@ public interface AuthorizationUserService {
     AuthUser getRememberedUser(String id);
 
     void removeRememberedUser(String id);
+
+    boolean isValidCinemaManager(String userLogin, long cinemaId);
 }

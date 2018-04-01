@@ -1,19 +1,20 @@
 package com.rustedbrain.study.course.presenter.cinema;
 
-import com.rustedbrain.study.course.model.persistence.authorization.Member;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
 import com.rustedbrain.study.course.model.persistence.cinema.Seat;
-import com.rustedbrain.study.course.model.persistence.cinema.Ticket;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.cinema.CinemaHallView;
+import com.rustedbrain.study.course.view.util.PageNavigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 
 @UIScope
@@ -24,7 +25,8 @@ public class CinemaHallViewPresenter implements CinemaHallView.CinemaHallViewLis
     private final CinemaService cinemaService;
     private final AuthenticationService authenticationService;
     private CinemaHallView view;
-    private Set<Seat> selectedSeats = new HashSet<>();
+    private FilmScreeningEvent filmScreeningEvent;
+    private Set<Seat> selectedSeats;
 
     @Autowired
     public CinemaHallViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
@@ -35,11 +37,13 @@ public class CinemaHallViewPresenter implements CinemaHallView.CinemaHallViewLis
     @Override
     public void fireSeatSelected(Seat seat) {
         if (selectedSeats.contains(seat)) {
-            selectedSeats.remove(seat);
-            view.unsetSeatSelected(seat);
+            this.selectedSeats.remove(seat);
+            this.view.unsetSelectedSeat(seat);
+            this.view.displaySelectedSeats(selectedSeats);
         } else {
-            selectedSeats.add(seat);
-            view.setSeatSelected(seat);
+            this.selectedSeats.add(seat);
+            this.view.setSelectedSeat(seat);
+            this.view.displaySelectedSeats(selectedSeats);
         }
     }
 
@@ -52,8 +56,9 @@ public class CinemaHallViewPresenter implements CinemaHallView.CinemaHallViewLis
     public void entered(ViewChangeListener.ViewChangeEvent event) {
         Optional<String> optionalId = Optional.ofNullable(event.getParameters());
         if (optionalId.isPresent()) {
-            FilmScreeningEvent filmScreeningEvent = cinemaService.getFilmScreeningEvent(Long.parseLong(optionalId.get()));
-            view.fillFilmScreeningEventPanel(filmScreeningEvent);
+            this.selectedSeats = new HashSet<>();
+            this.filmScreeningEvent = cinemaService.getFilmScreeningEvent(Long.parseLong(optionalId.get()));
+            this.view.fillFilmScreeningEventPanel(this.filmScreeningEvent);
         } else {
             logger.warning("Film screening event id is not presented. Navigating to previous view...");
             // TODO navigate to previous view, what to do with params?
@@ -65,28 +70,7 @@ public class CinemaHallViewPresenter implements CinemaHallView.CinemaHallViewLis
         if (selectedSeats.isEmpty()) {
             view.showWarning("Please select at least one seat to buy");
         } else {
-            if (authenticationService.isAuthenticated()) {
-                Member member;
-            } else {
-
-            }
+            new PageNavigator().navigateToTicketBuyingView(filmScreeningEvent.getId(), selectedSeats.stream().mapToLong(Seat::getId).toArray());
         }
-    }
-
-    private void buyTicketsForSeats(Member member, FilmScreeningEvent filmScreeningEvent, Set<Seat> seats) {
-        List<Ticket> ticketsToBuy = new ArrayList<>();
-        for (Seat seat : seats) {
-            Ticket ticket = new Ticket();
-            ticket.setEvent(filmScreeningEvent);
-            ticket.setSeat(seat);
-            ticket.setSoldDate(new Date());
-            ticket.setLastAccessDate(new Date());
-            ticket.setRegistrationDate(new Date());
-            ticket.setMember(member);
-            ticket.setClientName(member.getName());
-            ticket.setClientSurname(member.getSurname());
-            ticketsToBuy.add(ticket);
-        }
-        cinemaService.buyTickets(ticketsToBuy);
     }
 }

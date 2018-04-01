@@ -22,13 +22,78 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <vaadin.version>8.1.0</vaadin.version>
+        <guava.version>24.1-jre</guava.version>
+        <json.version>20180130</json.version>
+        <jsoup.version>1.11.2</jsoup.version>
+        <geoip.version>1.3.1</geoip.version>
+        <junit.version>4.12</junit.version>
+        <itext.version>7.1.1</itext.version>
     </properties>
 
     <dependencies>
+        <!-- add all iText 7 Community modules -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext7-core</artifactId>
+            <version>${itext.version}</version>
+            <type>pom</type>
+        </dependency>
+
+        <!-- pdfSweep -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>cleanup</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <!-- pdfInvoice -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>zugferd</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <!-- pdfHTML -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>html2pdf</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker-gae</artifactId>
+            <version>2.3.27-incubating</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.kenglxn.qrgen</groupId>
+            <artifactId>javase</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.opensagres.xdocreport</groupId>
+            <artifactId>fr.opensagres.xdocreport.document.odt</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.opensagres.xdocreport</groupId>
+            <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.opensagres.xdocreport</groupId>
+            <artifactId>fr.opensagres.xdocreport.converter.odt.odfdom</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -57,25 +122,25 @@
         <dependency>
             <groupId>com.maxmind.geoip</groupId>
             <artifactId>geoip-api</artifactId>
-            <version>1.3.1</version>
+            <version>${geoip.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>RELEASE</version>
+            <version>${jsoup.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>RELEASE</version>
+            <version>${guava.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>RELEASE</version>
+            <version>${json.version}</version>
         </dependency>
 
     </dependencies>
@@ -113,8 +178,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
 
@@ -126,6 +191,7 @@
                 <includes>
                     <include>**/*.txt</include>
                     <include>**/*.xml</include>
+                    <include>**/*.ftl</include>
                     <include>**/*.rtf</include>
                     <include>**/*.dat</include>
                     <include>**/*.properties</include>
@@ -136,6 +202,11 @@
     </build>
 
     <repositories>
+        <repository>
+            <id>itext</id>
+            <name>iText Repository - releases</name>
+            <url>https://repo.itextsupport.com/releases</url>
+        </repository>
         <repository>
             <id>spring-snapshots</id>
             <name>Spring Snapshots</name>
@@ -151,6 +222,10 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 

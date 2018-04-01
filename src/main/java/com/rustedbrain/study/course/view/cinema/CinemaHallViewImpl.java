@@ -13,24 +13,24 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.TreeSet;
+import java.util.*;
 
 @UIScope
 @SpringView(name = VaadinUI.CINEMA_HALL_VIEW)
 public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView {
 
     private static final String SELECT_SEAT_FOR_BUYING_TICKET_WARNING = "Please select seat's";
+    private final AuthenticationService authenticationService;
 
     private List<CinemaHallView.CinemaHallViewListener> cinemaHallViewListeners = new ArrayList<>();
 
+    private CinemaHallLayout cinemaHallLayout;
+    private TicketBuyLayout ticketBuyLayout;
     private Panel cinemaHallPanel;
-    private List<SeatButton> seatButtonList;
 
     @Autowired
     public CinemaHallViewImpl(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
         addComponentsAndExpand(new Panel(new MenuComponent(authenticationService)));
         addComponentsAndExpand(getCinemaHallPanel());
     }
@@ -51,83 +51,38 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
     public void fillFilmScreeningEventPanel(FilmScreeningEvent filmScreeningEvent) {
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.addComponentsAndExpand(createMovieInfoPanel(filmScreeningEvent));
+
         HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.addComponentsAndExpand(createSeatSelectionPanel(filmScreeningEvent));
-        horizontalLayout.addComponentsAndExpand(createTicketBuyPanel(filmScreeningEvent));
+
+        this.cinemaHallLayout = new CinemaHallLayout(filmScreeningEvent);
+        this.cinemaHallLayout.setSizeFull();
+        Panel cinemaHallLayoutPanel = new Panel();
+        cinemaHallLayoutPanel.setSizeFull();
+        cinemaHallLayoutPanel.setContent(this.cinemaHallLayout);
+        horizontalLayout.addComponentsAndExpand(cinemaHallLayoutPanel);
+
+        this.ticketBuyLayout = new TicketBuyLayout(filmScreeningEvent);
+        this.ticketBuyLayout.setSizeFull();
+        Panel ticketBuyLayoutPanel = new Panel();
+        ticketBuyLayoutPanel.setSizeFull();
+        ticketBuyLayoutPanel.setContent(this.ticketBuyLayout);
+        horizontalLayout.addComponentsAndExpand(ticketBuyLayoutPanel);
+
         verticalLayout.addComponentsAndExpand(horizontalLayout);
         cinemaHallPanel.setContent(verticalLayout);
     }
 
-    @Override
-    public void unsetSeatSelected(Seat seat) {
-        Optional<SeatButton> seatButton = seatButtonList.stream().filter(button -> button.getSeat().equals(seat)).findAny();
-        seatButton.ifPresent(button -> button.getButton().removeStyleName(ValoTheme.BUTTON_FRIENDLY));
-    }
-
-    @Override
-    public void setSeatSelected(Seat seat) {
-        Optional<SeatButton> seatButton = seatButtonList.stream().filter(button -> button.getSeat().equals(seat)).findAny();
-        seatButton.ifPresent(button -> button.getButton().setStyleName(ValoTheme.BUTTON_FRIENDLY));
-    }
-
-    private Component createTicketBuyPanel(FilmScreeningEvent filmScreeningEvent) {
-        VerticalLayout verticalLayout = new VerticalLayout();
-
-//        if (VaadinSession.getCurrent().getAttribute(LoginViewImpl.LOGGED_ADMINISTRATOR_ATTRIBUTE) != null) {
-//            Set<Ticket> tickets = filmScreeningEvent.getTickets();
-//            StringBuilder stringBuilder = new StringBuilder(tickets.size());
-//            for (Ticket ticket : tickets) {
-//                stringBuilder.append("Seat row ").append(ticket.getSeat().getRow().getNumber()).append(", seat number ").append(ticket.getSeat().getNumber()).append(", ").append(ticket.getClientName()).append(" ").append(ticket.getClientSurname()).append("</br>");
-//            }
-//            verticalLayout.addComponentsAndExpand(new Label(stringBuilder.toString(), ContentMode.HTML));
-//        } else {
-//            Label label = new Label(SELECT_SEAT_FOR_BUYING_TICKET_WARNING, ContentMode.HTML);
-//            label.setSizeFull();
-//
-//            Button buttonBuyTicket = new Button("Buy", (Button.ClickListener) event -> cinemaHallViewListeners.forEach(CinemaHallViewListener::buttonBuyTicketClicked));
-//            buttonBuyTicket.setSizeFull();
-//
-//            verticalLayout.addComponentsAndExpand(label, buttonBuyTicket);
-//        }
-        return new Panel(verticalLayout);
-    }
-
     private Component createMovieInfoPanel(FilmScreeningEvent filmScreeningEvent) {
         Movie movie = filmScreeningEvent.getFilmScreening().getMovie();
-        VerticalLayout verticalLayout = new VerticalLayout(new Label(movie.getLocalizedName() + "</br>" + "(" + movie.getOriginalName() + ")", ContentMode.HTML));
+        VerticalLayout verticalLayout = new VerticalLayout(new Label(movie.getLocalizedName() + " " + "(" + movie.getOriginalName() + ")" + "</br> " + filmScreeningEvent.getDate() + " " + filmScreeningEvent.getTime(), ContentMode.HTML));
         verticalLayout.setSpacing(true);
         return new Panel(verticalLayout);
     }
 
-    private Component createSeatSelectionPanel(FilmScreeningEvent filmScreeningEvent) {
-        VerticalLayout seatsVerticalLayout = new VerticalLayout();
-        CinemaHall cinemaHall = filmScreeningEvent.getCinemaHall();
-        seatButtonList = new ArrayList<>();
-        for (Row row : new TreeSet<>(cinemaHall.getRows())) {
-            HorizontalLayout rowHorizontalLayout = new HorizontalLayout();
-            rowHorizontalLayout.addComponent(new Label(Integer.toString(row.getNumber())));
-
-            for (Seat seat : new TreeSet<>(row.getSeats())) {
-                Button button = new Button(Integer.toString(seat.getNumber()));
-                if (filmScreeningEvent.getTickets().stream().anyMatch(ticket -> ticket.getSeat().equals(seat))) {
-                    button.setStyleName(ValoTheme.BUTTON_DANGER);
-                } else {
-                    button.addClickListener((Button.ClickListener) event -> {
-                        cinemaHallViewListeners.forEach(listener -> listener.fireSeatSelected(seat));
-                    });
-                }
-                seatButtonList.add(new SeatButton(button, seat));
-                rowHorizontalLayout.addComponent(button);
-            }
-            seatsVerticalLayout.addComponent(rowHorizontalLayout);
-        }
-        return new Panel(seatsVerticalLayout);
-    }
-
 
     @Override
-    public void displaySelectedSeats(List<Seat> seats) {
-
+    public void displaySelectedSeats(Set<Seat> seats) {
+        ticketBuyLayout.displaySelectedSeats(seats);
     }
 
     @Override
@@ -152,37 +107,127 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
         Page.getCurrent().reload();
     }
 
-    private class SeatButton {
+    @Override
+    public void unsetSelectedSeat(Seat seat) {
+        cinemaHallLayout.unsetSelectedSeat(seat);
+    }
 
-        private Button button;
-        private Seat seat;
+    @Override
+    public void setSelectedSeat(Seat seat) {
+        cinemaHallLayout.setSelectedSeat(seat);
+    }
 
-        SeatButton(Button button, Seat seat) {
-            this.button = button;
-            this.seat = seat;
+    private class TicketBuyLayout extends VerticalLayout {
+
+        private Label selectedSeatsLabel;
+        private Button buttonBuyTickets;
+
+        TicketBuyLayout(FilmScreeningEvent filmScreeningEvent) {
+            this.selectedSeatsLabel = new Label();
+            this.selectedSeatsLabel.setContentMode(ContentMode.PREFORMATTED);
+            this.addComponent(this.selectedSeatsLabel);
+            this.buttonBuyTickets = new Button("Apply", (Button.ClickListener) event -> cinemaHallViewListeners.forEach(CinemaHallViewListener::buttonBuyTicketClicked));
+            this.buttonBuyTickets.setEnabled(false);
+            this.buttonBuyTickets.setSizeFull();
+            this.addComponent(this.buttonBuyTickets);
         }
 
-        public Button getButton() {
-            return button;
+        void displaySelectedSeats(Set<Seat> seats) {
+            if (seats.isEmpty()) {
+                this.selectedSeatsLabel.setValue("No seats selected.");
+                this.buttonBuyTickets.setEnabled(false);
+            } else {
+                StringBuilder builder = new StringBuilder();
+                for (Seat seat : seats) {
+                    builder.append("Seat ").append(seat.getNumber())
+                            .append(", row ").append(seat.getRow().getNumber())
+                            .append(", price: ").append(seat.getPrice()).append(";\n");
+                }
+                builder.append("\nTotal: ").append(seats.stream().mapToDouble(Seat::getPrice).sum());
+                this.selectedSeatsLabel.setValue(builder.toString());
+                this.buttonBuyTickets.setEnabled(true);
+            }
+        }
+    }
+
+    private class CinemaHallLayout extends VerticalLayout {
+
+        private List<SeatButton> seatButtonList;
+
+        CinemaHallLayout(FilmScreeningEvent filmScreeningEvent) {
+            CinemaHall cinemaHall = filmScreeningEvent.getCinemaHall();
+            seatButtonList = new ArrayList<>();
+            for (Row row : new TreeSet<>(cinemaHall.getRows())) {
+                HorizontalLayout rowHorizontalLayout = new HorizontalLayout();
+                rowHorizontalLayout.addComponent(new Label(Integer.toString(row.getNumber())));
+
+                for (Seat seat : new TreeSet<>(row.getSeats())) {
+                    Button button = new Button(Integer.toString(seat.getNumber()));
+                    Optional<Ticket> optionalTicket = filmScreeningEvent.getTickets().stream().filter(ticket -> ticket.getSeat().equals(seat)).findAny();
+                    if (optionalTicket.isPresent()) {
+                        button.setStyleName(ValoTheme.BUTTON_DANGER);
+                        if (authenticationService.isCinemaManagementAvailable(cinemaHall.getCinema().getId())) {
+                            Ticket ticket = optionalTicket.get();
+                            button.setDescription("<ul>"
+                                    + "<li>Name: " + ticket.getClientName() + "</li>"
+                                    + "<li>Surname: " + ticket.getClientSurname() + "</li>"
+                                    + "<li>Sold: " + (ticket.getSoldDate() != null ? ticket.getSoldDate().toString() : "Reserved") + "</li>"
+                                    + "</ul>", ContentMode.HTML);
+                        }
+                    } else {
+                        button.addClickListener((Button.ClickListener) event -> {
+                            cinemaHallViewListeners.forEach(listener -> listener.fireSeatSelected(seat));
+                        });
+                    }
+                    seatButtonList.add(new SeatButton(button, seat));
+                    rowHorizontalLayout.addComponent(button);
+                }
+                this.addComponent(rowHorizontalLayout);
+            }
         }
 
-        public Seat getSeat() {
-            return seat;
+        void unsetSelectedSeat(Seat seat) {
+            Optional<SeatButton> seatButton = seatButtonList.stream().filter(button -> button.getSeat().equals(seat)).findAny();
+            seatButton.ifPresent(button -> button.getButton().removeStyleName(ValoTheme.BUTTON_FRIENDLY));
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            SeatButton that = (SeatButton) o;
-
-            return seat.equals(that.seat);
+        void setSelectedSeat(Seat seat) {
+            Optional<SeatButton> seatButton = seatButtonList.stream().filter(button -> button.getSeat().equals(seat)).findAny();
+            seatButton.ifPresent(button -> button.getButton().setStyleName(ValoTheme.BUTTON_FRIENDLY));
         }
 
-        @Override
-        public int hashCode() {
-            return seat.hashCode();
+        private class SeatButton {
+
+            private Button button;
+            private Seat seat;
+
+            SeatButton(Button button, Seat seat) {
+                this.button = button;
+                this.seat = seat;
+            }
+
+            public Button getButton() {
+                return button;
+            }
+
+            public Seat getSeat() {
+                return seat;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+
+                SeatButton that = (SeatButton) o;
+
+                return seat.equals(that.seat);
+            }
+
+            @Override
+            public int hashCode() {
+                return seat.hashCode();
+            }
         }
     }
 }

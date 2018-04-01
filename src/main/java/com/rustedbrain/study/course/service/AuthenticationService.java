@@ -4,6 +4,8 @@ import com.rustedbrain.study.course.model.dto.UserRole;
 
 public interface AuthenticationService {
 
+    boolean isCinemaManagementAvailable(long cinemaId);
+
     boolean isAuthenticated();
 
     void logOut();

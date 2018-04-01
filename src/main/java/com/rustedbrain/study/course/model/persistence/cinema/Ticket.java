@@ -11,21 +11,41 @@ import java.util.Date;
 @Table(name = "ticket")
 public class Ticket extends DatabaseEntity {
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private FilmScreeningEvent event;
     @Column(name = "soldDate")
     private Date soldDate;
-    @OneToOne(fetch = FetchType.LAZY)
+    @Column(name = "reserved")
+    private boolean reserved;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "seatId")
     private Seat seat;
     @ManyToOne
     private Member member;
     @ManyToOne
     private Paymaster paymaster;
-    @Column(name = "clientName", length = 128)
+    @Column(name = "clientName", length = 128, nullable = false)
     private String clientName;
-    @Column(name = "clientSurname", length = 128)
+    @Column(name = "clientSurname", length = 128, nullable = false)
     private String clientSurname;
+    @Column(name = "checkDate", nullable = true)
+    private Date checkDate;
+
+    public Date getCheckDate() {
+        return checkDate;
+    }
+
+    public void setCheckDate(Date checkDate) {
+        this.checkDate = checkDate;
+    }
+
+    public boolean isReserved() {
+        return reserved;
+    }
+
+    public void setReserved(boolean reserved) {
+        this.reserved = reserved;
+    }
 
     public Paymaster getPaymaster() {
         return paymaster;
@@ -104,7 +124,7 @@ public class Ticket extends DatabaseEntity {
 
     @Override
     public String toString() {
-        return "Ticket{" +
+        return "TicketInfo{" +
                 "event=" + event +
                 ", soldDate=" + soldDate +
                 ", seat=" + seat +

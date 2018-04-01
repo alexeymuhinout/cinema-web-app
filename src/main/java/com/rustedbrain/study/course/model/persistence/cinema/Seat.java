@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.model.persistence.cinema;
 import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(name = "seat")
@@ -17,6 +18,10 @@ public class Seat extends DatabaseEntity implements Comparable<Seat> {
     private int clientCount;
     @Column(name = "price", nullable = false)
     private double price;
+    @Column(name = "blockIp")
+    private String blockIp;
+    @Column(name = "blockDate")
+    private Date blockDate;
 
     public Seat(int number, int clientCount, double price) {
         this.number = number;
@@ -25,6 +30,22 @@ public class Seat extends DatabaseEntity implements Comparable<Seat> {
     }
 
     public Seat() {
+    }
+
+    public String getBlockIp() {
+        return blockIp;
+    }
+
+    public void setBlockIp(String blockIp) {
+        this.blockIp = blockIp;
+    }
+
+    public Date getBlockDate() {
+        return blockDate;
+    }
+
+    public void setBlockDate(Date blockDate) {
+        this.blockDate = blockDate;
     }
 
     public Row getRow() {

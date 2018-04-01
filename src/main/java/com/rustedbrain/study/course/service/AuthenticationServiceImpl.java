@@ -29,6 +29,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .findFirst();
     }
 
+    public boolean isCinemaManagementAvailable(long cinemaId) {
+        switch (getUserRole()) {
+            case ADMINISTRATOR:
+                return true;
+            case MEMBER:
+                return false;
+            case MANAGER:
+                return authorizationUserService.isValidCinemaManager(getUserLogin(), cinemaId);
+            case PAYMASTER:
+                return false;
+            case MODERATOR:
+                return false;
+            case NOT_AUTHORIZED:
+                return false;
+            default:
+                throw new IllegalStateException("Something is going wrong. Role behaviour not implemented yet.");
+        }
+    }
+
     public UserRole getUserRole() {
         if (isAuthenticated()) {
             return UserRole.valueOf(VaadinSession.getCurrent().getAttribute(SESSION_USER_ROLE).toString());
@@ -96,8 +115,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public boolean login(String username, String password, boolean rememberMe) {
-        Optional<AuthUser> optionalUser = authorizationUserService.getAuthenticUser(username, password);
+    public boolean login(String loginOrMail, String password, boolean rememberMe) {
+        Optional<AuthUser> optionalUser = authorizationUserService.getAuthenticUser(loginOrMail, password);
         if (optionalUser.isPresent()) {
             AuthUser user = optionalUser.get();
             VaadinSession.getCurrent().setAttribute(SESSION_USERNAME, user.getLogin());

@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "city")
-public class City extends DatabaseEntity {
+public class City extends DatabaseEntity implements Comparable<City> {
 
     @Column(name = "name", length = 64, nullable = false, unique = true)
     private String name;
@@ -74,5 +74,10 @@ public class City extends DatabaseEntity {
         return "City{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(City city) {
+        return this.name.compareTo(city.name);
     }
 }

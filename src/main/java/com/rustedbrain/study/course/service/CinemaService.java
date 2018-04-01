@@ -1,6 +1,8 @@
 package com.rustedbrain.study.course.service;
 
+import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.exception.ResourceException;
+import com.rustedbrain.study.course.model.persistence.authorization.Member;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.*;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.time.LocalDate;
 import java.util.*;
 
 public interface CinemaService {
@@ -75,4 +78,24 @@ public interface CinemaService {
     Map<String, String> getHelpTittleTextMap() throws ParserConfigurationException, ResourceException, SAXException, IOException;
 
     List<Cinema> getCityCinemas(Long id);
+
+    Seat getSeat(long seatId);
+
+    List<Seat> getSeats(List<Long> seatIds);
+
+    List<TicketInfo> reserveTickets(String name, String surname, String login, FilmScreeningEvent filmScreeningEvent, List<Seat> seats);
+
+    List<TicketInfo> reserveTickets(String name, String surname, FilmScreeningEvent filmScreeningEvent, List<Seat> seats);
+
+    Member getMemberByLogin(String userLogin);
+
+    Set<FilmScreening> getDayFilmScreenings(long cinemaId, LocalDate day);
+
+    List<FilmScreeningEvent> getFilmScreeningEvents(long cinemaId, LocalDate day);
+
+    List<TicketInfo> getTicketsInfo(List<Long> ticketIds);
+
+    void renameCinema(long id, String value);
+
+    void registerMember(String login, String password, String name, String surname, long id, LocalDate birthday, String mail);
 }

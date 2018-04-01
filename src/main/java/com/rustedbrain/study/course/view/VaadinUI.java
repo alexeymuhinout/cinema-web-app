@@ -24,10 +24,11 @@ public class VaadinUI extends UI {
     public static final String MOVIE_VIEW = "movie_view";
     public static final String CITY_CREATION_VIEW = "city_creation_view";
     public static final String MESSAGE_ATTRIBUTE = "message";
-    public static final String TICKET_USER_INFO_VIEW = "ticket_user_info";
+    public static final String TICKET_BUYING_VIEW = "ticket_user_info";
     public static final String CITY_CINEMAS_VIEW = "city_cinemas_view";
     public static final String CITIES_VIEW = "cities_view";
     public static final String MAIN_VIEW = "";
+    public static final String TICKET_INFO_VIEW = "tickets_info_view";
     public Navigator navigator;
 
     private SpringViewProvider viewProvider;

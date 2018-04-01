@@ -5,6 +5,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.sql.Time;
 import java.util.Set;
 
@@ -19,10 +20,20 @@ public class FilmScreeningEvent extends DatabaseEntity {
     @OneToMany(mappedBy = "event")
     @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
     private Set<Ticket> tickets;
+    @Column(name = "date")
+    private Date date;
     @Column(name = "time")
     private Time time;
     @ManyToOne
     private CinemaHall cinemaHall;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     public Set<Ticket> getTickets() {
         return tickets;
@@ -60,16 +71,19 @@ public class FilmScreeningEvent extends DatabaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         FilmScreeningEvent that = (FilmScreeningEvent) o;
 
-        return time.equals(that.time) && cinemaHall.equals(that.cinemaHall);
+        if (!date.equals(that.date)) return false;
+        return time.equals(that.time);
     }
 
     @Override
     public int hashCode() {
-        int result = time.hashCode();
-        result = 31 * result + cinemaHall.hashCode();
+        int result = super.hashCode();
+        result = 31 * result + date.hashCode();
+        result = 31 * result + time.hashCode();
         return result;
     }
 

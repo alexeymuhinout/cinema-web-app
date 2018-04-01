@@ -135,4 +135,9 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
     public void removeRememberedUser(String id) {
         rememberedUsers.remove(id);
     }
+
+    @Override
+    public boolean isValidCinemaManager(String login, long cinemaId) {
+        return managerRepository.isCinemaManager(login, cinemaId);
+    }
 }

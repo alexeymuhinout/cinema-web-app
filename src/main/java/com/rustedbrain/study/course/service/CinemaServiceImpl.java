@@ -2,15 +2,15 @@ package com.rustedbrain.study.course.service;
 
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
+import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.exception.ResourceException;
+import com.rustedbrain.study.course.model.persistence.authorization.Member;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.*;
-import com.rustedbrain.study.course.service.repository.CinemaRepository;
-import com.rustedbrain.study.course.service.repository.CityRepository;
-import com.rustedbrain.study.course.service.repository.FilmScreeningEventRepository;
-import com.rustedbrain.study.course.service.repository.TicketRepository;
+import com.rustedbrain.study.course.service.repository.*;
 import com.rustedbrain.study.course.service.resources.ResourceAccessor;
 import com.rustedbrain.study.course.service.util.GoogleMapApiUtil;
+import com.rustedbrain.study.course.service.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +22,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +32,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CinemaServiceImpl implements CinemaService {
-
 
     private final Logger logger = Logger.getLogger(CinemaServiceImpl.class.getName());
 
@@ -43,7 +44,28 @@ public class CinemaServiceImpl implements CinemaService {
 
     private FilmScreeningEventRepository filmScreeningEventRepository;
 
+    private FilmScreeningRepository filmScreeningRepository;
+
     private TicketRepository ticketRepository;
+
+    private SeatRepository seatRepository;
+
+    private MemberRepository memberRepository;
+
+    @Autowired
+    public void setFilmScreeningRepository(FilmScreeningRepository filmScreeningRepository) {
+        this.filmScreeningRepository = filmScreeningRepository;
+    }
+
+    @Autowired
+    public void setMemberRepository(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    @Autowired
+    public void setSeatRepository(SeatRepository seatRepository) {
+        this.seatRepository = seatRepository;
+    }
 
     @Autowired
     public void setTicketRepository(TicketRepository ticketRepository) {
@@ -276,6 +298,108 @@ public class CinemaServiceImpl implements CinemaService {
     @Override
     public List<Cinema> getCityCinemas(Long id) {
         return cinemaRepository.getCinemasByCityId(id);
+    }
+
+    @Override
+    public Seat getSeat(long seatId) {
+        return seatRepository.getOne(seatId);
+    }
+
+    @Override
+    public List<Seat> getSeats(List<Long> seatIds) {
+        return seatRepository.findAllById(seatIds);
+    }
+
+    @Override
+    public List<TicketInfo> reserveTickets(String name, String surname, String login, FilmScreeningEvent filmScreeningEvent, List<Seat> seats) {
+        Optional<Member> optionalMember = Optional.ofNullable(memberRepository.findByLogin(login));
+        if (optionalMember.isPresent()) {
+            List<TicketInfo> tickets = new ArrayList<>();
+            for (Seat seat : seats) {
+                Ticket ticket = new Ticket();
+                Date date = new Date();
+                ticket.setRegistrationDate(date);
+                ticket.setLastAccessDate(date);
+                ticket.setSeat(seat);
+                ticket.setMember(optionalMember.get());
+                ticket.setClientName(name);
+                ticket.setClientSurname(surname);
+                ticket.setEvent(filmScreeningEvent);
+                ticket.setReserved(true);
+                ticketRepository.save(ticket);
+                tickets.add(new TicketInfo(ticket));
+            }
+            return tickets;
+        } else {
+            throw new IllegalArgumentException("Only members can buy tickets");
+        }
+    }
+
+    @Override
+    public List<TicketInfo> reserveTickets(String name, String surname, FilmScreeningEvent filmScreeningEvent, List<Seat> seats) {
+        List<TicketInfo> tickets = new ArrayList<>();
+        for (Seat seat : seats) {
+            Ticket ticket = new Ticket();
+            Date date = new Date();
+            ticket.setRegistrationDate(date);
+            ticket.setLastAccessDate(date);
+            ticket.setSeat(seat);
+            ticket.setClientName(name);
+            ticket.setClientSurname(surname);
+            ticket.setEvent(filmScreeningEvent);
+            ticket.setReserved(true);
+            ticketRepository.save(ticket);
+            tickets.add(new TicketInfo(ticket));
+        }
+        return tickets;
+    }
+
+    @Override
+    public Member getMemberByLogin(String userLogin) {
+        return memberRepository.findByLogin(userLogin);
+    }
+
+    @Override
+    public Set<FilmScreening> getDayFilmScreenings(long cinemaId, LocalDate day) {
+        Set<FilmScreening> filmScreenings = new HashSet<>(filmScreeningRepository.getFilmScreening(cinemaId, java.sql.Date.valueOf(day)));
+
+        for (FilmScreening filmScreening : filmScreenings) {
+            filmScreening.getFilmScreeningEvents().removeIf(filmScreeningEvent -> !filmScreeningEvent.getDate().equals(java.sql.Date.valueOf(day)));
+        }
+
+        return filmScreenings;
+    }
+
+    @Override
+    public List<FilmScreeningEvent> getFilmScreeningEvents(long cinemaId, LocalDate day) {
+        return filmScreeningEventRepository.getFilmScreeningEvents(cinemaId, java.sql.Date.valueOf(day));
+    }
+
+    @Override
+    public List<TicketInfo> getTicketsInfo(List<Long> ticketIds) {
+        return ticketRepository.findAllById(ticketIds).stream().map(TicketInfo::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public void renameCinema(long id, String value) {
+        cinemaRepository.renameCinema(id, value);
+    }
+
+    @Override
+    public void registerMember(String login, String password, String name, String surname, long cityId, LocalDate birthday, String mail) {
+        if (!Validator.LOGIN_VALIDATOR.isValid(login)) {
+            throw new IllegalArgumentException("Login is not valid. You can use only characters and digits in your login.");
+        } else if (!Validator.MAIL_VALIDATOR.isValid(mail)) {
+            throw new IllegalArgumentException("Mail is not valid. Please check inputted mail.");
+        }
+        Member member = new Member(login, password, mail);
+        member.setName(name);
+        member.setSurname(surname);
+        member.setCity(cityRepository.getOne(cityId));
+        member.setLastAccessDate(new Date());
+        member.setRegistrationDate(new Date());
+        member.setBirthday(Date.from(birthday.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        memberRepository.save(member);
     }
 
     private Optional<Cinema> calculateNearestCinemaToAddress(Set<Cinema> cinemas, String userStreetLocation) throws IOException {

@@ -17,9 +17,7 @@ public interface MainView extends ApplicationView {
 
     void showCitySelectionPanel(List<City> cities);
 
-    void setSelectedCharacterButton(Character character);
-
-    void setSelectedCharacterCities(List<City> collect);
+    void setSelectedCharacterCities(Character character);
 
     interface MainViewListener {
 
@@ -35,8 +33,8 @@ public interface MainView extends ApplicationView {
 
         void setView(MainView mainView);
 
-        void characterButtonClicked(Character character);
+        void cityButtonClicked(long city);
 
-        void cityButtonClicked(City city);
+        void alphabetButtonClicked(Character character);
     }
 }

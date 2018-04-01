@@ -20,7 +20,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @UIScope
 @SpringComponent
@@ -42,16 +41,15 @@ public class MainViewPresenter implements MainView.MainViewListener, Serializabl
         this.mainView = mainView;
     }
 
+
     @Override
-    public void characterButtonClicked(Character character) {
-        List<City> cities = cinemaService.getCities();
-        this.mainView.setSelectedCharacterButton(character);
-        this.mainView.setSelectedCharacterCities(cities.stream().filter(city -> character.equals(city.getName().charAt(0))).collect(Collectors.toList()));
+    public void cityButtonClicked(long cityId) {
+        new PageNavigator().navigateToCityCinemasView(cityId);
     }
 
     @Override
-    public void cityButtonClicked(City city) {
-
+    public void alphabetButtonClicked(Character character) {
+        mainView.setSelectedCharacterCities(character);
     }
 
     @Override
@@ -88,7 +86,7 @@ public class MainViewPresenter implements MainView.MainViewListener, Serializabl
         mainView.fillMenuPanel(authenticationService);
         try {
             InetAddress address = InetAddress.getByName(Page.getCurrent().getWebBrowser().getAddress());
-            address = InetAddress.getByName("46.149.89.61");
+
             Optional<City> optionalCity = cinemaService.getCityByInetAddress(address);
 
             if (optionalCity.isPresent()) {
@@ -101,14 +99,16 @@ public class MainViewPresenter implements MainView.MainViewListener, Serializabl
                     new PageNavigator().navigateToCityCinemasView(city.getId());
                 }
             } else {
-                logger.info("City was not identified for user: " + address.getHostAddress());
-                mainView.showCitySelectionPanel(cinemaService.getCities());
+                throw new NoSuchElementException("User city was not identified");
             }
         } catch (IOException ex) {
             logger.log(Level.WARNING, "Error occured while binding " + MainViewPresenter.class.getSimpleName() + " to " + MainView.class.getSimpleName(), ex);
         } catch (NoSuchElementException ex) {
             logger.log(Level.INFO, "User location was not identified", ex);
-            // new PageNavigator().navigateToCitiesView();
+            List<City> cities = cinemaService.getCities();
+            mainView.showCitySelectionPanel(cities);
+            Optional<char[]> optional = cities.stream().sorted().map(City::getName).map(String::toCharArray).findAny();
+            optional.ifPresent(chars -> mainView.setSelectedCharacterCities(chars[0]));
         }
     }
 

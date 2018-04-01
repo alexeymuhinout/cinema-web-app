@@ -13,6 +13,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -157,20 +159,18 @@ public class Application {
             FilmScreening filmScreening = createFilmScreening(cinemaRepository.getOne(cinema6.getId()), movieRepository.getOne(movie1.getId()));
             FilmScreening filmScreening2 = createFilmScreening(cinemaRepository.getOne(cinema6.getId()), movieRepository.getOne(movie2.getId()));
             FilmScreening filmScreening3 = createFilmScreening(cinemaRepository.getOne(cinema6.getId()), movieRepository.getOne(movie3.getId()));
+
+            filmScreening.setFilmScreeningEvents(new HashSet<>(createFilmScreeningEvents(filmScreening, (CinemaHall) cinemaHalls2.toArray()[0], new Time(14, 30, 00))));
+            filmScreening2.setFilmScreeningEvents(new HashSet<>(createFilmScreeningEvents(filmScreening2, (CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00))));
+            filmScreening2.setFilmScreeningEvents(new HashSet<>(createFilmScreeningEvents(filmScreening2, (CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00))));
+
             filmScreeningRepository.save(filmScreening);
             filmScreeningRepository.save(filmScreening2);
             filmScreeningRepository.save(filmScreening3);
 
-            FilmScreeningEvent filmScreeningEvent = createFilmScreeningEvent(filmScreeningRepository.getOne(filmScreening.getId()), (CinemaHall) cinemaHalls2.toArray()[0], new Time(14, 30, 00));
-            FilmScreeningEvent filmScreeningEvent2 = createFilmScreeningEvent(filmScreeningRepository.getOne(filmScreening2.getId()), (CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00));
-            FilmScreeningEvent filmScreeningEvent3 = createFilmScreeningEvent(filmScreeningRepository.getOne(filmScreening2.getId()), (CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00));
-
-            filmScreeningEventRepository.saveAll(Arrays.asList(filmScreeningEvent, filmScreeningEvent2, filmScreeningEvent3));
-
-
-            List<FilmScreening> filmScreenings1 = filmScreeningRepository.findAll();
-            List<FilmScreeningEvent> filmScreeningsEvents = filmScreeningEventRepository.findAll();
-            Set<FilmScreening> filmScreenings2 = cinemaRepository.getOne(cinema6.getId()).getFilmScreenings();
+            log.info(filmScreeningRepository.findAll().toString());
+            log.info(filmScreeningEventRepository.findAll().toString());
+            log.info(cinemaRepository.getOne(cinema6.getId()).getFilmScreenings().toString());
         };
     }
 
@@ -193,7 +193,7 @@ public class Application {
     private FilmScreening createFilmScreening(Cinema cinema, Movie movie) {
         FilmScreening filmScreening = new FilmScreening();
         filmScreening.setStartDate(new Date());
-        filmScreening.setEndDate(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(14)));
+        filmScreening.setEndDate(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(new Random().nextInt(5) + 2)));
         filmScreening.setRegistrationDate(new Date());
         filmScreening.setLastAccessDate(new Date());
         filmScreening.setMovie(movie);
@@ -201,14 +201,25 @@ public class Application {
         return filmScreening;
     }
 
-    private FilmScreeningEvent createFilmScreeningEvent(FilmScreening filmScreening, CinemaHall cinemaHall, Time time) {
-        FilmScreeningEvent filmScreeningEvent = new FilmScreeningEvent();
-        filmScreeningEvent.setRegistrationDate(new Date());
-        filmScreeningEvent.setLastAccessDate(new Date());
-        filmScreeningEvent.setFilmScreening(filmScreening);
-        filmScreeningEvent.setTime(time);
-        filmScreeningEvent.setCinemaHall(cinemaHall);
-        return filmScreeningEvent;
+    private List<FilmScreeningEvent> createFilmScreeningEvents(FilmScreening filmScreening, CinemaHall cinemaHall, Time time) {
+        List<FilmScreeningEvent> filmScreeningEvents = new ArrayList<>();
+
+        final int days_increment = 1;
+        LocalDate currDate = LocalDate.from(filmScreening.getStartDate().toInstant().atZone(ZoneId.systemDefault()));
+        LocalDate endDate = LocalDate.from(filmScreening.getEndDate().toInstant().atZone(ZoneId.systemDefault()));
+        while (!currDate.equals(endDate.plusDays(days_increment))) {
+            FilmScreeningEvent filmScreeningEvent = new FilmScreeningEvent();
+            filmScreeningEvent.setRegistrationDate(new Date());
+            filmScreeningEvent.setLastAccessDate(new Date());
+            filmScreeningEvent.setFilmScreening(filmScreening);
+            filmScreeningEvent.setTime(time);
+            filmScreeningEvent.setCinemaHall(cinemaHall);
+            filmScreeningEvent.setDate(java.sql.Date.valueOf(currDate));
+            filmScreeningEvents.add(filmScreeningEvent);
+            currDate = currDate.plusDays(days_increment);
+        }
+
+        return filmScreeningEvents;
     }
 
     private Set<CinemaHall> getTestCinemaHallSet(int cinemaHallsCount, Cinema cinema) {
