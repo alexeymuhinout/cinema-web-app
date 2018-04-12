@@ -3,7 +3,6 @@ package com.rustedbrain.study.course.service;
 import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.exception.ResourceException;
 import com.rustedbrain.study.course.model.persistence.authorization.Member;
-import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -13,35 +12,20 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public interface CinemaService {
-
-    List<Movie> getCurrentMovies(Cinema cinema, Date date);
-
-    Set<Cinema> getCityCinemas(City city);
 
     List<City> getCities();
 
     Page<City> getCitiesPage(int page, int pageSize);
 
-    List<Comment> getMessages(Movie movie);
-
-    void addFilmScreening(FilmScreening filmScreening);
-
-    List<Seat> getAvailableSeats(Cinema cinema, FilmScreeningEvent event) throws IllegalArgumentException;
-
-    void lockTicket(User user, FilmScreeningEvent event);
-
-    void unlockTicket(User user, FilmScreeningEvent event);
-
-    List<Cinema> getCityCinemas();
-
     Page<Cinema> getCinemasPage(int page, int pageSize);
 
     Page<Cinema> getCinemasPage(int page, int pageSize, Sort sort);
-
-    boolean isCinemaExist(long id);
 
     Cinema getCinema(long id);
 
@@ -49,17 +33,11 @@ public interface CinemaService {
 
     void createCity(String name);
 
-    void deleteCinema(Cinema cinema);
-
     void createCinema(City city, String name, String street);
 
     Cinema getCinema(Long cinemaId);
 
     FilmScreeningEvent getFilmScreeningEvent(Long filmScreeningEventId);
-
-    void buyTickets(List<Ticket> boughtTickets);
-
-    List<Movie> getCurrentMovies();
 
     Optional<City> getCityByName(String ipAddress) throws IOException;
 
@@ -79,8 +57,6 @@ public interface CinemaService {
 
     List<Cinema> getCityCinemas(Long id);
 
-    Seat getSeat(long seatId);
-
     List<Seat> getSeats(List<Long> seatIds);
 
     List<TicketInfo> reserveTickets(String name, String surname, String login, FilmScreeningEvent filmScreeningEvent, List<Seat> seats);
@@ -90,8 +66,6 @@ public interface CinemaService {
     Member getMemberByLogin(String userLogin);
 
     Set<FilmScreening> getDayFilmScreenings(long cinemaId, LocalDate day);
-
-    List<FilmScreeningEvent> getFilmScreeningEvents(long cinemaId, LocalDate day);
 
     List<TicketInfo> getTicketsInfo(List<Long> ticketIds);
 

@@ -1,8 +1,7 @@
 package com.rustedbrain.study.course;
 
 
-import com.rustedbrain.study.course.model.persistence.authorization.Administrator;
-import com.rustedbrain.study.course.model.persistence.authorization.Member;
+import com.rustedbrain.study.course.model.persistence.authorization.*;
 import com.rustedbrain.study.course.model.persistence.cinema.*;
 import com.rustedbrain.study.course.service.repository.*;
 import org.slf4j.Logger;
@@ -28,15 +27,23 @@ public class Application {
     }
 
     @Bean
-    public CommandLineRunner loadData(SeatRepository seatRepository, RowRepository rowRepository, CinemaHallRepository cinemaHallRepository, FilmScreeningEventRepository filmScreeningEventRepository, GenreRepository genreRepository, ActorRepository actorRepository, FilmScreeningRepository filmScreeningRepository, CinemaRepository cinemaRepository, CityRepository cityRepository, AdministratorRepository administratorRepository, MemberRepository memberRepository, MovieRepository movieRepository) {
+    public CommandLineRunner loadData(ManagerRepository managerRepository, ModeratorRepository moderatorRepository, PaymasterRepository paymasterRepository, SeatRepository seatRepository, RowRepository rowRepository, CinemaHallRepository cinemaHallRepository, FilmScreeningEventRepository filmScreeningEventRepository, GenreRepository genreRepository, ActorRepository actorRepository, FilmScreeningRepository filmScreeningRepository, CinemaRepository cinemaRepository, CityRepository cityRepository, AdministratorRepository administratorRepository, MemberRepository memberRepository, MovieRepository movieRepository) {
         return (args) -> {
             // save a couple of customers
-            administratorRepository.save(new Administrator("mogtarip", "mogtariperson1996", "mogtarmogtar@gmail.com"));
-            administratorRepository.save(new Administrator("hardeathit", "hardeathit1992", "hardeathit@gmail.com"));
+            administratorRepository.save(new Administrator("BloodarAdmin", "bloodarkness1996", "bloodaradmin@gmail.com"));
+            administratorRepository.save(new Administrator("EleonoraAdmin", "eliakipa1996", "eliakipaadmin@gmail.com"));
 
-            memberRepository.save(new Member("Bloodar", "Bloodarkness1996", "alexeymuhinout@gmail.com"));
-            memberRepository.save(new Member("eleonora", "281093", "eleonoranora@gmail.com"));
+            memberRepository.save(new Member("BloodarMember", "bloodarkness1996", "bloodarmember@gmail.com"));
+            memberRepository.save(new Member("EleonoraMember", "eliakipa1996", "eliakipamember@gmail.com"));
 
+            paymasterRepository.save(new Paymaster("BloodarPaymaster", "bloodarkness1996", "bloodarpaymaster@gmail.com"));
+            paymasterRepository.save(new Paymaster("EleonoraPaymaster", "eliakipa1996", "eliakipapaymaster@gmail.com"));
+
+            moderatorRepository.save(new Moderator("BloodarModerator", "bloodarkness1996", "bloodarmoderator@gmail.com"));
+            moderatorRepository.save(new Moderator("EleonoraModerator", "eliakipa1996", "eliakipamoderator@gmail.com"));
+
+            managerRepository.save(new Manager("BloodarManager", "bloodarkness1996", "bloodarmanager@gmail.com"));
+            managerRepository.save(new Manager("EleonoraManager", "eliakipa1996", "eliakipamanager@gmail.com"));
 
             City city1 = new City("New York");
             City city2 = new City("New Jersey");
@@ -160,7 +167,7 @@ public class Application {
             FilmScreening filmScreening2 = createFilmScreening(cinemaRepository.getOne(cinema6.getId()), movieRepository.getOne(movie2.getId()));
             FilmScreening filmScreening3 = createFilmScreening(cinemaRepository.getOne(cinema6.getId()), movieRepository.getOne(movie3.getId()));
 
-            filmScreening.setFilmScreeningEvents(new HashSet<>(createFilmScreeningEvents(filmScreening, (CinemaHall) cinemaHalls2.toArray()[0], new Time(14, 30, 00))));
+            filmScreening.setFilmScreeningEvents(new HashSet<>(createFilmScreeningEvents(filmScreening, (CinemaHall) cinemaHalls2.toArray()[0], new Time(14, 30, 00), new Time(16, 30, 00), new Time(18, 30, 00), new Time(20, 30, 00), new Time(22, 30, 00))));
             filmScreening2.setFilmScreeningEvents(new HashSet<>(createFilmScreeningEvents(filmScreening2, (CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00))));
             filmScreening2.setFilmScreeningEvents(new HashSet<>(createFilmScreeningEvents(filmScreening2, (CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00))));
 
@@ -201,22 +208,24 @@ public class Application {
         return filmScreening;
     }
 
-    private List<FilmScreeningEvent> createFilmScreeningEvents(FilmScreening filmScreening, CinemaHall cinemaHall, Time time) {
+    private List<FilmScreeningEvent> createFilmScreeningEvents(FilmScreening filmScreening, CinemaHall cinemaHall, Time... times) {
         List<FilmScreeningEvent> filmScreeningEvents = new ArrayList<>();
 
-        final int days_increment = 1;
-        LocalDate currDate = LocalDate.from(filmScreening.getStartDate().toInstant().atZone(ZoneId.systemDefault()));
-        LocalDate endDate = LocalDate.from(filmScreening.getEndDate().toInstant().atZone(ZoneId.systemDefault()));
-        while (!currDate.equals(endDate.plusDays(days_increment))) {
-            FilmScreeningEvent filmScreeningEvent = new FilmScreeningEvent();
-            filmScreeningEvent.setRegistrationDate(new Date());
-            filmScreeningEvent.setLastAccessDate(new Date());
-            filmScreeningEvent.setFilmScreening(filmScreening);
-            filmScreeningEvent.setTime(time);
-            filmScreeningEvent.setCinemaHall(cinemaHall);
-            filmScreeningEvent.setDate(java.sql.Date.valueOf(currDate));
-            filmScreeningEvents.add(filmScreeningEvent);
-            currDate = currDate.plusDays(days_increment);
+        for (Time time : times) {
+            final int days_increment = 1;
+            LocalDate currDate = LocalDate.from(filmScreening.getStartDate().toInstant().atZone(ZoneId.systemDefault()));
+            LocalDate endDate = LocalDate.from(filmScreening.getEndDate().toInstant().atZone(ZoneId.systemDefault()));
+            while (!currDate.equals(endDate.plusDays(days_increment))) {
+                FilmScreeningEvent filmScreeningEvent = new FilmScreeningEvent();
+                filmScreeningEvent.setRegistrationDate(new Date());
+                filmScreeningEvent.setLastAccessDate(new Date());
+                filmScreeningEvent.setFilmScreening(filmScreening);
+                filmScreeningEvent.setTime(time);
+                filmScreeningEvent.setCinemaHall(cinemaHall);
+                filmScreeningEvent.setDate(java.sql.Date.valueOf(currDate));
+                filmScreeningEvents.add(filmScreeningEvent);
+                currDate = currDate.plusDays(days_increment);
+            }
         }
 
         return filmScreeningEvents;

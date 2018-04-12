@@ -49,4 +49,9 @@ public class LoginViewImpl extends VerticalLayout implements LoginView {
     public void showInvalidCredentialsNotification() {
         Notification.show("Invalid authorization data specified. Please, check your login and password.", Notification.Type.ERROR_MESSAGE);
     }
+
+    @Override
+    public void showError(String message) {
+        Notification.show(message, Notification.Type.ERROR_MESSAGE);
+    }
 }

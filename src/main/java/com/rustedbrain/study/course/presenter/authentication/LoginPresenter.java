@@ -7,6 +7,7 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.security.AccessControlException;
 import java.util.logging.Logger;
 
 @UIScope
@@ -24,12 +25,16 @@ public class LoginPresenter implements LoginView.LoginViewListener {
 
     @Override
     public void loginButtonClicked(String login, String password, boolean rememberMe) {
-        if (authenticationService.login(login, password, rememberMe)) {
-            logger.info("User with login \"" + login + "\" successfully logged in. Navigating to main view.");
-            new PageNavigator().navigateToMainView();
-        } else {
-            logger.info("User with login \"" + login + "\" and password \"" + password + "\" not exist. Can not login.");
-            loginView.showInvalidCredentialsNotification();
+        try {
+            if (authenticationService.login(login, password, rememberMe)) {
+                logger.info("User with login \"" + login + "\" successfully logged in. Navigating to main view.");
+                new PageNavigator().navigateToMainView();
+            } else {
+                logger.info("User with login \"" + login + "\" and password \"" + password + "\" not exist. Can not login.");
+                loginView.showInvalidCredentialsNotification();
+            }
+        } catch (AccessControlException ex) {
+            loginView.showError(ex.getMessage());
         }
     }
 

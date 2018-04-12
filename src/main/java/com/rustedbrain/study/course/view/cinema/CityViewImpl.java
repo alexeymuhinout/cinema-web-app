@@ -5,6 +5,7 @@ import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -104,16 +105,16 @@ public class CityViewImpl extends VerticalLayout implements CityView {
 
     @Override
     public void showWarning(String message) {
-
+        Notification.show(message, Notification.Type.WARNING_MESSAGE);
     }
 
     @Override
     public void showError(String message) {
-
+        Notification.show(message, Notification.Type.ERROR_MESSAGE);
     }
 
     @Override
     public void reloadPage() {
-
+        Page.getCurrent().reload();
     }
 }

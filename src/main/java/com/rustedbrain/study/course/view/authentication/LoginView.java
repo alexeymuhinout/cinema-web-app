@@ -8,6 +8,8 @@ public interface LoginView extends View {
 
     void showInvalidCredentialsNotification();
 
+    void showError(String message);
+
     interface LoginViewListener {
 
         void loginButtonClicked(String login, String password, boolean rememberMe);

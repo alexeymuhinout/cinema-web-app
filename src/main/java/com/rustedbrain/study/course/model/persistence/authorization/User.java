@@ -29,6 +29,10 @@ public class User extends DatabaseEntity {
     @ManyToOne
     @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
     protected City city;
+    @Column(name = "blockPeriod")
+    private Date blockPeriod;
+    @Column(name = "blockDescription")
+    private String blockDescription;
 
     public User(String login, String password, String email) {
         this.login = login;
@@ -37,6 +41,22 @@ public class User extends DatabaseEntity {
     }
 
     public User() {
+    }
+
+    public String getBlockDescription() {
+        return blockDescription;
+    }
+
+    public void setBlockDescription(String blockDescription) {
+        this.blockDescription = blockDescription;
+    }
+
+    public Date getBlockPeriod() {
+        return blockPeriod;
+    }
+
+    public void setBlockPeriod(Date blockPeriod) {
+        this.blockPeriod = blockPeriod;
     }
 
     public City getCity() {

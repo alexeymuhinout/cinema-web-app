@@ -14,6 +14,13 @@ public class Manager extends User {
     @OneToMany(mappedBy = "manager")
     private Set<Cinema> cinemas;
 
+    public Manager() {
+    }
+
+    public Manager(String login, String password, String email) {
+        super(login, password, email);
+    }
+
     public Manager(String login, String password, String mail, Set<Cinema> cinemas) {
         super(login, password, mail);
         this.cinemas = cinemas;

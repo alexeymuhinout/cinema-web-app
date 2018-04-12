@@ -8,13 +8,11 @@ import com.rustedbrain.study.course.service.util.TicketInfoHTML;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileDownloader;
+import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
@@ -86,17 +84,17 @@ public class TicketsInfoViewImpl extends VerticalLayout implements TicketsInfoVi
 
     @Override
     public void showWarning(String message) {
-
+        Notification.show(message, Notification.Type.WARNING_MESSAGE);
     }
 
     @Override
     public void showError(String message) {
-
+        Notification.show(message, Notification.Type.ERROR_MESSAGE);
     }
 
     @Override
     public void reloadPage() {
-
+        Page.getCurrent().reload();
     }
 
     private StreamResource createResource(List<TicketInfo> ticketInfos) {

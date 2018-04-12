@@ -5,6 +5,7 @@ import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.components.CityComboBox;
 import com.vaadin.data.Result;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -126,16 +127,16 @@ public class RegistrationViewImpl extends VerticalLayout implements Registration
 
     @Override
     public void showWarning(String message) {
-
+        Notification.show(message, Notification.Type.WARNING_MESSAGE);
     }
 
     @Override
     public void showError(String message) {
-
+        Notification.show(message, Notification.Type.ERROR_MESSAGE);
     }
 
     @Override
     public void reloadPage() {
-
+        Page.getCurrent().reload();
     }
 }

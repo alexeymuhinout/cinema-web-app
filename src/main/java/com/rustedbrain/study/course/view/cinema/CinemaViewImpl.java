@@ -1,7 +1,10 @@
 package com.rustedbrain.study.course.view.cinema;
 
 import com.rustedbrain.study.course.model.dto.UserRole;
-import com.rustedbrain.study.course.model.persistence.cinema.*;
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
+import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.components.MenuComponent;
@@ -17,14 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @UIScope
 @SpringView(name = VaadinUI.CINEMA_VIEW)
 public class CinemaViewImpl extends VerticalLayout implements CinemaView {
+
+    private static final int SCREENING_TIMES_COLUMNS_COUNT = 5;
 
     private List<CinemaViewListener> listeners = new ArrayList<>();
     private Panel filmScreeningsPanel;
@@ -77,58 +80,24 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
             Label movieNameLabel = new Label(movie.getLocalizedName() + "<br />" + "(" + movie.getOriginalName() + ", " + movie.getReleaseDate().getYear() + ")", ContentMode.HTML);
             verticalLayout.addComponent(movieNameLabel);
 
+            Image image = new Image(movie.getOriginalName(), new FileResource(new File(movie.getPosterPath())));
+            image.setWidth(365, Unit.PIXELS);
+            image.setHeight(490, Unit.PIXELS);
+            verticalLayout.addComponent(image);
 
-            FileResource resource = new FileResource(new File(movie.getPosterPath()));
-            Image image = new Image("", resource);
-            image.setWidth(400, Unit.PIXELS);
-            image.setHeight(500, Unit.PIXELS);
-            HorizontalLayout horizontalLayout = new HorizontalLayout(image);
-
-            for (FilmScreeningEvent filmScreeningEvent : filmScreening.getFilmScreeningEvents()) {
+            GridLayout timesLayout = new GridLayout();
+            timesLayout.setColumns(SCREENING_TIMES_COLUMNS_COUNT);
+            List<FilmScreeningEvent> filmScreeningEvents = filmScreening.getFilmScreeningEvents().stream().sorted(Comparator.comparing(FilmScreeningEvent::getTime)).collect(Collectors.toList());
+            for (FilmScreeningEvent filmScreeningEvent : filmScreeningEvents) {
                 Button buttonFilmViewTime = new Button(filmScreeningEvent.getTime().getHours() + ":" + filmScreeningEvent.getTime().getMinutes(), (Button.ClickListener) event -> listeners.forEach(listener -> listener.buttonFilmViewTimeClicked(filmScreeningEvent.getId())));
                 buttonFilmViewTime.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
-                horizontalLayout.addComponent(buttonFilmViewTime);
+                timesLayout.addComponent(buttonFilmViewTime);
             }
 
-            verticalLayout.addComponent(horizontalLayout);
+            verticalLayout.addComponent(timesLayout);
 
-            Accordion accordion = new Accordion();
-            accordion.setHeight(100.0f, Unit.PERCENTAGE);
-
-            StringBuilder genresStringBuilder = new StringBuilder();
-            for (Genre genre : movie.getGenres()) {
-                genresStringBuilder.append(genre.getName()).append("<br />");
-            }
-            final Label genresLabel = new Label(genresStringBuilder.toString(), ContentMode.HTML);
-            genresLabel.setWidth(100.0f, Unit.PERCENTAGE);
-
-            final VerticalLayout accordionGenresVerticalLayout = new VerticalLayout(genresLabel);
-            accordionGenresVerticalLayout.setMargin(true);
-
-            accordion.addTab(accordionGenresVerticalLayout, "Genres");
-
-            StringBuilder actorsStringBuilder = new StringBuilder();
-            for (Actor actor : movie.getActors()) {
-                actorsStringBuilder.append(actor.getName()).append(" ").append(actor.getSurname()).append("<br />");
-            }
-            final Label actorsLabel = new Label(actorsStringBuilder.toString(), ContentMode.HTML);
-            actorsLabel.setWidth(100.0f, Unit.PERCENTAGE);
-
-            final VerticalLayout accordionVerticalLayout = new VerticalLayout(actorsLabel);
-            accordionVerticalLayout.setMargin(true);
-
-            accordion.addTab(accordionVerticalLayout, "Actors");
-
-            final Label descriptionLabel = new Label(movie.getDescription());
-            descriptionLabel.setWidth(100.0f, Unit.PERCENTAGE);
-
-            final VerticalLayout descriptionVerticalLayout = new VerticalLayout(descriptionLabel);
-            descriptionVerticalLayout.setMargin(true);
-
-            accordion.addTab(descriptionVerticalLayout, "Description");
-            accordion.setSizeUndefined();
-            verticalLayout.addComponent(accordion);
-            verticalLayout.setSizeUndefined();
+            verticalLayout.setSizeFull();
+            panel.setSizeFull();
             filmScreeningsHorizontalLayout.addComponent(panel);
             filmScreeningsHorizontalLayout.setSizeUndefined();
         }
@@ -220,12 +189,12 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
 
     @Override
     public void showWarning(String message) {
-
+        Notification.show(message, Notification.Type.WARNING_MESSAGE);
     }
 
     @Override
     public void showError(String message) {
-
+        Notification.show(message, Notification.Type.ERROR_MESSAGE);
     }
 
     @Override

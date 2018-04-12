@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.security.AccessControlException;
 import java.security.SecureRandom;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +27,50 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 
     private SecureRandom random = new SecureRandom();
     private Map<String, AuthUser> rememberedUsers = new HashMap<>();
+
+    public UserPropertiesAccessor getUserPropertiesAccessor(UserRole role) {
+        switch (role) {
+            case MODERATOR:
+                return new UserPropertiesAccessorImpl<>(moderatorRepository);
+            case MANAGER:
+                return new UserPropertiesAccessorImpl<>(managerRepository);
+            case ADMINISTRATOR:
+                return new UserPropertiesAccessorImpl<>(administratorRepository);
+            case MEMBER:
+                return new UserPropertiesAccessorImpl<>(memberRepository);
+            case PAYMASTER:
+                return new UserPropertiesAccessorImpl<>(paymasterRepository);
+            case NOT_AUTHORIZED:
+                throw new IllegalArgumentException("User not authorised");
+            default:
+                throw new IllegalArgumentException("Role not predefined");
+        }
+    }
+
+    @Override
+    public User getUser(String login) {
+        User user = memberRepository.findByLogin(login);
+        if (user != null) {
+            return user;
+        }
+        user = administratorRepository.findByLogin(login);
+        if (user != null) {
+            return user;
+        }
+        user = paymasterRepository.findByLogin(login);
+        if (user != null) {
+            return user;
+        }
+        user = moderatorRepository.findByLogin(login);
+        if (user != null) {
+            return user;
+        }
+        user = managerRepository.findByLogin(login);
+        if (user != null) {
+            return user;
+        }
+        return user;
+    }
 
     @Autowired
     public void setAdministratorRepository(AdministratorRepository administratorRepository) {
@@ -52,7 +98,7 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
     }
 
     @Override
-    public Optional<AuthUser> getAuthenticUser(String login, String password) {
+    public Optional<AuthUser> getIdentifiedAuthUser(String login, String password) {
         for (Validator validator : Validator.values()) {
             if (validator.isValid(login)) {
                 switch (validator) {
@@ -100,7 +146,12 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
     }
 
     private boolean isNotNullPasswordIdentified(User user, String password) {
-        return user != null && user.getPassword().equals(password);
+        boolean identified = user != null && user.getPassword().equals(password);
+        if (identified && user.getBlockPeriod() != null && user.getBlockPeriod().after(new Date())) {
+            throw new AccessControlException("User is blocked and cannot use service until \"" + user.getBlockPeriod() + "\", reason \"" + user.getBlockDescription() + "\"");
+        } else {
+            return identified;
+        }
     }
 
     private Optional<AuthUser> getAuthUserByMail(String mail, String password) {
@@ -139,5 +190,36 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
     @Override
     public boolean isValidCinemaManager(String login, long cinemaId) {
         return managerRepository.isCinemaManager(login, cinemaId);
+    }
+
+    @Override
+    public Optional<Administrator> getAdministrator(String userLogin) {
+        Optional<Administrator> optionalAdministrator = Optional.ofNullable(administratorRepository.findByLogin(userLogin));
+        if (!optionalAdministrator.isPresent()) {
+            optionalAdministrator = Optional.ofNullable(administratorRepository.findByEmail(userLogin));
+        }
+        return optionalAdministrator;
+    }
+
+    @Override
+    public Optional<AuthUser> getAuthUserById(long id) {
+        Optional<Member> member = memberRepository.findById(id);
+        if (member.isPresent()) {
+            return Optional.of(new AuthUser(member.get().getLogin(), UserRole.MEMBER));
+        }
+        Optional<Administrator> optionalAdministrator = administratorRepository.findById(id);
+        if (optionalAdministrator.isPresent()) {
+            return Optional.of(new AuthUser(optionalAdministrator.get().getLogin(), UserRole.ADMINISTRATOR));
+        }
+        Optional<Manager> optionalManager = managerRepository.findById(id);
+        if (optionalManager.isPresent()) {
+            return Optional.of(new AuthUser(optionalManager.get().getLogin(), UserRole.MANAGER));
+        }
+        Optional<Moderator> optionalModerator = moderatorRepository.findById(id);
+        if (optionalModerator.isPresent()) {
+            return Optional.of(new AuthUser(optionalModerator.get().getLogin(), UserRole.MODERATOR));
+        }
+        Optional<Paymaster> paymaster = paymasterRepository.findById(id);
+        return paymaster.map(paymaster1 -> new AuthUser(paymaster1.getLogin(), UserRole.PAYMASTER));
     }
 }

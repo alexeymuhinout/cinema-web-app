@@ -2,6 +2,7 @@ package com.rustedbrain.study.course.service;
 
 import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
@@ -9,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
-import java.util.Arrays;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -58,6 +62,191 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     public String getUserLogin() {
         return VaadinSession.getCurrent().getAttribute(SESSION_USERNAME).toString();
+    }
+
+    @Override
+    public User getAuthenticUser() {
+        if (!isAuthenticated()) {
+            throw new IllegalStateException("Cannot retrieve not authenticated user.");
+        }
+        Optional<User> optionalUser = Optional.ofNullable(authorizationUserService.getUser(getUserLogin()));
+        if (!optionalUser.isPresent()) {
+            throw new IllegalStateException("User with specified login/mail not found.");
+        } else {
+            return optionalUser.get();
+        }
+    }
+
+    @Override
+    public List<User> getUsersByRoles(List<UserRole> roles) {
+        List<User> users = new ArrayList<>();
+        for (UserRole role : roles) {
+            users.addAll(authorizationUserService.getUserPropertiesAccessor(role).findAll());
+        }
+        return users;
+    }
+
+    @Override
+    public void changeUserName(long id, String name, UserRole authorizedUserRole) {
+        switch (authorizedUserRole) {
+            case ADMINISTRATOR: {
+                Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+                if (optionalAuthUser.isPresent()) {
+                    authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole()).changeUserName(id, name);
+                } else {
+                    throw new IllegalArgumentException("User with specified id not found.");
+                }
+            }
+            break;
+            default: {
+                // TODO: 4/8/18 Add logic to check last renaming request and prevent to change data too often
+                // TODO: 4/8/18 Add logic to create request in database about renaming for admin
+            }
+            break;
+        }
+    }
+
+    @Override
+    public void changeUserLogin(long id, String login, UserRole role) {
+        switch (role) {
+            case ADMINISTRATOR: {
+                Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+                if (optionalAuthUser.isPresent()) {
+                    authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole()).changeUserLogin(id, login);
+                } else {
+                    throw new IllegalArgumentException("User with specified id not found.");
+                }
+            }
+            break;
+            default: {
+                // TODO: 4/8/18 Add logic to check last renaming request and prevent to change data too often
+                // TODO: 4/8/18 Add logic to create request in database about renaming for admin
+            }
+            break;
+        }
+    }
+
+    @Override
+    public void changeUserMail(long id, String mail, UserRole role) {
+        switch (role) {
+            case ADMINISTRATOR: {
+                Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+                if (optionalAuthUser.isPresent()) {
+                    authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole()).changeUserMail(id, mail);
+                } else {
+                    throw new IllegalArgumentException("User with specified id not found.");
+                }
+            }
+            break;
+            default: {
+                // TODO: 4/8/18 Add logic to check last renaming request and prevent to change data too often
+                // TODO: 4/8/18 Add logic to create request in database about renaming for admin
+            }
+            break;
+        }
+    }
+
+    @Override
+    public void changeUserSurname(long id, String surname, UserRole role) {
+        switch (role) {
+            case ADMINISTRATOR: {
+                Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+                if (optionalAuthUser.isPresent()) {
+                    authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole()).changeUserSurname(id, surname);
+                } else {
+                    throw new IllegalArgumentException("User with specified id not found.");
+                }
+            }
+            break;
+            default: {
+                // TODO: 4/8/18 Add logic to check last renaming request and prevent to change data too often
+                // TODO: 4/8/18 Add logic to create request in database about renaming for admin
+            }
+            break;
+        }
+    }
+
+    @Override
+    public void changeUserCity(long id, long cityId, UserRole role) {
+        switch (role) {
+            case ADMINISTRATOR: {
+                Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+                if (optionalAuthUser.isPresent()) {
+                    authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole()).changeUserCity(id, cityId);
+                } else {
+                    throw new IllegalArgumentException("User with specified id not found.");
+                }
+            }
+            break;
+            default: {
+                // TODO: 4/8/18 Add logic to check last renaming request and prevent to change data too often
+                // TODO: 4/8/18 Add logic to create request in database about renaming for admin
+            }
+            break;
+        }
+    }
+
+    @Override
+    public void changeUserBirthday(long id, LocalDate birthday, UserRole role) {
+        switch (role) {
+            case ADMINISTRATOR: {
+                Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+                if (optionalAuthUser.isPresent()) {
+                    authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole()).changeUserBirthday(id, Date.from(birthday.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                } else {
+                    throw new IllegalArgumentException("User with specified id not found.");
+                }
+            }
+            break;
+            default: {
+                // TODO: 4/8/18 Add logic to check last renaming request and prevent to change data too often
+                // TODO: 4/8/18 Add logic to create request in database about renaming for admin
+            }
+            break;
+        }
+    }
+
+    @Override
+    public void changeUserBlockUntilDate(long id, LocalDateTime blockedUntilDate, String blockDescription, UserRole userRole) {
+        switch (userRole) {
+            case ADMINISTRATOR: {
+                Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+                if (optionalAuthUser.isPresent()) {
+                    authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole()).changeUserBlockUntilDateAndDescription(id, Date.from(blockedUntilDate.atZone(ZoneId.systemDefault()).toInstant()), blockDescription);
+                } else {
+                    throw new IllegalArgumentException("User with specified id not found.");
+                }
+            }
+            // TODO: 4/8/18 Create blocking logic for moderator
+            break;
+            default: {
+                throw new IllegalArgumentException("Only administrator and moderator can block another users.");
+            }
+        }
+    }
+
+    @Override
+    public void unblockUser(long id, UserRole userRole) {
+        switch (userRole) {
+            case ADMINISTRATOR: {
+                Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+                if (optionalAuthUser.isPresent()) {
+                    authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole()).changeUserBlockUntilDateAndDescription(id, Date.from(Instant.now()), "");
+                } else {
+                    throw new IllegalArgumentException("User with specified id not found.");
+                }
+            }
+            // TODO: 4/8/18 Create blocking logic for moderator
+            break;
+            default: {
+                throw new IllegalArgumentException("Only administrator and moderator can unblock another users.");
+            }
+        }
+    }
+
+    @Override
+    public Optional<AuthUser> getAuthUserById(long id) {
+        return authorizationUserService.getAuthUserById(id);
     }
 
     @Override
@@ -116,7 +305,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean login(String loginOrMail, String password, boolean rememberMe) {
-        Optional<AuthUser> optionalUser = authorizationUserService.getAuthenticUser(loginOrMail, password);
+        Optional<AuthUser> optionalUser = authorizationUserService.getIdentifiedAuthUser(loginOrMail, password);
         if (optionalUser.isPresent()) {
             AuthUser user = optionalUser.get();
             VaadinSession.getCurrent().setAttribute(SESSION_USERNAME, user.getLogin());

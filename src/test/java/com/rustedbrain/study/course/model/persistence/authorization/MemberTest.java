@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 public class MemberTest {
 
@@ -30,11 +29,5 @@ public class MemberTest {
         commentList.add(notFirst);
         member.setComments(commentList);
         assertEquals("NotFirst", member.getComments().toArray(new Comment[0])[0].getMessage());
-    }
-
-    @Test
-    public void testSetPermanentlyBanned() {
-        member.setPermanentlyBanned(true);
-        assertNotEquals(false, member.isPermanentlyBanned());
     }
 }

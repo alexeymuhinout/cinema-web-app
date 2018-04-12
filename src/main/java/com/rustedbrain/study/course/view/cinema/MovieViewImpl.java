@@ -3,9 +3,11 @@ package com.rustedbrain.study.course.view.cinema;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,16 +41,16 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 
     @Override
     public void showWarning(String message) {
-
+        Notification.show(message, Notification.Type.WARNING_MESSAGE);
     }
 
     @Override
     public void showError(String message) {
-
+        Notification.show(message, Notification.Type.ERROR_MESSAGE);
     }
 
     @Override
     public void reloadPage() {
-
+        Page.getCurrent().reload();
     }
 }

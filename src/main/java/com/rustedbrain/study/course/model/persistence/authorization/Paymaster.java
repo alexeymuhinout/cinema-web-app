@@ -16,6 +16,13 @@ public class Paymaster extends User {
     @OneToMany(mappedBy = "paymaster")
     private Set<Ticket> tickets;
 
+    public Paymaster() {
+    }
+
+    public Paymaster(String login, String password, String mail) {
+        super(login, password, mail);
+    }
+
     public Cinema getCinema() {
         return cinema;
     }

@@ -5,7 +5,6 @@ import com.maxmind.geoip.LookupService;
 import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.exception.ResourceException;
 import com.rustedbrain.study.course.model.persistence.authorization.Member;
-import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.*;
 import com.rustedbrain.study.course.service.repository.*;
 import com.rustedbrain.study.course.service.resources.ResourceAccessor;
@@ -52,6 +51,34 @@ public class CinemaServiceImpl implements CinemaService {
 
     private MemberRepository memberRepository;
 
+    private AdministratorRepository administratorRepository;
+
+    private ModeratorRepository moderatorRepository;
+
+    private PaymasterRepository paymasterRepository;
+
+    private ManagerRepository managerRepository;
+
+    @Autowired
+    public void setResourceAccessor(ResourceAccessor resourceAccessor) {
+        this.resourceAccessor = resourceAccessor;
+    }
+
+    @Autowired
+    public void setAdministratorRepository(AdministratorRepository administratorRepository) {
+        this.administratorRepository = administratorRepository;
+    }
+
+    @Autowired
+    public void setModeratorRepository(ModeratorRepository moderatorRepository) {
+        this.moderatorRepository = moderatorRepository;
+    }
+
+    @Autowired
+    public void setPaymasterRepository(PaymasterRepository paymasterRepository) {
+        this.paymasterRepository = paymasterRepository;
+    }
+
     @Autowired
     public void setFilmScreeningRepository(FilmScreeningRepository filmScreeningRepository) {
         this.filmScreeningRepository = filmScreeningRepository;
@@ -87,15 +114,7 @@ public class CinemaServiceImpl implements CinemaService {
         this.filmScreeningEventRepository = filmScreeningEventRepository;
     }
 
-    @Override
-    public List<Movie> getCurrentMovies(Cinema cinema, Date date) {
-        return null;
-    }
 
-    @Override
-    public Set<Cinema> getCityCinemas(City city) {
-        return city.getCinemas();
-    }
 
     @Override
     public List<City> getCities() {
@@ -107,35 +126,6 @@ public class CinemaServiceImpl implements CinemaService {
         return cityRepository.findAll(PageRequest.of(page, pageSize));
     }
 
-    @Override
-    public List<Comment> getMessages(Movie movie) {
-        return null;
-    }
-
-    @Override
-    public void addFilmScreening(FilmScreening filmScreening) {
-
-    }
-
-    @Override
-    public List<Seat> getAvailableSeats(Cinema cinema, FilmScreeningEvent event) throws IllegalArgumentException {
-        return null;
-    }
-
-    @Override
-    public void lockTicket(User user, FilmScreeningEvent event) {
-
-    }
-
-    @Override
-    public void unlockTicket(User user, FilmScreeningEvent event) {
-
-    }
-
-    @Override
-    public List<Cinema> getCityCinemas() {
-        return cinemaRepository.findAll();
-    }
 
     @Override
     public Page<Cinema> getCinemasPage(int page, int pageSize) {
@@ -145,11 +135,6 @@ public class CinemaServiceImpl implements CinemaService {
     @Override
     public Page<Cinema> getCinemasPage(int page, int pageSize, Sort sort) {
         return cinemaRepository.findAll(PageRequest.of(page, pageSize, sort));
-    }
-
-    @Override
-    public boolean isCinemaExist(long id) {
-        return getCinema(id) != null;
     }
 
 
@@ -182,11 +167,6 @@ public class CinemaServiceImpl implements CinemaService {
     }
 
     @Override
-    public void deleteCinema(Cinema cinema) {
-        cinemaRepository.delete(cinema);
-    }
-
-    @Override
     public void createCinema(City city, String name, String street) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Cinema name cannot be empty");
@@ -206,18 +186,6 @@ public class CinemaServiceImpl implements CinemaService {
     @Override
     public FilmScreeningEvent getFilmScreeningEvent(Long filmScreeningEventId) {
         return filmScreeningEventRepository.getOne(filmScreeningEventId);
-    }
-
-    @Override
-    public void buyTickets(List<Ticket> boughtTickets) {
-        ticketRepository.saveAll(boughtTickets);
-    }
-
-    @Override
-    public List<Movie> getCurrentMovies() {
-
-
-        return null;
     }
 
     private Location getUserLocation(String ipAddress) throws IOException {
@@ -301,11 +269,6 @@ public class CinemaServiceImpl implements CinemaService {
     }
 
     @Override
-    public Seat getSeat(long seatId) {
-        return seatRepository.getOne(seatId);
-    }
-
-    @Override
     public List<Seat> getSeats(List<Long> seatIds) {
         return seatRepository.findAllById(seatIds);
     }
@@ -369,12 +332,6 @@ public class CinemaServiceImpl implements CinemaService {
 
         return filmScreenings;
     }
-
-    @Override
-    public List<FilmScreeningEvent> getFilmScreeningEvents(long cinemaId, LocalDate day) {
-        return filmScreeningEventRepository.getFilmScreeningEvents(cinemaId, java.sql.Date.valueOf(day));
-    }
-
     @Override
     public List<TicketInfo> getTicketsInfo(List<Long> ticketIds) {
         return ticketRepository.findAllById(ticketIds).stream().map(TicketInfo::new).collect(Collectors.toList());
