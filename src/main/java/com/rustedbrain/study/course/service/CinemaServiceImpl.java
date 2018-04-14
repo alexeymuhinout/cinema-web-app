@@ -5,6 +5,7 @@ import com.maxmind.geoip.LookupService;
 import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.exception.ResourceException;
 import com.rustedbrain.study.course.model.persistence.authorization.Member;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.*;
 import com.rustedbrain.study.course.service.repository.*;
 import com.rustedbrain.study.course.service.resources.ResourceAccessor;
@@ -58,6 +59,20 @@ public class CinemaServiceImpl implements CinemaService {
     private PaymasterRepository paymasterRepository;
 
     private ManagerRepository managerRepository;
+
+    private MovieRepository movieRepository;
+
+    private CommentRepository commentRepository;
+
+    @Autowired
+    public void setCommentRepository(CommentRepository commentRepository) {
+        this.commentRepository = commentRepository;
+    }
+
+    @Autowired
+    public void setMovieRepository(MovieRepository movieRepository) {
+        this.movieRepository = movieRepository;
+    }
 
     @Autowired
     public void setResourceAccessor(ResourceAccessor resourceAccessor) {
@@ -113,7 +128,6 @@ public class CinemaServiceImpl implements CinemaService {
     public void setFilmScreeningEventRepository(FilmScreeningEventRepository filmScreeningEventRepository) {
         this.filmScreeningEventRepository = filmScreeningEventRepository;
     }
-
 
 
     @Override
@@ -332,6 +346,7 @@ public class CinemaServiceImpl implements CinemaService {
 
         return filmScreenings;
     }
+
     @Override
     public List<TicketInfo> getTicketsInfo(List<Long> ticketIds) {
         return ticketRepository.findAllById(ticketIds).stream().map(TicketInfo::new).collect(Collectors.toList());
@@ -357,6 +372,19 @@ public class CinemaServiceImpl implements CinemaService {
         member.setRegistrationDate(new Date());
         member.setBirthday(Date.from(birthday.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         memberRepository.save(member);
+    }
+
+    @Override
+    public Optional<Movie> getMovie(long id) {
+        return movieRepository.findById(id);
+    }
+
+    @Override
+    public void createMessage(Movie movie, User authenticUser, String message) {
+        Comment comment = new Comment(authenticUser, movie, message);
+        comment.setLastAccessDate(new Date());
+        comment.setRegistrationDate(new Date());
+        commentRepository.save(comment);
     }
 
     private Optional<Cinema> calculateNearestCinemaToAddress(Set<Cinema> cinemas, String userStreetLocation) throws IOException {

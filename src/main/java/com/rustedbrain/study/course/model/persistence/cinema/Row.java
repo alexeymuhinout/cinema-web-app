@@ -14,9 +14,9 @@ public class Row extends DatabaseEntity implements Comparable<Row> {
 
     @Column(name = "number", nullable = false)
     private int number;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private CinemaHall cinemaHall;
-    @OneToMany(mappedBy = "row")
+    @OneToMany(mappedBy = "row", fetch = FetchType.EAGER)
     @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
     private Set<Seat> seats = new HashSet<>();
 

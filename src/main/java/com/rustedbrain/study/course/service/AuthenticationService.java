@@ -1,6 +1,7 @@
 package com.rustedbrain.study.course.service;
 
 import com.rustedbrain.study.course.model.dto.AuthUser;
+import com.rustedbrain.study.course.model.dto.UserInfo;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 
@@ -44,4 +45,6 @@ public interface AuthenticationService {
     void unblockUser(long id, UserRole userRole);
 
     Optional<AuthUser> getAuthUserById(long id);
+
+    Optional<UserInfo> getUserInfo(long userId);
 }

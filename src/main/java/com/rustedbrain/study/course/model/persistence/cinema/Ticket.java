@@ -17,12 +17,12 @@ public class Ticket extends DatabaseEntity {
     private Date soldDate;
     @Column(name = "reserved")
     private boolean reserved;
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "seatId")
     private Seat seat;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Member member;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Paymaster paymaster;
     @Column(name = "clientName", length = 128, nullable = false)
     private String clientName;

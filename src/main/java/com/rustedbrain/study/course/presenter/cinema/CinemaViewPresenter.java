@@ -78,6 +78,11 @@ public class CinemaViewPresenter implements Serializable, CinemaView.CinemaViewL
     @Override
     public void buttonRenameClicked(String value) {
         cinemaService.renameCinema(cinema.getId(), value);
-        cinemaView.reloadPage();
+        cinemaView.reload();
+    }
+
+    @Override
+    public void buttonShowMovieClicked(long id) {
+        new PageNavigator().navigateToMovieView(id);
     }
 }

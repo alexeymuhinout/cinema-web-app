@@ -130,7 +130,7 @@ public class Application {
                     theTerminatorActorSet,
                     genreSet,
                     130,
-                    "/home/alexey/Downloads/greatgatsby.jpg"
+                    "C:\\Users\\User\\IdeaProjects\\greatgatsby.jpg"
             );
             movieRepository.saveAndFlush(movie1);
 
@@ -145,7 +145,7 @@ public class Application {
                     theTerminatorActorSet,
                     genreSet,
                     130,
-                    "/home/alexey/Downloads/terminator.jpg"
+                    "C:\\Users\\User\\IdeaProjects\\terminator.jpg"
             );
             movieRepository.saveAndFlush(movie2);
 
@@ -159,7 +159,7 @@ public class Application {
                     hellBoyActorSet,
                     genreSet,
                     122,
-                    "/home/alexey/Downloads/hellboy.jpeg"
+                    "C:\\Users\\User\\IdeaProjects\\hellboy.jpg"
             );
             movieRepository.saveAndFlush(movie3);
 

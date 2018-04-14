@@ -132,7 +132,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
     @Override
     public void buttonChangeNameClicked(long id, String name) {
         authenticationService.changeUserName(id, name, authenticationService.getUserRole());
-        view.reloadPage();
+        view.reload();
     }
 
     @Override
@@ -143,25 +143,25 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
     @Override
     public void buttonChangeMailClicked(long id, String mail) {
         authenticationService.changeUserMail(id, mail, authenticationService.getUserRole());
-        view.reloadPage();
+        view.reload();
     }
 
     @Override
     public void buttonChangeSurnameClicked(long id, String surname) {
         authenticationService.changeUserSurname(id, surname, authenticationService.getUserRole());
-        view.reloadPage();
+        view.reload();
     }
 
     @Override
     public void buttonChangeCityClicked(long id, long cityId) {
         authenticationService.changeUserCity(id, cityId, authenticationService.getUserRole());
-        view.reloadPage();
+        view.reload();
     }
 
     @Override
     public void buttonChangeBirthdayClicked(long id, LocalDate birthday) {
         authenticationService.changeUserBirthday(id, birthday, authenticationService.getUserRole());
-        view.reloadPage();
+        view.reload();
     }
 
     @Override
@@ -178,7 +178,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
     @Override
     public void buttonUnblockClicked(long id) {
         authenticationService.unblockUser(id, authenticationService.getUserRole());
-        view.reloadPage();
+        view.reload();
     }
 
     @Override

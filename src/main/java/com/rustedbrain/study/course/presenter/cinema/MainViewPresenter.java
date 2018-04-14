@@ -56,7 +56,7 @@ public class MainViewPresenter implements MainView.MainViewListener, Serializabl
     public void buttonDeleteCityClicked(String cityName) {
         try {
             cinemaService.deleteCity(cityName);
-            mainView.reloadPage();
+            mainView.reload();
         } catch (IllegalArgumentException ex) {
             mainView.showWarning(ex.getMessage());
         } catch (Exception ex) {
@@ -68,7 +68,7 @@ public class MainViewPresenter implements MainView.MainViewListener, Serializabl
     public void buttonCreateCityClicked(String cityName) {
         try {
             cinemaService.createCity(cityName);
-            mainView.reloadPage();
+            mainView.reload();
         } catch (IllegalArgumentException ex) {
             mainView.showWarning(ex.getMessage());
         } catch (Exception ex) {

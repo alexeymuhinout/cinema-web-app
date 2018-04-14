@@ -60,7 +60,7 @@ public class CommentRepositoryTest {
         member.setLastAccessDate(date);
 
         comment = new Comment();
-        comment.setMember(member);
+        comment.setUser(member);
         comment.setMessage("Hello all!!!");
         comment.setRegistrationDate(date);
         comment.setLastAccessDate(date);

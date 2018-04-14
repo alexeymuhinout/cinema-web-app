@@ -103,7 +103,7 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 

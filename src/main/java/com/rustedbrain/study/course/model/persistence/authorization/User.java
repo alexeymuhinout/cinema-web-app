@@ -2,11 +2,13 @@ package com.rustedbrain.study.course.model.persistence.authorization;
 
 import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.Comment;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -33,6 +35,8 @@ public class User extends DatabaseEntity {
     private Date blockPeriod;
     @Column(name = "blockDescription")
     private String blockDescription;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<Comment> comments;
 
     public User(String login, String password, String email) {
         this.login = login;
@@ -41,6 +45,14 @@ public class User extends DatabaseEntity {
     }
 
     public User() {
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 
     public String getBlockDescription() {

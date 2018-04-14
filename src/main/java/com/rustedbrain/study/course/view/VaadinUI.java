@@ -29,6 +29,7 @@ public class VaadinUI extends UI {
     public static final String CITIES_VIEW = "cities_view";
     public static final String MAIN_VIEW = "";
     public static final String TICKET_INFO_VIEW = "tickets_info_view";
+    public static final String PROFILE_INFO_VIEW = "profile_info_view";
     public Navigator navigator;
 
     private SpringViewProvider viewProvider;

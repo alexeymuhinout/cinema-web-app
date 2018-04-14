@@ -1,13 +1,10 @@
 package com.rustedbrain.study.course.view.util;
 
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
-import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.model.persistence.cinema.Seat;
 import com.rustedbrain.study.course.presenter.cinema.TicketBuyingViewPresenter;
 import com.rustedbrain.study.course.presenter.cinema.TicketsInfoViewPresenter;
 import com.rustedbrain.study.course.view.VaadinUI;
-import com.rustedbrain.study.course.view.cinema.MovieViewImpl;
-import com.vaadin.server.VaadinSession;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,14 +41,9 @@ public class PageNavigator {
         navigateTo(VaadinUI.CITY_VIEW + PARAMS_SEPARATOR + cityId);
     }
 
-    public void navigateToMovieView(Movie movie, String message) {
-        VaadinSession.getCurrent().setAttribute(MovieViewImpl.MOVIE_ATTRIBUTE, movie);
-        VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.MOVIE_VIEW);
-    }
 
-    public void navigateToMovieView(Movie movie) {
-        VaadinSession.getCurrent().setAttribute(MovieViewImpl.MOVIE_ATTRIBUTE, movie);
-        VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.MOVIE_VIEW);
+    public void navigateToMovieView(long id) {
+        navigateTo(VaadinUI.MOVIE_VIEW + PARAMS_SEPARATOR + id);
     }
 
     public void navigateToCinemaHallView(Long id, String message) {
@@ -104,5 +96,17 @@ public class PageNavigator {
                 .collect(Collectors.joining(TicketBuyingViewPresenter.PARAM_SEPARATOR));
 
         navigateTo(VaadinUI.TICKET_INFO_VIEW + PARAMS_SEPARATOR + TicketsInfoViewPresenter.TICKETS_ID_PARAM_KEY + KEY_VALUE_SEPARATOR + ticketsIdsCommaSeparated);
+    }
+
+    public void navigateToProfileInfoView(long id) {
+        VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.PROFILE_INFO_VIEW + "/" + id);
+    }
+
+    public void navigateToLoginView() {
+        VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.LOGIN_VIEW);
+    }
+
+    public void navigateToRegistrationView() {
+        VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.REGISTRATION_VIEW);
     }
 }

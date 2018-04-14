@@ -114,7 +114,7 @@ public class CityViewImpl extends VerticalLayout implements CityView {
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 }

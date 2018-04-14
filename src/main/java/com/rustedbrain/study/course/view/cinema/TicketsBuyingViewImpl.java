@@ -64,7 +64,7 @@ public class TicketsBuyingViewImpl extends VerticalLayout implements TicketsBuyi
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 

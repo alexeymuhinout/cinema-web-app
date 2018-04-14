@@ -136,7 +136,7 @@ public class RegistrationViewImpl extends VerticalLayout implements Registration
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 }

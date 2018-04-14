@@ -89,7 +89,7 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 

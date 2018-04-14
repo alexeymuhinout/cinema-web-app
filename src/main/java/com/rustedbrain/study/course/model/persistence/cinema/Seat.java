@@ -9,7 +9,7 @@ import java.sql.Date;
 @Table(name = "seat")
 public class Seat extends DatabaseEntity implements Comparable<Seat> {
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "rowId")
     private Row row;
     @Column(name = "number", nullable = false)

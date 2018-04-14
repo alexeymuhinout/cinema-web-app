@@ -8,5 +8,5 @@ public interface ApplicationView extends View {
 
     void showError(String message);
 
-    void reloadPage();
+    void reload();
 }

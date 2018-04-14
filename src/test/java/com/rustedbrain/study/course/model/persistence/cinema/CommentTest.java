@@ -20,14 +20,14 @@ public class CommentTest {
 
         comment1.setId(1);
         comment1.setMessage("First");
-        comment1.setMember(setUpMember());
+        comment1.setUser(setUpMember());
         comment2.setId(1);
         comment2.setMessage("First");
-        comment2.setMember(setUpMember());
+        comment2.setUser(setUpMember());
 
         comment3.setId(5);
         comment3.setMessage("NotFirst");
-        comment3.setMember(setUpMember());
+        comment3.setUser(setUpMember());
     }
 
     private static Member setUpMember() {

@@ -58,7 +58,7 @@ public class HelpViewImpl extends VerticalLayout implements HelpView {
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 

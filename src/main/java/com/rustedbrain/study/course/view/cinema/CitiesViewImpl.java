@@ -59,7 +59,7 @@ public class CitiesViewImpl extends VerticalLayout implements CitiesView {
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 

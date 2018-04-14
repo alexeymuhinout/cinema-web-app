@@ -90,7 +90,7 @@ public class CityCinemasViewImpl extends VerticalLayout implements CityCinemasVi
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 }

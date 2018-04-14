@@ -1,6 +1,7 @@
 package com.rustedbrain.study.course.service;
 
 import com.rustedbrain.study.course.model.dto.AuthUser;
+import com.rustedbrain.study.course.model.dto.UserInfo;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.vaadin.server.Page;
@@ -247,6 +248,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Optional<AuthUser> getAuthUserById(long id) {
         return authorizationUserService.getAuthUserById(id);
+    }
+
+    @Override
+    public Optional<UserInfo> getUserInfo(long userId) {
+        return authorizationUserService.getUserInfo(userId);
     }
 
     @Override

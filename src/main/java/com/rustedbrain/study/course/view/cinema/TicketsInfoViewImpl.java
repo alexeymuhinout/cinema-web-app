@@ -93,7 +93,7 @@ public class TicketsInfoViewImpl extends VerticalLayout implements TicketsInfoVi
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 

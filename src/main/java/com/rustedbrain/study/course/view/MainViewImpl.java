@@ -103,7 +103,7 @@ public class MainViewImpl extends VerticalLayout implements MainView {
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 

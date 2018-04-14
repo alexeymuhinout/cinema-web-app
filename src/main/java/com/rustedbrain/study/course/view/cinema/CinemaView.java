@@ -37,5 +37,7 @@ public interface CinemaView extends ApplicationView {
         void buttonDayClicked(LocalDate day);
 
         void buttonRenameClicked(String value);
+
+        void buttonShowMovieClicked(long id);
     }
 }

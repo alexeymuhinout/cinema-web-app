@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.service;
 import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.exception.ResourceException;
 import com.rustedbrain.study.course.model.persistence.authorization.Member;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -72,4 +73,8 @@ public interface CinemaService {
     void renameCinema(long id, String value);
 
     void registerMember(String login, String password, String name, String surname, long id, LocalDate birthday, String mail);
+
+    Optional<Movie> getMovie(long id);
+
+    void createMessage(Movie movie, User authenticUser, String textArea);
 }

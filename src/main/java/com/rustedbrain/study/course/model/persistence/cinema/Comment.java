@@ -1,25 +1,31 @@
 package com.rustedbrain.study.course.model.persistence.cinema;
 
 import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
-import com.rustedbrain.study.course.model.persistence.authorization.Member;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "message")
 public class Comment extends DatabaseEntity {
 
-    @ManyToOne
-    private Member member;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User user;
     @ManyToOne
     private Movie movie;
     @Column(name = "message", length = 512, nullable = false)
     private String message;
     @Column(name = "edited")
     private boolean edited;
+
+    public Comment() {
+    }
+
+    public Comment(User user, Movie movie, String message) {
+        this.user = user;
+        this.movie = movie;
+        this.message = message;
+    }
 
     public Movie getMovie() {
         return movie;
@@ -29,12 +35,12 @@ public class Comment extends DatabaseEntity {
         this.movie = movie;
     }
 
-    public Member getMember() {
-        return member;
+    public User getUser() {
+        return user;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getMessage() {
@@ -61,13 +67,13 @@ public class Comment extends DatabaseEntity {
 
         Comment comment1 = (Comment) o;
 
-        return member.equals(comment1.member) && message.equals(comment1.message);
+        return user.equals(comment1.user) && message.equals(comment1.message);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + member.hashCode();
+        result = 31 * result + user.hashCode();
         result = 31 * result + message.hashCode();
         return result;
     }
@@ -75,7 +81,7 @@ public class Comment extends DatabaseEntity {
     @Override
     public String toString() {
         return "Comment{" +
-                "member=" + member +
+                "user=" + user +
                 ", movie=" + movie +
                 ", message='" + message + '\'' +
                 ", edited=" + edited +

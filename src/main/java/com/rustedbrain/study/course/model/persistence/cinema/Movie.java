@@ -18,6 +18,10 @@ public class Movie extends DatabaseEntity {
     private String localizedName;
     @Column(name = "originalName", length = 128, nullable = false)
     private String originalName;
+    @Column(name = "country", length = 128)
+    private String country;
+    @Column(name = "producer", length = 128)
+    private String producer;
     @Column(name = "releaseDate", nullable = false)
     private Date releaseDate;
     @ManyToMany
@@ -40,7 +44,7 @@ public class Movie extends DatabaseEntity {
             joinColumns = @JoinColumn(name = "movieId"),
             inverseJoinColumns = @JoinColumn(name = "actorId"))
     private Set<Actor> actors = new HashSet<>();
-    @OneToMany(mappedBy = "movie")
+    @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
     @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
     private Set<Comment> comments = new HashSet<>();
 
@@ -82,6 +86,22 @@ public class Movie extends DatabaseEntity {
 
     public void setGenres(Set<Genre> genres) {
         this.genres = genres;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getProducer() {
+        return producer;
+    }
+
+    public void setProducer(String producer) {
+        this.producer = producer;
     }
 
     public String getDescription() {

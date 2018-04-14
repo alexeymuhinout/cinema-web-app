@@ -1,6 +1,7 @@
 package com.rustedbrain.study.course.service;
 
 import com.rustedbrain.study.course.model.dto.AuthUser;
+import com.rustedbrain.study.course.model.dto.UserInfo;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.*;
 import com.rustedbrain.study.course.service.repository.*;
@@ -69,7 +70,12 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
         if (user != null) {
             return user;
         }
-        return user;
+        return null;
+    }
+
+    @Override
+    public Optional<UserInfo> getUserInfo(long userId) {
+        return Optional.empty();
     }
 
     @Autowired
@@ -221,5 +227,26 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
         }
         Optional<Paymaster> paymaster = paymasterRepository.findById(id);
         return paymaster.map(paymaster1 -> new AuthUser(paymaster1.getLogin(), UserRole.PAYMASTER));
+    }
+
+    private User getUser(long id) {
+        Optional<Member> member = memberRepository.findById(id);
+        if (member.isPresent()) {
+            return member.get();
+        }
+        Optional<Administrator> optionalAdministrator = administratorRepository.findById(id);
+        if (optionalAdministrator.isPresent()) {
+            return optionalAdministrator.get();
+        }
+        Optional<Manager> optionalManager = managerRepository.findById(id);
+        if (optionalManager.isPresent()) {
+            return optionalManager.get();
+        }
+        Optional<Moderator> optionalModerator = moderatorRepository.findById(id);
+        if (optionalModerator.isPresent()) {
+            return optionalModerator.get();
+        }
+        Optional<Paymaster> paymaster = paymasterRepository.findById(id);
+        return paymaster.orElse(null);
     }
 }

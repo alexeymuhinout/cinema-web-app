@@ -36,8 +36,7 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
     private List<Button> dateButtons;
     private HorizontalLayout filmScreeningsHorizontalLayout;
 
-    @Autowired
-    public CinemaViewImpl(AuthenticationService authenticationService) {
+    public CinemaViewImpl() {
         addComponentsAndExpand(getMenuViewPanel());
         addComponentsAndExpand(new Panel(new VerticalLayout(getCinemaPanel(), getFilmScreeningsPanel())));
     }
@@ -70,20 +69,22 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
 
     private Component createAndFillFilmScreeningsLayout(Set<FilmScreening> filmScreenings) {
         this.filmScreeningsHorizontalLayout = new HorizontalLayout();
-        filmScreeningsHorizontalLayout.setMargin(true);
+        this.filmScreeningsHorizontalLayout.setSizeUndefined();
+        this.filmScreeningsHorizontalLayout.setMargin(true);
         for (FilmScreening filmScreening : filmScreenings) {
             VerticalLayout verticalLayout = new VerticalLayout();
-            Panel panel = new Panel(verticalLayout);
 
             Movie movie = filmScreening.getMovie();
-
             Label movieNameLabel = new Label(movie.getLocalizedName() + "<br />" + "(" + movie.getOriginalName() + ", " + movie.getReleaseDate().getYear() + ")", ContentMode.HTML);
             verticalLayout.addComponent(movieNameLabel);
 
-            Image image = new Image(movie.getOriginalName(), new FileResource(new File(movie.getPosterPath())));
+            Image image = new Image("", new FileResource(new File(movie.getPosterPath())));
             image.setWidth(365, Unit.PIXELS);
             image.setHeight(490, Unit.PIXELS);
             verticalLayout.addComponent(image);
+
+            Button buttonShowInfo = new Button("Info", (Button.ClickListener) event -> listeners.forEach(cinemaViewListener -> cinemaViewListener.buttonShowMovieClicked(movie.getId())));
+            verticalLayout.addComponent(buttonShowInfo);
 
             GridLayout timesLayout = new GridLayout();
             timesLayout.setColumns(SCREENING_TIMES_COLUMNS_COUNT);
@@ -95,11 +96,7 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
             }
 
             verticalLayout.addComponent(timesLayout);
-
-            verticalLayout.setSizeFull();
-            panel.setSizeFull();
-            filmScreeningsHorizontalLayout.addComponent(panel);
-            filmScreeningsHorizontalLayout.setSizeUndefined();
+            filmScreeningsHorizontalLayout.addComponent(new Panel(verticalLayout));
         }
         return filmScreeningsHorizontalLayout;
     }
@@ -198,7 +195,7 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
     }
 
     @Override
-    public void reloadPage() {
+    public void reload() {
         Page.getCurrent().reload();
     }
 }
