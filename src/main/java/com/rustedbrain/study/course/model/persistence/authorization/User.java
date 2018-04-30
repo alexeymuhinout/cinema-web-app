@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.model.persistence.authorization;
 import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.model.persistence.cinema.Comment;
+import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -37,6 +38,9 @@ public class User extends DatabaseEntity {
     private String blockDescription;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Comment> comments;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
+    private Set<CommentReputation> commentReputations;
 
     public User(String login, String password, String email) {
         this.login = login;
@@ -45,6 +49,14 @@ public class User extends DatabaseEntity {
     }
 
     public User() {
+    }
+
+    public Set<CommentReputation> getCommentReputations() {
+        return commentReputations;
+    }
+
+    public void setCommentReputations(Set<CommentReputation> commentReputations) {
+        this.commentReputations = commentReputations;
     }
 
     public Set<Comment> getComments() {

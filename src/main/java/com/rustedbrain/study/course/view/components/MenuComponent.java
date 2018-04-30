@@ -9,6 +9,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class MenuComponent extends CustomComponent {
 
@@ -20,9 +21,12 @@ public class MenuComponent extends CustomComponent {
         }
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
-        createNavigationButtons(authenticationService).stream().filter(Objects::nonNull).forEach(horizontalLayout::addComponentsAndExpand);
+        List<Button> buttons = createNavigationButtons(authenticationService).stream().filter(Objects::nonNull).collect(Collectors.toList());
+        buttons.forEach(button -> button.setWidth(155, Unit.PIXELS));
+        buttons.forEach(horizontalLayout::addComponent);
 
-        verticalLayout.addComponentsAndExpand(horizontalLayout);
+        verticalLayout.addComponent(horizontalLayout);
+        verticalLayout.setComponentAlignment(horizontalLayout, Alignment.MIDDLE_CENTER);
         setCompositionRoot(verticalLayout);
     }
 
@@ -39,14 +43,10 @@ public class MenuComponent extends CustomComponent {
     private Button createLogoutButton(AuthenticationService authenticationService) {
         Button button = new Button("Logout", (Button.ClickListener) event -> {
             authenticationService.logOut();
-            getUI().getPage().setLocation(getLogoutPath());
+            getUI().getPage().setLocation(getUI().getPage().getLocation().getPath());
         });
         button.addStyleName(ValoTheme.BUTTON_LARGE);
         return button;
-    }
-
-    private String getLogoutPath() {
-        return getUI().getPage().getLocation().getPath();
     }
 
     private Button createNavigationButton(final String caption, final String viewName) {

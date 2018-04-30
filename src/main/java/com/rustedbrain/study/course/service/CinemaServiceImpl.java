@@ -52,17 +52,16 @@ public class CinemaServiceImpl implements CinemaService {
 
     private MemberRepository memberRepository;
 
-    private AdministratorRepository administratorRepository;
-
-    private ModeratorRepository moderatorRepository;
-
-    private PaymasterRepository paymasterRepository;
-
-    private ManagerRepository managerRepository;
-
     private MovieRepository movieRepository;
 
     private CommentRepository commentRepository;
+
+    private CommentReputationRepository commentReputationRepository;
+
+    @Autowired
+    public void setCommentReputationRepository(CommentReputationRepository commentReputationRepository) {
+        this.commentReputationRepository = commentReputationRepository;
+    }
 
     @Autowired
     public void setCommentRepository(CommentRepository commentRepository) {
@@ -77,21 +76,6 @@ public class CinemaServiceImpl implements CinemaService {
     @Autowired
     public void setResourceAccessor(ResourceAccessor resourceAccessor) {
         this.resourceAccessor = resourceAccessor;
-    }
-
-    @Autowired
-    public void setAdministratorRepository(AdministratorRepository administratorRepository) {
-        this.administratorRepository = administratorRepository;
-    }
-
-    @Autowired
-    public void setModeratorRepository(ModeratorRepository moderatorRepository) {
-        this.moderatorRepository = moderatorRepository;
-    }
-
-    @Autowired
-    public void setPaymasterRepository(PaymasterRepository paymasterRepository) {
-        this.paymasterRepository = paymasterRepository;
     }
 
     @Autowired
@@ -385,6 +369,40 @@ public class CinemaServiceImpl implements CinemaService {
         comment.setLastAccessDate(new Date());
         comment.setRegistrationDate(new Date());
         commentRepository.save(comment);
+    }
+
+    @Override
+    public void deleteComment(long id) {
+        commentRepository.deleteById(id);
+    }
+
+
+    @Override
+    public void addMinusCommentReputation(long commentId, User user) {
+        CommentReputation commentReputation = createMinusCommentReputation(commentId, user);
+        commentReputationRepository.save(commentReputation);
+    }
+
+    @Override
+    public void invertCommentReputation(CommentReputation commentReputation) {
+        commentReputationRepository.setPlus(commentReputation.getId(), !commentReputation.isPlus());
+    }
+
+    @Override
+    public void addPlusCommentReputation(long commentId, User user) {
+        CommentReputation commentReputation = createMinusCommentReputation(commentId, user);
+        commentReputation.setPlus(true);
+        commentReputationRepository.save(commentReputation);
+    }
+
+    private CommentReputation createMinusCommentReputation(long commentId, User user) {
+        CommentReputation commentReputation = new CommentReputation();
+        commentReputation.setLastAccessDate(new Date());
+        commentReputation.setRegistrationDate(new Date());
+        commentReputation.setUser(user);
+        commentReputation.setComment(commentRepository.getOne(commentId));
+        commentReputationRepository.save(commentReputation);
+        return commentReputation;
     }
 
     private Optional<Cinema> calculateNearestCinemaToAddress(Set<Cinema> cinemas, String userStreetLocation) throws IOException {

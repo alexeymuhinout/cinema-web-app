@@ -102,11 +102,11 @@ public class TicketsBuyingViewImpl extends VerticalLayout implements TicketsBuyi
         Label seatsLabel = new Label(seatsStringBuilder.toString(), ContentMode.PREFORMATTED);
         ticketInfoPanelLayout.addComponent(seatsLabel);
 
-        TextField nameTextField = new TextField("Name", userName);
+        TextField nameTextField = new TextField("Name", (userName == null ? "" : userName));
         ticketInfoPanelLayout.addComponent(nameTextField);
-        TextField surnameTextField = new TextField("Surname", userSurname);
+        TextField surnameTextField = new TextField("Surname", (userSurname == null ? "" : userSurname));
         ticketInfoPanelLayout.addComponent(surnameTextField);
-        TextField mailTextField = new TextField("Mail", mail);
+        TextField mailTextField = new TextField("Mail", (mail == null ? "" : mail));
         ticketInfoPanelLayout.addComponent(mailTextField);
 
         HorizontalLayout buttonsHorizontalLayout = new HorizontalLayout();

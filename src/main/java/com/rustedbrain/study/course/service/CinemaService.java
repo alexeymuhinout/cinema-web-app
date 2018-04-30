@@ -77,4 +77,12 @@ public interface CinemaService {
     Optional<Movie> getMovie(long id);
 
     void createMessage(Movie movie, User authenticUser, String textArea);
+
+    void deleteComment(long id);
+
+    void addMinusCommentReputation(long commentId, User userId);
+
+    void invertCommentReputation(CommentReputation commentReputation);
+
+    void addPlusCommentReputation(long id, User user);
 }

@@ -1,6 +1,7 @@
 package com.rustedbrain.study.course.view.cinema;
 
 import com.rustedbrain.study.course.model.persistence.cinema.Comment;
+import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
@@ -57,28 +58,23 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
     }
 
     @Override
-    public void showMovieInfo(Movie movie, boolean authorized) {
+    public void showMovieInfo(Movie movie, boolean authorized, String login, boolean admin, boolean moderator) {
         moviePanel.setContent(getMovieInfoLayout(movie));
-        commentsPanel.setContent(getMovieCommentsLayout(movie.getComments(), authorized));
+        commentsPanel.setContent(getMovieCommentsLayout(movie.getComments(), authorized, login, admin, moderator));
     }
 
-    private Component getMovieCommentsLayout(Set<Comment> commentsSet, boolean authorized) {
+    private Component getMovieCommentsLayout(Set<Comment> commentsSet, boolean authorized, String login, boolean admin, boolean moderator) {
         VerticalLayout layout = new VerticalLayout();
 
-        List<Comment> comments = commentsSet.stream().sorted(Comparator.comparing(Comment::getRegistrationDate)).collect(Collectors.toList());
+        List<Panel> commentsPanels = commentsSet.stream()
+                .sorted(Comparator.comparing(Comment::getRegistrationDate))
+                .map(comment -> createCommentPanel(comment, (authorized && comment.getUser().getLogin().equals(login)), admin, moderator))
+                .collect(Collectors.toList());
 
-        for (Comment comment : comments) {
-            HorizontalLayout commentLayout = new HorizontalLayout();
-            Button buttonProfile = new Button(comment.getUser().getLogin(), (Button.ClickListener) event -> listeners.forEach(listener -> listener.buttonProfileClicked(comment.getUser().getId())));
-            buttonProfile.setWidth(200, Unit.PIXELS);
-            commentLayout.addComponent(buttonProfile);
-
-            VerticalLayout messageLayout = new VerticalLayout();
-            messageLayout.addComponent(new Label(comment.getRegistrationDate().toString()));
-            messageLayout.addComponent(new Label(comment.getMessage()));
-
-            commentLayout.addComponent(messageLayout);
-            layout.addComponent(new Panel(commentLayout));
+        if (commentsPanels.isEmpty()) {
+            layout.addComponent(new Label("No comments yet created..."));
+        } else {
+            commentsPanels.forEach(layout::addComponent);
         }
 
         if (authorized) {
@@ -88,8 +84,46 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
             layout.addComponents(textArea, buttonCreateMessage);
         }
 
-
         return layout;
+    }
+
+    private Panel createCommentPanel(Comment comment, boolean creator, boolean admin, boolean moderator) {
+        HorizontalLayout commentLayout = new HorizontalLayout();
+        commentLayout.setMargin(true);
+        Button buttonProfile = new Button(comment.getUser().getLogin(), (Button.ClickListener) event -> listeners.forEach(listener -> listener.buttonProfileClicked(comment.getUser().getId())));
+        buttonProfile.setWidth(200, Unit.PIXELS);
+        commentLayout.addComponent(buttonProfile);
+
+        VerticalLayout messageLayout = new VerticalLayout();
+        messageLayout.setMargin(false);
+        messageLayout.addComponent(new Panel(new Label(comment.getRegistrationDate().toString())));
+        messageLayout.addComponent(new Label(comment.getMessage()));
+
+        HorizontalLayout layout = new HorizontalLayout();
+
+        HorizontalLayout reputationLayout = new HorizontalLayout();
+        reputationLayout.addComponent(new Button("+", (Button.ClickListener) event -> listeners.forEach(listener -> listener.buttonPlusClicked(comment))));
+        long plusesCount = comment.getCommentReputations().stream().filter(CommentReputation::isPlus).count();
+        long minusesCount = comment.getCommentReputations().size() - plusesCount;
+        String reputationString = plusesCount >= minusesCount ? ("+" + (plusesCount - minusesCount)) : ("-" + (minusesCount - plusesCount));
+        reputationLayout.addComponent(new Label(reputationString));
+        reputationLayout.addComponent(new Button("-", (Button.ClickListener) event -> listeners.forEach(listener -> listener.buttonMinusClicked(comment))));
+        layout.addComponent(reputationLayout);
+
+        if (creator || admin || moderator) {
+            layout.addComponentsAndExpand(new Button("Delete", (Button.ClickListener) event -> listeners.forEach(listener -> listener.buttonDeleteCommentClicked(comment.getId()))));
+            layout.addComponentsAndExpand(new Button("Edit", (Button.ClickListener) event -> listeners.forEach(listener -> listener.buttonEditeCommentClicked(comment.getId()))));
+        }
+        if (admin || moderator) {
+            layout.addComponentsAndExpand(new Button("Block", (Button.ClickListener) event -> listeners.forEach(listener -> listener.buttonBlockClicked(comment.getUser().getId()))));
+            layout.addComponentsAndExpand(new Button("Block And Delete", (Button.ClickListener) event -> listeners.forEach(listener -> listener.buttonBlockAndDeleteClicked(comment.getId(), comment.getUser().getId()))));
+        }
+        layout.setSizeFull();
+
+        messageLayout.addComponent(new Panel(layout));
+
+        commentLayout.addComponentsAndExpand(new Panel(messageLayout));
+        return new Panel(commentLayout);
     }
 
     private Layout getMovieInfoLayout(Movie movie) {

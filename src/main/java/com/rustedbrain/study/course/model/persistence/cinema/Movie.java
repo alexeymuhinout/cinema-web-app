@@ -32,7 +32,9 @@ public class Movie extends DatabaseEntity {
     private Set<Genre> genres = new HashSet<>();
     @Column(name = "description", length = 2048)
     private String description;
-    @Column(name = "posterPath", length = 2048)
+    @Column(name = "trailerURL", length = 256)
+    private String trailerURL;
+    @Column(name = "posterPath", length = 256)
     private String posterPath;
     @Column(name = "minAge")
     private int minAge;
@@ -47,6 +49,14 @@ public class Movie extends DatabaseEntity {
     @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
     @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
     private Set<Comment> comments = new HashSet<>();
+
+    public String getTrailerURL() {
+        return trailerURL;
+    }
+
+    public void setTrailerURL(String trailerURL) {
+        this.trailerURL = trailerURL;
+    }
 
     public String getPosterPath() {
         return posterPath;

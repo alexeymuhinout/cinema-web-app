@@ -2,8 +2,10 @@ package com.rustedbrain.study.course.model.persistence.cinema;
 
 import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "message")
@@ -17,6 +19,9 @@ public class Comment extends DatabaseEntity {
     private String message;
     @Column(name = "edited")
     private boolean edited;
+    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
+    private Set<CommentReputation> commentReputations;
 
     public Comment() {
     }
@@ -25,6 +30,14 @@ public class Comment extends DatabaseEntity {
         this.user = user;
         this.movie = movie;
         this.message = message;
+    }
+
+    public Set<CommentReputation> getCommentReputations() {
+        return commentReputations;
+    }
+
+    public void setCommentReputations(Set<CommentReputation> commentReputations) {
+        this.commentReputations = commentReputations;
     }
 
     public Movie getMovie() {

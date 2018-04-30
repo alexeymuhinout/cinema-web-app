@@ -130,7 +130,9 @@ public class Application {
                     theTerminatorActorSet,
                     genreSet,
                     130,
-                    "C:\\Users\\User\\IdeaProjects\\greatgatsby.jpg"
+                    "/home/alexey/Downloads/greatgatsby.jpg",
+                    "http://www.youtube.com/v/rARN6agiW7o"
+
             );
             movieRepository.saveAndFlush(movie1);
 
@@ -145,7 +147,8 @@ public class Application {
                     theTerminatorActorSet,
                     genreSet,
                     130,
-                    "C:\\Users\\User\\IdeaProjects\\terminator.jpg"
+                    "/home/alexey/Downloads/terminator.jpg",
+                    "http://www.youtube.com/v/k64P4l2Wmeg"
             );
             movieRepository.saveAndFlush(movie2);
 
@@ -159,7 +162,8 @@ public class Application {
                     hellBoyActorSet,
                     genreSet,
                     122,
-                    "C:\\Users\\User\\IdeaProjects\\hellboy.jpg"
+                    "/home/alexey/Downloads/hellboy.jpeg",
+                    "http://www.youtube.com/v/kA9vtXbbhVs"
             );
             movieRepository.saveAndFlush(movie3);
 
@@ -181,7 +185,7 @@ public class Application {
         };
     }
 
-    private Movie createMovie(String localizedName, String originalName, int minAge, String description, Date registrationDate, Date lastAccesDate, Date releaseDate, Set<Actor> actors, Set<Genre> genres, int timeMinutes, String posterPath) {
+    private Movie createMovie(String localizedName, String originalName, int minAge, String description, Date registrationDate, Date lastAccesDate, Date releaseDate, Set<Actor> actors, Set<Genre> genres, int timeMinutes, String posterPath, String trailerURL) {
         Movie movie = new Movie();
         movie.setLocalizedName(localizedName);
         movie.setOriginalName(originalName);
@@ -194,6 +198,7 @@ public class Application {
         movie.setGenres(genres);
         movie.setPosterPath(posterPath);
         movie.setTimeMinutes(timeMinutes);
+        movie.setTrailerURL(trailerURL);
         return movie;
     }
 

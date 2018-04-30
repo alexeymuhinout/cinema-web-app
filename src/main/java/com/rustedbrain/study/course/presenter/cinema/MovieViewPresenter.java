@@ -1,5 +1,9 @@
 package com.rustedbrain.study.course.presenter.cinema;
 
+import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.model.persistence.cinema.Comment;
+import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.service.CinemaService;
@@ -35,7 +39,9 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
             Optional<Movie> optionalMovie = cinemaService.getMovie(Long.parseLong(optionalId.get()));
             if (optionalMovie.isPresent()) {
                 this.movie = optionalMovie.get();
-                this.view.showMovieInfo(movie, authenticationService.isAuthenticated());
+                boolean authenticated = authenticationService.isAuthenticated();
+                String userLogin = authenticated ? authenticationService.getUserLogin() : null;
+                this.view.showMovieInfo(movie, authenticated, userLogin, authenticationService.getUserRole().equals(UserRole.ADMINISTRATOR), authenticationService.getUserRole().equals(UserRole.MODERATOR));
             } else {
                 this.view.showError("Movie with specified id not exist.");
             }
@@ -63,6 +69,65 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
         } else {
             view.showError("Only registered user can create messages");
         }
+    }
+
+    @Override
+    public void buttonDeleteCommentClicked(long id) {
+        cinemaService.deleteComment(id);
+        view.reload();
+    }
+
+    @Override
+    public void buttonEditeCommentClicked(long commentId) {
+
+    }
+
+    @Override
+    public void buttonPlusClicked(Comment comment) {
+        User user = authenticationService.getAuthenticUser();
+        try {
+            Optional<CommentReputation> commentReputationOptional = comment.getCommentReputations().stream().filter(commentReputation -> commentReputation.getUser().equals(user)).findAny();
+            if (!commentReputationOptional.isPresent()) {
+                cinemaService.addMinusCommentReputation(comment.getId(), user);
+                view.reload();
+            } else if (!commentReputationOptional.get().isPlus()) {
+                cinemaService.invertCommentReputation(commentReputationOptional.get());
+                view.reload();
+            } else {
+                view.showError("Cannot addListener reputation to comment twice");
+            }
+        } catch (Exception ex) {
+            view.showError(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void buttonMinusClicked(Comment comment) {
+        User user = authenticationService.getAuthenticUser();
+        try {
+            Optional<CommentReputation> commentReputationOptional = comment.getCommentReputations().stream().filter(commentReputation -> commentReputation.getUser().equals(user)).findAny();
+            if (!commentReputationOptional.isPresent()) {
+                cinemaService.addPlusCommentReputation(comment.getId(), user);
+                view.reload();
+            } else if (commentReputationOptional.get().isPlus()) {
+                cinemaService.invertCommentReputation(commentReputationOptional.get());
+                view.reload();
+            } else {
+                view.showError("Cannot minus reputation to comment twice");
+            }
+        } catch (Exception ex) {
+            view.showError(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void buttonBlockAndDeleteClicked(long commentId, long userId) {
+
+    }
+
+    @Override
+    public void buttonBlockClicked(long userId) {
+
     }
 }
 

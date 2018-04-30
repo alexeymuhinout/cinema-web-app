@@ -8,7 +8,9 @@ import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.components.MenuComponent;
+import com.vaadin.navigator.ViewBeforeLeaveEvent;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
@@ -28,13 +30,17 @@ import java.util.stream.Collectors;
 public class CinemaViewImpl extends VerticalLayout implements CinemaView {
 
     private static final int SCREENING_TIMES_COLUMNS_COUNT = 5;
+    private static final int TRAILER_WINDOW_HEIGHT = 360;
+    private static final int TRAILER_WINDOW_WIDTH = 480;
+    private static final int POSTER_IMAGE_HEIGHT = 490;
+    private static final int POSTER_IMAGE_WIDTH = 365;
 
     private List<CinemaViewListener> listeners = new ArrayList<>();
     private Panel filmScreeningsPanel;
     private Panel cinemaPanel;
     private Panel menuPanel;
     private List<Button> dateButtons;
-    private HorizontalLayout filmScreeningsHorizontalLayout;
+    private Window trailerWindow;
 
     public CinemaViewImpl() {
         addComponentsAndExpand(getMenuViewPanel());
@@ -68,23 +74,24 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
     }
 
     private Component createAndFillFilmScreeningsLayout(Set<FilmScreening> filmScreenings) {
-        this.filmScreeningsHorizontalLayout = new HorizontalLayout();
-        this.filmScreeningsHorizontalLayout.setSizeUndefined();
-        this.filmScreeningsHorizontalLayout.setMargin(true);
+        HorizontalLayout filmScreeningsHorizontalLayout = new HorizontalLayout();
         for (FilmScreening filmScreening : filmScreenings) {
             VerticalLayout verticalLayout = new VerticalLayout();
 
             Movie movie = filmScreening.getMovie();
             Label movieNameLabel = new Label(movie.getLocalizedName() + "<br />" + "(" + movie.getOriginalName() + ", " + movie.getReleaseDate().getYear() + ")", ContentMode.HTML);
-            verticalLayout.addComponent(movieNameLabel);
 
-            Image image = new Image("", new FileResource(new File(movie.getPosterPath())));
-            image.setWidth(365, Unit.PIXELS);
-            image.setHeight(490, Unit.PIXELS);
-            verticalLayout.addComponent(image);
+            verticalLayout.addComponent(movieNameLabel);
+            verticalLayout.addComponent(createPosterImage(movie.getPosterPath()));
 
             Button buttonShowInfo = new Button("Info", (Button.ClickListener) event -> listeners.forEach(cinemaViewListener -> cinemaViewListener.buttonShowMovieClicked(movie.getId())));
-            verticalLayout.addComponent(buttonShowInfo);
+            buttonShowInfo.setWidth(POSTER_IMAGE_WIDTH / 2, Unit.PIXELS);
+            Button showTrailerButton = createShowTrailerButton(movie.getLocalizedName(), movie.getTrailerURL());
+            showTrailerButton.setWidth(POSTER_IMAGE_WIDTH / 2, Unit.PIXELS);
+
+            HorizontalLayout layout = new HorizontalLayout(buttonShowInfo, showTrailerButton);
+
+            verticalLayout.addComponent(layout);
 
             GridLayout timesLayout = new GridLayout();
             timesLayout.setColumns(SCREENING_TIMES_COLUMNS_COUNT);
@@ -99,6 +106,50 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
             filmScreeningsHorizontalLayout.addComponent(new Panel(verticalLayout));
         }
         return filmScreeningsHorizontalLayout;
+    }
+
+    private Button createShowTrailerButton(String movieName, String trailerURL) {
+        Button showTrailerButton = new Button("Trailer");
+
+        Embedded e = new Embedded(movieName, new ExternalResource(
+                trailerURL));
+        e.setMimeType("application/x-shockwave-flash");
+        e.setSizeFull();
+        showTrailerButton.addClickListener((Button.ClickListener) event -> showTrailerWindow(movieName, e));
+
+        return showTrailerButton;
+    }
+
+    private void showTrailerWindow(String movieName, Embedded embedded) {
+        closeUserBlockWindow();
+        trailerWindow = new Window(movieName);
+        trailerWindow.addCloseListener((Window.CloseListener) e -> trailerWindow = null);
+        trailerWindow.setModal(true);
+        trailerWindow.setDraggable(false);
+        trailerWindow.setContent(embedded);
+        trailerWindow.setWidth(TRAILER_WINDOW_WIDTH, Unit.PIXELS);
+        trailerWindow.setHeight(TRAILER_WINDOW_HEIGHT, Unit.PIXELS);
+
+        UI.getCurrent().addWindow(trailerWindow);
+    }
+
+    @Override
+    public void beforeLeave(ViewBeforeLeaveEvent event) {
+        closeUserBlockWindow();
+        event.navigate();
+    }
+
+    private void closeUserBlockWindow() {
+        if (this.trailerWindow != null) {
+            this.trailerWindow.close();
+        }
+    }
+
+    private Image createPosterImage(String posterImagePath) {
+        Image image = new Image("", new FileResource(new File(posterImagePath)));
+        image.setWidth(POSTER_IMAGE_WIDTH, Unit.PIXELS);
+        image.setHeight(POSTER_IMAGE_HEIGHT, Unit.PIXELS);
+        return image;
     }
 
     @Override
@@ -168,9 +219,10 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
             break;
         }
 
-        dateButtons = getDateButtons(availableToOrderDays);
+        this.dateButtons = getDateButtons(availableToOrderDays);
+        Button[] dateButtons = new Button[this.dateButtons.size()];
 
-        return new VerticalLayout(cinemaNameLayout, new HorizontalLayout(dateButtons.toArray(new Button[0])));
+        return new VerticalLayout(cinemaNameLayout, new HorizontalLayout(this.dateButtons.toArray(dateButtons)));
     }
 
     private List<Button> getDateButtons(int availableToOrderDays) {
