@@ -39,7 +39,7 @@ public class TicketRepositoryTest {
     public void deleteTicket() throws Exception {
         repository.save(ticket);
         repository.delete(ticket);
-        Assert.assertEquals(Optional.empty(), repository.findById(ticket.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findOne(ticket.getId()));
     }
 
     @After

@@ -80,7 +80,7 @@ public class CommentRepositoryTest {
     public void deleteComment() throws Exception {
         repository.save(comment);
         repository.delete(comment);
-        Assert.assertEquals(Optional.empty(), repository.findById(comment.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findOne(comment.getId()));
     }
 
     @After

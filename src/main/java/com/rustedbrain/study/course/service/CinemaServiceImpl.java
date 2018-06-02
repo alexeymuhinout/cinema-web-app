@@ -121,18 +121,18 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public Page<City> getCitiesPage(int page, int pageSize) {
-        return cityRepository.findAll(PageRequest.of(page, pageSize));
+        return cityRepository.findAll(new PageRequest(page, pageSize));
     }
 
 
     @Override
     public Page<Cinema> getCinemasPage(int page, int pageSize) {
-        return getCinemasPage(page, pageSize, Sort.by(Sort.Direction.DESC, "name"));
+        return getCinemasPage(page, pageSize, new Sort(Sort.Direction.DESC, "name"));
     }
 
     @Override
     public Page<Cinema> getCinemasPage(int page, int pageSize, Sort sort) {
-        return cinemaRepository.findAll(PageRequest.of(page, pageSize, sort));
+        return cinemaRepository.findAll(new PageRequest(page, pageSize, sort));
     }
 
 
@@ -248,12 +248,12 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public void deleteCinema(Long id) {
-        cinemaRepository.deleteById(id);
+        cinemaRepository.delete(id);
     }
 
     @Override
     public void deleteCity(Long id) {
-        cityRepository.deleteById(id);
+        cityRepository.delete(id);
     }
 
     @Override
@@ -268,7 +268,7 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public List<Seat> getSeats(List<Long> seatIds) {
-        return seatRepository.findAllById(seatIds);
+        return seatRepository.findAll(seatIds);
     }
 
     @Override
@@ -333,7 +333,7 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public List<TicketInfo> getTicketsInfo(List<Long> ticketIds) {
-        return ticketRepository.findAllById(ticketIds).stream().map(TicketInfo::new).collect(Collectors.toList());
+        return ticketRepository.findAll(ticketIds).stream().map(TicketInfo::new).collect(Collectors.toList());
     }
 
     @Override
@@ -360,7 +360,7 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public Optional<Movie> getMovie(long id) {
-        return movieRepository.findById(id);
+        return Optional.ofNullable(movieRepository.findOne(id));
     }
 
     @Override
@@ -373,7 +373,7 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public void deleteComment(long id) {
-        commentRepository.deleteById(id);
+        commentRepository.delete(id);
     }
 
 

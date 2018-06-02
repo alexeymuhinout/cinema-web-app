@@ -42,7 +42,7 @@ public class FilmScreeningEventRepositoryTest {
     public void deleteFilmScreeningEvent() throws Exception {
         repository.save(filmScreeningEvent);
         repository.delete(filmScreeningEvent);
-        Assert.assertEquals(Optional.empty(), repository.findById(filmScreeningEvent.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findOne(filmScreeningEvent.getId()));
     }
 
     @After

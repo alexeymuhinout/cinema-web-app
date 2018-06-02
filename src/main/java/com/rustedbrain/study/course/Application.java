@@ -75,8 +75,8 @@ public class Application {
             Set<CinemaHall> cinemaHalls1 = getTestCinemaHallSet(3, cinema5);
             Set<CinemaHall> cinemaHalls2 = getTestCinemaHallSet(5, cinema6);
 
-            cinemaHallRepository.saveAll(cinemaHalls1);
-            cinemaHallRepository.saveAll(cinemaHalls2);
+            cinemaHallRepository.save(cinemaHalls1);
+            cinemaHallRepository.save(cinemaHalls2);
 
             for (CinemaHall cinemaHall : cinemaHalls2) {
                 cinemaHallRepository.save(cinemaHall);
@@ -96,7 +96,7 @@ public class Application {
                     "Karel Roden",
                     "Rupert Evans",
                     "John Hurt");
-            actorRepository.saveAll(hellBoyActorSet);
+            actorRepository.save(hellBoyActorSet);
 
             Set<Actor> theGreatGatsbyActorSet = getActorSet(
                     "Leonardo DiCaprio",
@@ -106,17 +106,17 @@ public class Application {
                     "Isla Fisher",
                     "Jason Clarke",
                     "Amitabh Bachchan");
-            actorRepository.saveAll(theGreatGatsbyActorSet);
+            actorRepository.save(theGreatGatsbyActorSet);
 
             Set<Actor> theTerminatorActorSet = getActorSet(
                     "Arnold Schwarzenegger",
                     "Michael Biehn",
                     "Linda Hamilton",
                     "Paul Winfield");
-            actorRepository.saveAll(theTerminatorActorSet);
+            actorRepository.save(theTerminatorActorSet);
 
             Set<Genre> genreSet = getGenreSet("adventure", "comedy", "drama", "horror", "historical");
-            genreRepository.saveAll(genreSet);
+            genreRepository.save(genreSet);
 
             Movie movie1 = createMovie("Великий Гэтсби",
                     "The Great Gatsby",

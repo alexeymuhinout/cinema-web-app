@@ -45,7 +45,7 @@ public class MemberRepositoryTest {
     public void deleteMember() throws Exception {
         repository.save(member);
         repository.delete(member);
-        Assert.assertEquals(Optional.empty(), repository.findById(member.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findOne(member.getId()));
     }
 
     @After

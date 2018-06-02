@@ -45,7 +45,7 @@ public class FilmScreeningRepositoryTest {
     public void deleteFeature() throws Exception {
         repository.save(filmScreening);
         repository.delete(filmScreening);
-        Assert.assertEquals(Optional.empty(), repository.findById(filmScreening.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findOne(filmScreening.getId()));
     }
 
     @After

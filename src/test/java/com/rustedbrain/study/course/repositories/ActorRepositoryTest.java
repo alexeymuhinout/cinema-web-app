@@ -44,7 +44,7 @@ public class ActorRepositoryTest {
     public void deleteActor() throws Exception {
         repository.save(actor);
         repository.delete(actor);
-        Assert.assertEquals(Optional.empty(), repository.findById(actor.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findOne(actor.getId()));
     }
 
     @After

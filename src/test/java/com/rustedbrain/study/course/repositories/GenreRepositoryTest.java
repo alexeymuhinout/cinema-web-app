@@ -41,7 +41,7 @@ public class GenreRepositoryTest {
     public void deleteGenre() throws Exception {
         repository.save(genre);
         repository.delete(genre);
-        Assert.assertEquals(Optional.empty(), repository.findById(genre.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findOne(genre.getId()));
     }
 
     @After
