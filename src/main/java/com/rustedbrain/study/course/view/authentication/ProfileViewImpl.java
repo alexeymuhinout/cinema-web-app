@@ -5,10 +5,7 @@ import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
-import com.rustedbrain.study.course.view.authentication.layout.AdminProfileEditTab;
-import com.rustedbrain.study.course.view.authentication.layout.AdminProfileInfoLayout;
-import com.rustedbrain.study.course.view.authentication.layout.ProfileEditTab;
-import com.rustedbrain.study.course.view.authentication.layout.ProfileInfoLayout;
+import com.rustedbrain.study.course.view.authentication.layout.*;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewBeforeLeaveEvent;
 import com.vaadin.navigator.ViewChangeListener;
@@ -32,8 +29,14 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
     private TabSheet tabSheet;
     private ProfileInfoLayout profileInfoTab;
     private ProfileEditTab profileEditTab;
-    private Layout adminLayout;
+    private TabSheet adminLayout;
+    private TabSheet statisticsLayout;
     private Window userBlockWindow;
+    private AdministrationCityPanel administrationCityPanel;
+    private AdministrationCinemaPanel administrationCinemaPanel;
+    private AdministrationStatisticPanel administrationStatisticPanel;
+    private AdministrationCinemaHallPanel administrationCinemaHallPanel;
+
 
     @Autowired
     public ProfileViewImpl(AuthenticationService authenticationService) {
@@ -41,7 +44,6 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
         tabSheet = new TabSheet();
         tabSheet.addStyleName(ValoTheme.TABSHEET_EQUAL_WIDTH_TABS);
         tabSheet.addStyleName(ValoTheme.TABSHEET_FRAMED);
-
         addComponentsAndExpand(tabSheet);
     }
 
@@ -52,12 +54,6 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
         return layout;
     }
 
-    private Layout createAdminTab(List<User> users, List<City> cities) {
-        TabSheet tabSheet = new TabSheet();
-
-
-        return null;
-    }
 
     private Layout getPopupLayout(AbstractComponent newValueTextField, Button.ClickListener bClickListener, String propertyKey, String propertyValue, Layout targetLayout) {
         VerticalLayout changeSurnamePopupContent = new VerticalLayout();
@@ -165,21 +161,47 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
     }
 
     @Override
-    public void addAdministrationTab(List<User> users, List<City> cities) {
+    public void addAdministrationTab(User currUser, List<City> cities) {
         if (adminLayout != null) {
-            Layout oldAdminLayout = this.adminLayout;
-            this.adminLayout = createAdminTab(users, cities);
+            TabSheet oldAdminLayout = this.adminLayout;
+            this.adminLayout = createAdminTab(cities);
             tabSheet.replaceComponent(oldAdminLayout, this.adminLayout);
         } else {
-            this.adminLayout = createAdminTab(users, cities);
-            tabSheet.addTab(adminLayout, "Edit");
+            this.adminLayout = createAdminTab(cities);
+            tabSheet.addTab(adminLayout, "Administration");
         }
+    }
+
+    private TabSheet createAdminTab(List<City> cities) {
+        TabSheet tabSheet = new TabSheet();
+        administrationCityPanel = new AdministrationCityPanel(listeners, cities);
+        administrationCinemaPanel = new AdministrationCinemaPanel(listeners, cities);
+        administrationCinemaHallPanel = new AdministrationCinemaHallPanel(listeners, cities);
+        tabSheet.addTab(administrationCityPanel, "City");
+        tabSheet.addTab(administrationCinemaPanel, "Cinema");
+        tabSheet.addTab(administrationCinemaHallPanel,"Cinema Hall");
+        return tabSheet;
     }
 
 
     @Override
     public void addStatisticsTab() {
+        if (statisticsLayout != null) {
+            TabSheet oldStatisticsLayout = this.statisticsLayout;
+            this.statisticsLayout = createStatisticsTab();
+            tabSheet.replaceComponent(oldStatisticsLayout, this.statisticsLayout);
+        } else {
+            this.statisticsLayout = createStatisticsTab();
+            tabSheet.addTab(statisticsLayout, "Statistics");
+        }
+    }
 
+    @Override
+    public TabSheet createStatisticsTab() {
+        TabSheet tabSheet = new TabSheet();
+        administrationStatisticPanel = new AdministrationStatisticPanel(listeners);
+        tabSheet.addTab(administrationStatisticPanel, "Ticket");
+        return tabSheet;
     }
 
     @Override

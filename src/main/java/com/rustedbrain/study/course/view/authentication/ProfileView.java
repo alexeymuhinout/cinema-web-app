@@ -3,8 +3,12 @@ package com.rustedbrain.study.course.view.authentication;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.CityEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.CinemaHallEditPresenter;
 import com.rustedbrain.study.course.view.ApplicationView;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.ui.TabSheet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -20,9 +24,11 @@ public interface ProfileView extends ApplicationView {
 
     void showUserBlockWindow(long id, String login, UserRole userRole);
 
-    void addAdministrationTab(List<User> users, List<City> cities);
+    void addAdministrationTab(User currUser, List<City> cities);
 
     void addStatisticsTab();
+
+    TabSheet createStatisticsTab();
 
     void setAdminEditUserSelected(User currentUser);
 
@@ -67,5 +73,11 @@ public interface ProfileView extends ApplicationView {
         void comboBoxInfoUserSelected(User selectedUser);
 
         void buttonInfoShowMeClicked(List<User> users);
+
+        CityEditPresenter getCityEditPresenter();
+
+        CinemaEditPresenter getCinemaEditPresenter();
+
+        CinemaHallEditPresenter getCinemaHallEditPresenter();
     }
 }
