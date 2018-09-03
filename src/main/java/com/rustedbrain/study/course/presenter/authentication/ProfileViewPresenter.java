@@ -4,9 +4,13 @@ import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.CinemaHallEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.CityEditPresenter;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.authentication.ProfileView;
+import com.rustedbrain.study.course.view.cinema.CinemaView;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
@@ -29,13 +33,19 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
     private static final Logger logger = Logger.getLogger(ProfileViewPresenter.class.getName());
     private final CinemaService cinemaService;
     private final AuthenticationService authenticationService;
+    private final CityEditPresenter cityEditPresenter;
 
     private ProfileView view;
+    private CinemaEditPresenter cinemaEditPresenter;
+    private CinemaHallEditPresenter cinemaHallEditPresenter;
 
     @Autowired
     public ProfileViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
         this.cinemaService = cinemaService;
         this.authenticationService = authenticationService;
+        cityEditPresenter = new CityEditPresenter(cinemaService);
+        cinemaEditPresenter = new CinemaEditPresenter(cinemaService);
+        cinemaHallEditPresenter = new CinemaHallEditPresenter(cinemaService);
     }
 
     @Override
@@ -47,6 +57,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
                 addProfileInfoTab(role);
                 addProfileEditTab(role);
                 addAdministrationTab(role);
+                addStatisticsTab(role);
             }
             break;
             case PAYMASTER:
@@ -78,8 +89,17 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
         }
     }
 
+    private void addStatisticsTab(UserRole role) {
+        logger.info("Statistics tab successfully added.");
+        view.addStatisticsTab();
+    }
+
     private void addAdministrationTab(UserRole role) {
         logger.info("Administration tab successfully added.");
+        User currUser = authenticationService.getAuthenticUser();
+        List<City> cities = cinemaService.getCities();
+
+        view.addAdministrationTab(currUser, cities);
     }
 
     private void addProfileEditTab(UserRole role) {
@@ -158,6 +178,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
         view.reload();
     }
 
+
     @Override
     public void buttonChangeBirthdayClicked(long id, LocalDate birthday) {
         authenticationService.changeUserBirthday(id, birthday, authenticationService.getUserRole());
@@ -212,4 +233,18 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
     }
 
 
+    @Override
+    public CityEditPresenter getCityEditPresenter() {
+        return cityEditPresenter;
+    }
+
+    @Override
+    public CinemaEditPresenter getCinemaEditPresenter() {
+        return cinemaEditPresenter;
+    }
+
+    @Override
+    public CinemaHallEditPresenter getCinemaHallEditPresenter() {
+        return cinemaHallEditPresenter;
+    }
 }
