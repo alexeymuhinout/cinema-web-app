@@ -41,6 +41,7 @@ public class CinemaServiceImpl implements CinemaService {
     private CityRepository cityRepository;
 
     private CinemaRepository cinemaRepository;
+    private CinemaHallRepository cinemaHallRepository;
 
     private FilmScreeningEventRepository filmScreeningEventRepository;
 
@@ -101,6 +102,11 @@ public class CinemaServiceImpl implements CinemaService {
     @Autowired
     public void setCityRepository(CityRepository cityRepository) {
         this.cityRepository = cityRepository;
+    }
+
+    @Autowired
+    public void setCinemaHallRepository(CinemaHallRepository cinemaHallRepository) {
+        this.cinemaHallRepository = cinemaHallRepository;
     }
 
     @Autowired
@@ -393,6 +399,38 @@ public class CinemaServiceImpl implements CinemaService {
         CommentReputation commentReputation = createMinusCommentReputation(commentId, user);
         commentReputation.setPlus(true);
         commentReputationRepository.save(commentReputation);
+    }
+
+    @Override
+    public void renameCity(City selectedCity, String newCityName) {
+        cityRepository.renameCity(selectedCity.getId(), newCityName);
+    }
+
+    @Override
+    public void addCity(String newCityName) {
+        City city = new City(newCityName);
+        cityRepository.save(city);
+    }
+
+    @Override
+    public void editCinema(Cinema selectedCinema, String newCinemaName, City newCity, String newCinemaLocation) {
+        cinemaRepository.editCinema(selectedCinema.getId(), newCinemaName, newCity, newCinemaLocation);
+    }
+
+    @Override
+    public void addCinema(String cinemaName, City city, String location) {
+        Cinema cinema = new Cinema(city, cinemaName, location);
+        cinemaRepository.save(cinema);
+    }
+
+    @Override
+    public void editCinemaHall(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema) {
+        cinemaHallRepository.editCinemaHall(selectedCinemaHall.getId(), newCinemaHallName, newCinema);
+    }
+
+    @Override
+    public void deleteCinemaHall(long id) {
+        cinemaHallRepository.delete(id);
     }
 
     private CommentReputation createMinusCommentReputation(long commentId, User user) {

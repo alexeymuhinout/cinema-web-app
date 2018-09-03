@@ -85,4 +85,16 @@ public interface CinemaService {
     void invertCommentReputation(CommentReputation commentReputation);
 
     void addPlusCommentReputation(long id, User user);
+
+    void renameCity(City selectedCity, String newCityName);
+
+    void addCity(String newCityName);
+
+    void editCinema(Cinema selectedCinema, String newCinemaName, City newCity, String newCinemaLocation);
+
+    void addCinema(String cinemaName, City city, String location);
+
+    void editCinemaHall(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema);
+
+    void deleteCinemaHall(long id);
 }
