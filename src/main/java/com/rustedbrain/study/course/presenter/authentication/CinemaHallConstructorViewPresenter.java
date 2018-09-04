@@ -21,4 +21,9 @@ public class CinemaHallConstructorViewPresenter implements CinemaHallConstructor
     public void setCinemaHallConstructorView(CinemaHallConstructorView cinemaHallConstructorView) {
         this.cinemaHallConstructorView = cinemaHallConstructorView;
     }
+
+    @Override
+    public void addButtonClicked(String rows, String seats) {
+
+    }
 }
