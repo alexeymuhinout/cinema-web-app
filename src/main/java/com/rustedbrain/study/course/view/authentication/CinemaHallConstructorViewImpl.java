@@ -43,21 +43,24 @@ public class CinemaHallConstructorViewImpl extends VerticalLayout implements Cin
         Button seatsIconButton = new Button(VaadinIcons.ALIGN_JUSTIFY);
         seatsIconButton.setCaption("Seats");
         seatsIconButton.addClickListener(clickEvent -> {
-            this.addComponent(getAddNewSeatsPopupView());
+            addComponent(getAddNewSeatsPopupView());
         });
         verticalLayout.addComponent(seatsIconButton);
         return verticalLayout;
     }
 
     private PopupView getAddNewSeatsPopupView() {
-        VerticalLayout createPopupContent = new VerticalLayout();
+        FormLayout content = new FormLayout();
 
-        TextField numberOfRows = new TextField("Row");
-        TextField numberOfSeats = new TextField("Seat");
-        createPopupContent.addComponent(numberOfRows);
-        createPopupContent.addComponent(numberOfSeats);
+        TextField numberOfRowsTextField = new TextField("Row");
+        TextField numberOfSeatsTextField = new TextField("Seat");
+        content.addComponent(numberOfRowsTextField);
+        content.addComponent(numberOfSeatsTextField);
+        content.addComponent(new Button("Add", (Button.ClickListener) event -> viewListeners.forEach(viewListener -> viewListener.addButtonClicked(numberOfRowsTextField.getValue(), numberOfSeatsTextField.getValue()))));
+        content.setSizeUndefined();
+        content.setMargin(true);
 
-        PopupView createPopup = new PopupView(null, createPopupContent);
+        PopupView createPopup = new PopupView(null, content);
         createPopup.setSizeUndefined();
         createPopup.setPopupVisible(true);
         return createPopup;

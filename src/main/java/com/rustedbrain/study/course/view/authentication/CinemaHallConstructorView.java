@@ -9,5 +9,7 @@ public interface CinemaHallConstructorView extends View {
 
     interface ViewListener {
         void setCinemaHallConstructorView(CinemaHallConstructorView components);
+
+        void addButtonClicked(String rows, String seats);
     }
 }
