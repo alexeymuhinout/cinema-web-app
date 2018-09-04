@@ -7,6 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface ManagerRepository extends UserRepository<Manager> {
 
-    @Query("select count(m) from Manager m left join m.cinemas c where c.id = ?2 and m.login = ?1")
-    boolean isCinemaManager(String login, long cinemaId);
+	@Query("select count(m) from Manager m left join m.cinemas c where c.id = ?2 and m.login = ?1")
+	boolean isCinemaManager(String login, long cinemaId);
 }

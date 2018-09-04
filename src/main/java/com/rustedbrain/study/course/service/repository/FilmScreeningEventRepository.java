@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface FilmScreeningEventRepository extends JpaRepository<FilmScreeningEvent, Long> {
 
-    @Query("select fs from FilmScreeningEvent fs where fs.filmScreening.cinema.id = ?1 and fs.date = ?2")
-    List<FilmScreeningEvent> getFilmScreeningEvents(long cinemaId, Date currDate);
+	@Query("select fs from FilmScreeningEvent fs where fs.filmScreening.cinema.id = ?1 and fs.date = ?2")
+	List<FilmScreeningEvent> getFilmScreeningEvents(long cinemaId, Date currDate);
 
 }

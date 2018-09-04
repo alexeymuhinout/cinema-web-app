@@ -4,9 +4,9 @@ import com.vaadin.navigator.View;
 
 public interface ApplicationView extends View {
 
-    void showWarning(String message);
+	void showWarning(String message);
 
-    void showError(String message);
+	void showError(String message);
 
-    void reload();
+	void reload();
 }

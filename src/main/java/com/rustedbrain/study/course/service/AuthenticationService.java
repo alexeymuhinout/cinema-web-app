@@ -12,39 +12,39 @@ import java.util.Optional;
 
 public interface AuthenticationService {
 
-    boolean isCinemaManagementAvailable(long cinemaId);
+	boolean isCinemaManagementAvailable(long cinemaId);
 
-    boolean isAuthenticated();
+	boolean isAuthenticated();
 
-    void logOut();
+	void logOut();
 
-    boolean login(String username, String password, boolean rememberMe);
+	boolean login(String username, String password, boolean rememberMe);
 
-    UserRole getUserRole();
+	UserRole getUserRole();
 
-    String getUserLogin();
+	String getUserLogin();
 
-    User getAuthenticUser();
+	User getAuthenticUser();
 
-    List<User> getUsersByRoles(List<UserRole> roles);
+	List<User> getUsersByRoles(List<UserRole> roles);
 
-    void changeUserName(long id, String name, UserRole role);
+	void changeUserName(long id, String name, UserRole role);
 
-    void changeUserLogin(long id, String login, UserRole role);
+	void changeUserLogin(long id, String login, UserRole role);
 
-    void changeUserMail(long id, String mail, UserRole role);
+	void changeUserMail(long id, String mail, UserRole role);
 
-    void changeUserSurname(long id, String surname, UserRole userRole);
+	void changeUserSurname(long id, String surname, UserRole userRole);
 
-    void changeUserCity(long id, long cityId, UserRole userRole);
+	void changeUserCity(long id, long cityId, UserRole userRole);
 
-    void changeUserBirthday(long id, LocalDate birthday, UserRole role);
+	void changeUserBirthday(long id, LocalDate birthday, UserRole role);
 
-    void changeUserBlockUntilDate(long id, LocalDateTime blockedUntilDate, String blockDescription, UserRole userRole);
+	void changeUserBlockUntilDate(long id, LocalDateTime blockedUntilDate, String blockDescription, UserRole userRole);
 
-    void unblockUser(long id, UserRole userRole);
+	void unblockUser(long id, UserRole userRole);
 
-    Optional<AuthUser> getAuthUserById(long id);
+	Optional<AuthUser> getAuthUserById(long id);
 
-    Optional<UserInfo> getUserInfo(long userId);
+	Optional<UserInfo> getUserInfo(long userId);
 }

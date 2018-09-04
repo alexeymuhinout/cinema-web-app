@@ -26,130 +26,136 @@ import java.util.List;
 @SpringView(name = VaadinUI.TICKET_INFO_VIEW)
 public class TicketsInfoViewImpl extends VerticalLayout implements TicketsInfoView {
 
-    private List<TicketsInfoView.TicketsInfoViewListener> viewListeners = new ArrayList<>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 54340880029187075L;
 
-    private Panel ticketsInfoPanel;
+	private List<TicketsInfoView.TicketsInfoViewListener> viewListeners = new ArrayList<>();
 
-    public TicketsInfoViewImpl() {
-        addComponent(getTicketsInfoPanel());
-    }
+	private Panel ticketsInfoPanel;
 
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-        viewListeners.forEach(listener -> listener.entered(event));
-    }
+	public TicketsInfoViewImpl() {
+		addComponent(getTicketsInfoPanel());
+	}
 
-    public Panel getTicketsInfoPanel() {
-        if (ticketsInfoPanel == null) {
-            ticketsInfoPanel = new Panel();
-        }
-        return ticketsInfoPanel;
-    }
+	@Override
+	public void enter(ViewChangeListener.ViewChangeEvent event) {
+		viewListeners.forEach(listener -> listener.entered(event));
+	}
 
-    @Override
-    @Autowired
-    public void addListener(TicketsInfoView.TicketsInfoViewListener listener) {
-        listener.setView(this);
-        this.viewListeners.add(listener);
-    }
+	public Panel getTicketsInfoPanel() {
+		if (ticketsInfoPanel == null) {
+			ticketsInfoPanel = new Panel();
+		}
+		return ticketsInfoPanel;
+	}
 
-    @Override
-    public void showTicketsInfo(List<TicketInfo> ticketInfos) {
-        VerticalLayout ticketsVerticalLayout = new VerticalLayout();
-        if (!ticketInfos.isEmpty()) {
-            for (TicketInfo ticketInfo : ticketInfos) {
-                Label movieNameLabel = new Label(ticketInfo.getMovie());
-                Label dateTimeLabel = new Label("Date: " + ticketInfo.getDate() + "; Time: " + ticketInfo.getDate());
-                Label cinemaHallLabel = new Label("Hall: " + ticketInfo.getHall());
-                Label rowSeatLabel = new Label("Row: " + ticketInfo.getRow() + "; Seat: " + ticketInfo.getSeat());
-                Label priceLabel = new Label("Price: " + ticketInfo.getPrice());
-                if (ticketInfo.isReserved()) {
-                    priceLabel.setValue(priceLabel.getValue() + "; Ticket reserved, please present it to the seller 30 minutes before the session.");
-                }
-                ticketsVerticalLayout.addComponent(new Panel(new VerticalLayout(movieNameLabel, dateTimeLabel, cinemaHallLabel, rowSeatLabel, priceLabel)));
-            }
-            Button buttonDownload = new Button("Download");
-            StreamResource myResource = createResource(ticketInfos);
-            FileDownloader fileDownloader = new FileDownloader(myResource);
-            fileDownloader.extend(buttonDownload);
+	@Override
+	@Autowired
+	public void addListener(TicketsInfoView.TicketsInfoViewListener listener) {
+		listener.setView(this);
+		this.viewListeners.add(listener);
+	}
 
-            ticketsVerticalLayout.addComponent(buttonDownload);
-        } else {
-            Label errorLabel = new Label("No tickets selected.");
-            ticketsVerticalLayout.addComponent(errorLabel);
-        }
-        getTicketsInfoPanel().setContent(ticketsVerticalLayout);
-    }
+	@Override
+	public void showTicketsInfo(List<TicketInfo> ticketInfos) {
+		VerticalLayout ticketsVerticalLayout = new VerticalLayout();
+		if (!ticketInfos.isEmpty()) {
+			for (TicketInfo ticketInfo : ticketInfos) {
+				Label movieNameLabel = new Label(ticketInfo.getMovie());
+				Label dateTimeLabel = new Label("Date: " + ticketInfo.getDate() + "; Time: " + ticketInfo.getDate());
+				Label cinemaHallLabel = new Label("Hall: " + ticketInfo.getHall());
+				Label rowSeatLabel = new Label("Row: " + ticketInfo.getRow() + "; Seat: " + ticketInfo.getSeat());
+				Label priceLabel = new Label("Price: " + ticketInfo.getPrice());
+				if (ticketInfo.isReserved()) {
+					priceLabel.setValue(priceLabel.getValue()
+							+ "; Ticket reserved, please present it to the seller 30 minutes before the session.");
+				}
+				ticketsVerticalLayout.addComponent(new Panel(
+						new VerticalLayout(movieNameLabel, dateTimeLabel, cinemaHallLabel, rowSeatLabel, priceLabel)));
+			}
+			Button buttonDownload = new Button("Download");
+			StreamResource myResource = createResource(ticketInfos);
+			FileDownloader fileDownloader = new FileDownloader(myResource);
+			fileDownloader.extend(buttonDownload);
 
+			ticketsVerticalLayout.addComponent(buttonDownload);
+		} else {
+			Label errorLabel = new Label("No tickets selected.");
+			ticketsVerticalLayout.addComponent(errorLabel);
+		}
+		getTicketsInfoPanel().setContent(ticketsVerticalLayout);
+	}
 
-    @Override
-    public void showWarning(String message) {
-        Notification.show(message, Notification.Type.WARNING_MESSAGE);
-    }
+	@Override
+	public void showWarning(String message) {
+		Notification.show(message, Notification.Type.WARNING_MESSAGE);
+	}
 
-    @Override
-    public void showError(String message) {
-        Notification.show(message, Notification.Type.ERROR_MESSAGE);
-    }
+	@Override
+	public void showError(String message) {
+		Notification.show(message, Notification.Type.ERROR_MESSAGE);
+	}
 
-    @Override
-    public void reload() {
-        Page.getCurrent().reload();
-    }
+	@Override
+	public void reload() {
+		Page.getCurrent().reload();
+	}
 
-    private StreamResource createResource(List<TicketInfo> ticketInfos) {
+	private StreamResource createResource(List<TicketInfo> ticketInfos) {
 
-        return new StreamResource((StreamResource.StreamSource) () -> {
+		return new StreamResource((StreamResource.StreamSource) () -> {
 
-            StringWriter stringWriter = new StringWriter();
+			StringWriter stringWriter = new StringWriter();
 
-            try {
-                TicketInfoHTML.getInstance().precess(ticketInfos, stringWriter);
+			try {
+				TicketInfoHTML.getInstance().precess(ticketInfos, stringWriter);
 
-                return new ByteArrayInputStream(createPdfStream(stringWriter.toString()).toByteArray());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+				return new ByteArrayInputStream(createPdfStream(stringWriter.toString()).toByteArray());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-            return null;
+			return null;
 
-        }, "tickets.pdf");
-    }
+		}, "tickets.pdf");
+	}
 
-    public ByteArrayOutputStream createPdfStream(String src) throws IOException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
+	public ByteArrayOutputStream createPdfStream(String src) throws IOException {
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		try {
 
-            WriterProperties writerProperties = new WriterProperties();
-            //Add metadata
-            writerProperties.addXmpMetadata();
+			WriterProperties writerProperties = new WriterProperties();
+			// Add metadata
+			writerProperties.addXmpMetadata();
 
-            PdfWriter pdfWriter = new PdfWriter(byteArrayOutputStream, writerProperties);
+			PdfWriter pdfWriter = new PdfWriter(byteArrayOutputStream, writerProperties);
 
-            PdfDocument pdfDoc = new PdfDocument(pdfWriter);
-            pdfDoc.getCatalog().setLang(new PdfString("en-US"));
-            //Set the document to be tagged
-            pdfDoc.setTagged();
-            pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
+			PdfDocument pdfDoc = new PdfDocument(pdfWriter);
+			pdfDoc.getCatalog().setLang(new PdfString("en-US"));
+			// Set the document to be tagged
+			pdfDoc.setTagged();
+			pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
 
-            //Set meta tags
-            PdfDocumentInfo pdfMetaData = pdfDoc.getDocumentInfo();
-            pdfMetaData.setAuthor("cinema-web-app Administrator");
-            pdfMetaData.addCreationDate();
-            pdfMetaData.getProducer();
-            pdfMetaData.setCreator("cinema-web-app");
-            pdfMetaData.setKeywords("ticket, tickets");
-            pdfMetaData.setSubject("tickets");
-            //Title is derived from html
+			// Set meta tags
+			PdfDocumentInfo pdfMetaData = pdfDoc.getDocumentInfo();
+			pdfMetaData.setAuthor("cinema-web-app Administrator");
+			pdfMetaData.addCreationDate();
+			pdfMetaData.getProducer();
+			pdfMetaData.setCreator("cinema-web-app");
+			pdfMetaData.setKeywords("ticket, tickets");
+			pdfMetaData.setSubject("tickets");
+			// Title is derived from html
 
-            // pdf conversion
-            ConverterProperties props = new ConverterProperties();
+			// pdf conversion
+			ConverterProperties props = new ConverterProperties();
 
-            HtmlConverter.convertToPdf(src, pdfDoc, props);
-            pdfDoc.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return byteArrayOutputStream;
-    }
+			HtmlConverter.convertToPdf(src, pdfDoc, props);
+			pdfDoc.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return byteArrayOutputStream;
+	}
 }

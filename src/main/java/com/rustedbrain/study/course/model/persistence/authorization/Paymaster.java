@@ -10,32 +10,36 @@ import java.util.Set;
 @Table(name = "paymaster")
 public class Paymaster extends User {
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cinemaId")
-    private Cinema cinema;
-    @OneToMany(mappedBy = "paymaster")
-    private Set<Ticket> tickets;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6870052176268087499L;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cinemaId")
+	private Cinema cinema;
+	@OneToMany(mappedBy = "paymaster")
+	private Set<Ticket> tickets;
 
-    public Paymaster() {
-    }
+	public Paymaster() {
+	}
 
-    public Paymaster(String login, String password, String mail) {
-        super(login, password, mail);
-    }
+	public Paymaster(String login, String password, String mail) {
+		super(login, password, mail);
+	}
 
-    public Cinema getCinema() {
-        return cinema;
-    }
+	public Cinema getCinema() {
+		return cinema;
+	}
 
-    public void setCinema(Cinema cinema) {
-        this.cinema = cinema;
-    }
+	public void setCinema(Cinema cinema) {
+		this.cinema = cinema;
+	}
 
-    public Set<Ticket> getTickets() {
-        return tickets;
-    }
+	public Set<Ticket> getTickets() {
+		return tickets;
+	}
 
-    public void setTickets(Set<Ticket> tickets) {
-        this.tickets = tickets;
-    }
+	public void setTickets(Set<Ticket> tickets) {
+		this.tickets = tickets;
+	}
 }

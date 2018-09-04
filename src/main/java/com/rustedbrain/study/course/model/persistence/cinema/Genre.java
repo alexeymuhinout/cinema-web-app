@@ -13,49 +13,54 @@ import java.util.Set;
 @Table(name = "genre")
 public class Genre extends DatabaseEntity {
 
-    @Column(name = "name", length = 64, nullable = false)
-    private String name;
-    @ManyToMany(mappedBy = "genres")
-    private Set<Movie> movies = new HashSet<>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3579725893493586217L;
+	@Column(name = "name", length = 64, nullable = false)
+	private String name;
+	@ManyToMany(mappedBy = "genres")
+	private Set<Movie> movies = new HashSet<>();
 
-    public Set<Movie> getMovies() {
-        return movies;
-    }
+	public Set<Movie> getMovies() {
+		return movies;
+	}
 
-    public void setMovies(Set<Movie> movies) {
-        this.movies = movies;
-    }
+	public void setMovies(Set<Movie> movies) {
+		this.movies = movies;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		if (!super.equals(o))
+			return false;
 
-        Genre genre = (Genre) o;
+		Genre genre = (Genre) o;
 
-        return name.equals(genre.name);
-    }
+		return name.equals(genre.name);
+	}
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + name.hashCode();
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + name.hashCode();
+		return result;
+	}
 
-    @Override
-    public String toString() {
-        return "Genre{" +
-                "name='" + name + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "Genre{" + "name='" + name + '\'' + '}';
+	}
 }

@@ -21,35 +21,36 @@ import static com.rustedbrain.study.course.presenter.cinema.TicketBuyingViewPres
 @SpringComponent
 public class TicketsInfoViewPresenter implements TicketsInfoView.TicketsInfoViewListener, Serializable {
 
-    public static final String TICKETS_ID_PARAM_KEY = "tickets";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1825173376730261455L;
 
-    private final CinemaService cinemaService;
-    private final AuthenticationService authenticationService;
-    private TicketsInfoView view;
-    private List<TicketInfo> ticketInfos;
+	public static final String TICKETS_ID_PARAM_KEY = "tickets";
 
+	private final CinemaService cinemaService;
+	private final AuthenticationService authenticationService;
+	private TicketsInfoView view;
+	private List<TicketInfo> ticketInfos;
 
-    @Autowired
-    public TicketsInfoViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
-        this.cinemaService = cinemaService;
-        this.authenticationService = authenticationService;
-    }
+	@Autowired
+	public TicketsInfoViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
+		this.cinemaService = cinemaService;
+		this.authenticationService = authenticationService;
+	}
 
-    @Override
-    public void setView(TicketsInfoView view) {
-        this.view = view;
-    }
+	@Override
+	public void setView(TicketsInfoView view) {
+		this.view = view;
+	}
 
-    @Override
-    public void entered(ViewChangeListener.ViewChangeEvent event) {
-        Map<String, String> parameterMap = event.getParameterMap();
-        List<Long> seatIds = Arrays.stream(parameterMap.get(TICKETS_ID_PARAM_KEY)
-                .split(PARAM_SEPARATOR))
-                .map(String::trim)
-                .mapToLong(Long::parseLong).boxed()
-                .collect(Collectors.toList());
-        this.ticketInfos = cinemaService.getTicketsInfo(seatIds);
-        this.view.showTicketsInfo(ticketInfos);
+	@Override
+	public void entered(ViewChangeListener.ViewChangeEvent event) {
+		Map<String, String> parameterMap = event.getParameterMap();
+		List<Long> seatIds = Arrays.stream(parameterMap.get(TICKETS_ID_PARAM_KEY).split(PARAM_SEPARATOR))
+				.map(String::trim).mapToLong(Long::parseLong).boxed().collect(Collectors.toList());
+		this.ticketInfos = cinemaService.getTicketsInfo(seatIds);
+		this.view.showTicketsInfo(ticketInfos);
 
-    }
+	}
 }

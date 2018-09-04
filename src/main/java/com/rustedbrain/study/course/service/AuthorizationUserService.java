@@ -10,23 +10,23 @@ import java.util.Optional;
 
 public interface AuthorizationUserService {
 
-    Optional<AuthUser> getIdentifiedAuthUser(String login, String password);
+	Optional<AuthUser> getIdentifiedAuthUser(String login, String password);
 
-    Optional<AuthUser> getAuthUserById(long id);
+	Optional<AuthUser> getAuthUserById(long id);
 
-    String rememberUser(String login, UserRole role);
+	String rememberUser(String login, UserRole role);
 
-    AuthUser getRememberedUser(String id);
+	AuthUser getRememberedUser(String id);
 
-    void removeRememberedUser(String id);
+	void removeRememberedUser(String id);
 
-    boolean isValidCinemaManager(String userLogin, long cinemaId);
+	boolean isValidCinemaManager(String userLogin, long cinemaId);
 
-    Optional<Administrator> getAdministrator(String userLogin);
+	Optional<Administrator> getAdministrator(String userLogin);
 
-    UserPropertiesAccessor getUserPropertiesAccessor(UserRole role);
+	UserPropertiesAccessor getUserPropertiesAccessor(UserRole role);
 
-    User getUser(String login);
+	User getUser(String login);
 
-    Optional<UserInfo> getUserInfo(long userId);
+	Optional<UserInfo> getUserInfo(long userId);
 }

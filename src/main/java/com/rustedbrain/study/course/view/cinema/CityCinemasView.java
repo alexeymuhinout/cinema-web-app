@@ -8,24 +8,24 @@ import java.util.List;
 
 public interface CityCinemasView extends ApplicationView {
 
-    void showCinemasPanel(List<Cinema> cinemas);
+	void showCinemasPanel(List<Cinema> cinemas);
 
-    void addCityCinemasViewListener(CityCinemasViewListener listener);
+	void addCityCinemasViewListener(CityCinemasViewListener listener);
 
-    void setCinemasPageCount(int totalPages);
+	void setCinemasPageCount(int totalPages);
 
-    void setCurrentCinemasPage(int currentCinemasPage);
+	void setCurrentCinemasPage(int currentCinemasPage);
 
-    interface CityCinemasViewListener {
+	interface CityCinemasViewListener {
 
-        void buttonDeleteCinemaClicked(Long id);
+		void buttonDeleteCinemaClicked(Long id);
 
-        void buttonCinemasPerPageCountClicked(int cinemasPerPageCount);
+		void buttonCinemasPerPageCountClicked(int cinemasPerPageCount);
 
-        void buttonPageClicked(int page);
+		void buttonPageClicked(int page);
 
-        void entered(ViewChangeListener.ViewChangeEvent event);
+		void entered(ViewChangeListener.ViewChangeEvent event);
 
-        void setView(CityCinemasView cityCinemasView);
-    }
+		void setView(CityCinemasView cityCinemasView);
+	}
 }

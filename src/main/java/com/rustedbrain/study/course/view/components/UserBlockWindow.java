@@ -8,31 +8,40 @@ import java.util.List;
 
 public class UserBlockWindow extends Window {
 
-    private static final String WINDOW_TITTLE = "Block User";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5707645639377588313L;
 
-    private List<Listener> listeners = new ArrayList<>();
+	private static final String WINDOW_TITTLE = "Block User";
 
-    public UserBlockWindow(String userLogin, long userId) {
-        super(WINDOW_TITTLE);
-        super.setSizeUndefined();
-        super.setModal(true);
-        super.setResizable(false);
-        super.setDraggable(false);
+	private List<Listener> listeners = new ArrayList<>();
 
-        Label warnLabel = new Label("If you want to block user \"" + userLogin + "\", please specify date and description");
-        DateTimeField blockDateTimeField = new DateTimeField("Block date", LocalDateTime.now());
-        TextArea blockDescrTextField = new TextArea("Reason of blocking");
-        blockDescrTextField.setSizeFull();
-        Button buttonBlock = new Button("Block", (Button.ClickListener) event -> listeners.forEach(viewListener -> viewListener.buttonBlockSubmitClicked(userId, blockDateTimeField.getValue(), blockDescrTextField.getValue())));
-        super.setContent(new VerticalLayout(warnLabel, blockDateTimeField, blockDescrTextField, buttonBlock));
-    }
+	public UserBlockWindow(String userLogin, long userId) {
+		super(WINDOW_TITTLE);
+		super.setSizeUndefined();
+		super.setModal(true);
+		super.setResizable(false);
+		super.setDraggable(false);
 
-    public boolean addListener(Listener listener) {
-        return listeners.add(listener);
-    }
+		Label warnLabel = new Label(
+				"If you want to block user \"" + userLogin + "\", please specify date and description");
+		DateTimeField blockDateTimeField = new DateTimeField("Block date", LocalDateTime.now());
+		TextArea blockDescrTextField = new TextArea("Reason of blocking");
+		blockDescrTextField.setSizeFull();
+		Button buttonBlock = new Button("Block",
+				(Button.ClickListener) event -> listeners
+						.forEach(viewListener -> viewListener.buttonBlockSubmitClicked(userId,
+								blockDateTimeField.getValue(), blockDescrTextField.getValue())));
+		super.setContent(new VerticalLayout(warnLabel, blockDateTimeField, blockDescrTextField, buttonBlock));
+	}
 
-    public interface Listener {
+	public boolean addListener(Listener listener) {
+		return listeners.add(listener);
+	}
 
-        void buttonBlockSubmitClicked(long userId, LocalDateTime blockUntil, String blockDescription);
-    }
+	public interface Listener {
+
+		void buttonBlockSubmitClicked(long userId, LocalDateTime blockUntil, String blockDescription);
+	}
 }

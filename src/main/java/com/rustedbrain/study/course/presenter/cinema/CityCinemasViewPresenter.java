@@ -18,61 +18,66 @@ import java.util.logging.Logger;
 @SpringComponent
 public class CityCinemasViewPresenter implements CityCinemasView.CityCinemasViewListener, Serializable {
 
-    private static final Logger logger = Logger.getLogger(CityCinemasViewPresenter.class.getName());
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 235588100969571636L;
 
-    private static final int START_CINEMAS_PAGE = 1;
-    private static final int CINEMAS_PER_PAGE = 10;
+	private static final Logger logger = Logger.getLogger(CityCinemasViewPresenter.class.getName());
 
-    private CityCinemasView view;
-    private CinemaService cinemaService;
+	private static final int START_CINEMAS_PAGE = 1;
+	private static final int CINEMAS_PER_PAGE = 10;
 
-    private int currentCinemasPageNumber = START_CINEMAS_PAGE;
-    private int currentCinemasPerPageCount = CINEMAS_PER_PAGE;
+	private CityCinemasView view;
+	private CinemaService cinemaService;
 
-    @Autowired
-    public CityCinemasViewPresenter(CinemaService cinemaService) {
-        this.cinemaService = cinemaService;
-    }
+	private int currentCinemasPageNumber = START_CINEMAS_PAGE;
+	private int currentCinemasPerPageCount = CINEMAS_PER_PAGE;
 
-    public void setView(CityCinemasView view) {
-        this.view = view;
-    }
+	@Autowired
+	public CityCinemasViewPresenter(CinemaService cinemaService) {
+		this.cinemaService = cinemaService;
+	}
 
-    @Override
-    public void buttonDeleteCinemaClicked(Long id) {
-        cinemaService.deleteCinema(id);
-        reloadCinemas();
-    }
+	public void setView(CityCinemasView view) {
+		this.view = view;
+	}
 
-    @Override
-    public void buttonCinemasPerPageCountClicked(int cinemasPerPageCount) {
-        currentCinemasPerPageCount = cinemasPerPageCount;
-        reloadCinemas();
-    }
+	@Override
+	public void buttonDeleteCinemaClicked(Long id) {
+		cinemaService.deleteCinema(id);
+		reloadCinemas();
+	}
 
-    @Override
-    public void buttonPageClicked(int page) {
-        currentCinemasPageNumber = page;
-        reloadCinemas();
-    }
+	@Override
+	public void buttonCinemasPerPageCountClicked(int cinemasPerPageCount) {
+		currentCinemasPerPageCount = cinemasPerPageCount;
+		reloadCinemas();
+	}
 
-    @Override
-    public void entered(ViewChangeListener.ViewChangeEvent event) {
-        String param = event.getParameters();
-        Optional<String> optionalCityName = Optional.ofNullable(param);
-        if (optionalCityName.isPresent()) {
-            Long cityId = Long.parseLong(optionalCityName.get());
-            view.showCinemasPanel(cinemaService.getCityCinemas(cityId));
-        } else {
-            logger.warning("City was not selected, navigating to cities view...");
-            new PageNavigator().navigateToCitiesView();
-        }
-    }
+	@Override
+	public void buttonPageClicked(int page) {
+		currentCinemasPageNumber = page;
+		reloadCinemas();
+	}
 
-    private void reloadCinemas() {
-        Page<Cinema> cinemaPage = cinemaService.getCinemasPage(currentCinemasPageNumber, currentCinemasPerPageCount);
-        view.setCinemasPageCount(cinemaPage.getTotalPages());
-        view.setCurrentCinemasPage(currentCinemasPageNumber);
-        view.showCinemasPanel(cinemaPage.getContent());
-    }
+	@Override
+	public void entered(ViewChangeListener.ViewChangeEvent event) {
+		String param = event.getParameters();
+		Optional<String> optionalCityName = Optional.ofNullable(param);
+		if (optionalCityName.isPresent()) {
+			Long cityId = Long.parseLong(optionalCityName.get());
+			view.showCinemasPanel(cinemaService.getCityCinemas(cityId));
+		} else {
+			logger.warning("City was not selected, navigating to cities view...");
+			new PageNavigator().navigateToCitiesView();
+		}
+	}
+
+	private void reloadCinemas() {
+		Page<Cinema> cinemaPage = cinemaService.getCinemasPage(currentCinemasPageNumber, currentCinemasPerPageCount);
+		view.setCinemasPageCount(cinemaPage.getTotalPages());
+		view.setCurrentCinemasPage(currentCinemasPageNumber);
+		view.showCinemasPanel(cinemaPage.getContent());
+	}
 }

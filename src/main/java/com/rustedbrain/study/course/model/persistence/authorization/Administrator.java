@@ -7,10 +7,15 @@ import javax.persistence.Table;
 @Table(name = "administrator")
 public class Administrator extends User {
 
-    public Administrator() {
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8148254296836712739L;
 
-    public Administrator(String login, String password, String mail) {
-        super(login, password, mail);
-    }
+	public Administrator() {
+	}
+
+	public Administrator(String login, String password, String mail) {
+		super(login, password, mail);
+	}
 }

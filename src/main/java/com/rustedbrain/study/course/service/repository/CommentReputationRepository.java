@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface CommentReputationRepository extends JpaRepository<CommentReputation, Long> {
 
-    @Transactional
-    @Modifying
-    @Query("update CommentReputation cr set cr.plus = ?2 where cr.id = ?1")
-    void setPlus(long id, boolean plus);
+	@Transactional
+	@Modifying
+	@Query("update CommentReputation cr set cr.plus = ?2 where cr.id = ?1")
+	void setPlus(long id, boolean plus);
 }

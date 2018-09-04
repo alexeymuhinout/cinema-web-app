@@ -8,45 +8,50 @@ import java.util.List;
 
 public class CityComboBox extends ComboBox<City> {
 
-    public CityComboBox(List<City> cities) {
-        super();
-        this.setItemCaptionGenerator(City::getName);
-        this.setEmptySelectionAllowed(false);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7917315707347051791L;
 
-        this.setItems(cities);
+	public CityComboBox(List<City> cities) {
+		super();
+		this.setItemCaptionGenerator(City::getName);
+		this.setEmptySelectionAllowed(false);
 
-        this.setNewItemHandler(inputString -> {
-            City city = new City(inputString);
-            cities.add(city);
-            this.setItems(cities);
-            this.setSelectedItem(city);
-        });
-    }
+		this.setItems(cities);
 
-    public CityComboBox(List<City> cities, String caption) {
-        super(caption);
-        this.setItemCaptionGenerator(City::getName);
-        this.setEmptySelectionAllowed(false);
+		this.setNewItemHandler(inputString -> {
+			City city = new City(inputString);
+			cities.add(city);
+			this.setItems(cities);
+			this.setSelectedItem(city);
+		});
+	}
 
-        this.setItems(cities);
+	public CityComboBox(List<City> cities, String caption) {
+		super(caption);
+		this.setItemCaptionGenerator(City::getName);
+		this.setEmptySelectionAllowed(false);
 
-        this.setNewItemHandler(inputString -> {
-            City city = new City(inputString);
-            cities.add(city);
-            this.setItems(cities);
-            this.setSelectedItem(city);
-        });
-    }
+		this.setItems(cities);
 
-    public CityComboBox() {
-        super();
-    }
+		this.setNewItemHandler(inputString -> {
+			City city = new City(inputString);
+			cities.add(city);
+			this.setItems(cities);
+			this.setSelectedItem(city);
+		});
+	}
 
-    private CityComboBox(String caption) {
-        super(caption);
-    }
+	public CityComboBox() {
+		super();
+	}
 
-    private CityComboBox(String caption, Collection<City> options) {
-        super(caption, options);
-    }
+	private CityComboBox(String caption) {
+		super(caption);
+	}
+
+	private CityComboBox(String caption, Collection<City> options) {
+		super(caption, options);
+	}
 }

@@ -24,7 +24,7 @@ public class PageNavigator {
         VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.HELP_VIEW);
     }
 
-    public void navigateToCinemaView(Cinema cinema, String message) {
+	public void navigateToCinemaView(Cinema cinema, String message) {
         VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.CINEMA_VIEW);
     }
 

@@ -11,30 +11,34 @@ import java.util.Set;
 @Table(name = "manager")
 public class Manager extends User {
 
-    @OneToMany(mappedBy = "manager")
-    private Set<Cinema> cinemas;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3736287536412145893L;
+	@OneToMany(mappedBy = "manager")
+	private Set<Cinema> cinemas;
 
-    public Manager() {
-    }
+	public Manager() {
+	}
 
-    public Manager(String login, String password, String email) {
-        super(login, password, email);
-    }
+	public Manager(String login, String password, String email) {
+		super(login, password, email);
+	}
 
-    public Manager(String login, String password, String mail, Set<Cinema> cinemas) {
-        super(login, password, mail);
-        this.cinemas = cinemas;
-    }
+	public Manager(String login, String password, String mail, Set<Cinema> cinemas) {
+		super(login, password, mail);
+		this.cinemas = cinemas;
+	}
 
-    public Manager(Set<Cinema> cinemas) {
-        this.cinemas = cinemas;
-    }
+	public Manager(Set<Cinema> cinemas) {
+		this.cinemas = cinemas;
+	}
 
-    public Set<Cinema> getCinemas() {
-        return cinemas;
-    }
+	public Set<Cinema> getCinemas() {
+		return cinemas;
+	}
 
-    public void setCinemas(Set<Cinema> cinemas) {
-        this.cinemas = cinemas;
-    }
+	public void setCinemas(Set<Cinema> cinemas) {
+		this.cinemas = cinemas;
+	}
 }

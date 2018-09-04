@@ -7,25 +7,25 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Help {
 
-    @XmlElement(name = "tittle")
-    private String tittle;
-    @XmlElementWrapper(name = "contents")
-    @XmlElement(name = "content")
-    private List<Content> contents;
+	@XmlElement(name = "tittle")
+	private String tittle;
+	@XmlElementWrapper(name = "contents")
+	@XmlElement(name = "content")
+	private List<Content> contents;
 
-    public String getTittle() {
-        return tittle;
-    }
+	public String getTittle() {
+		return tittle;
+	}
 
-    public void setTittle(String tittle) {
-        this.tittle = tittle;
-    }
+	public void setTittle(String tittle) {
+		this.tittle = tittle;
+	}
 
-    public List<Content> getContents() {
-        return contents;
-    }
+	public List<Content> getContents() {
+		return contents;
+	}
 
-    public void setContents(List<Content> contents) {
-        this.contents = contents;
-    }
+	public void setContents(List<Content> contents) {
+		this.contents = contents;
+	}
 }

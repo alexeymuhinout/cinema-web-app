@@ -9,16 +9,15 @@ import java.util.List;
 
 public interface TicketsInfoView extends ApplicationView {
 
-    @Autowired
-    void addListener(TicketsInfoViewListener listener);
+	@Autowired
+	void addListener(TicketsInfoViewListener listener);
 
-    void showTicketsInfo(List<TicketInfo> ticketInfos);
+	void showTicketsInfo(List<TicketInfo> ticketInfos);
 
-    public interface TicketsInfoViewListener {
+	public interface TicketsInfoViewListener {
 
+		void setView(TicketsInfoView view);
 
-        void setView(TicketsInfoView view);
-
-        void entered(ViewChangeListener.ViewChangeEvent event);
-    }
+		void entered(ViewChangeListener.ViewChangeEvent event);
+	}
 }

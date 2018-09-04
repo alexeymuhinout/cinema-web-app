@@ -18,8 +18,8 @@ public class CinemaHallConstructorViewPresenter implements CinemaHallConstructor
     }
 
     @Override
-    public void setCinemaHallConstructorView(CinemaHallConstructorView cinemaHallConstructorView) {
-        this.cinemaHallConstructorView = cinemaHallConstructorView;
+	public void setCinemaHallConstructorView(CinemaHallConstructorView cinemaHallConstructorView) {
+		this.cinemaHallConstructorView = cinemaHallConstructorView;
     }
 
     @Override

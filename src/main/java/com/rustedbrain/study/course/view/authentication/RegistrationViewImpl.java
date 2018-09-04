@@ -21,66 +21,69 @@ import java.util.List;
 @SpringView(name = VaadinUI.REGISTRATION_VIEW)
 public class RegistrationViewImpl extends VerticalLayout implements RegistrationView {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9020052590247572371L;
+	private List<RegistrationView.ViewListener> listeners = new ArrayList<>();
 
-    private List<RegistrationView.ViewListener> listeners = new ArrayList<>();
+	@Override
+	public void enter(ViewChangeListener.ViewChangeEvent event) {
+		listeners.forEach(listener -> listener.entered(event));
+	}
 
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-        listeners.forEach(listener -> listener.entered(event));
-    }
+	@Override
+	public void voidShowRegistrationPanel(List<City> cities) {
+		Panel panel = new Panel("Registration");
+		panel.setSizeUndefined();
+		addComponent(panel);
 
-    @Override
-    public void voidShowRegistrationPanel(List<City> cities) {
-        Panel panel = new Panel("Registration");
-        panel.setSizeUndefined();
-        addComponent(panel);
+		FormLayout content = new FormLayout();
+		TextField loginTextField = new TextField("Login");
+		content.addComponent(loginTextField);
 
-        FormLayout content = new FormLayout();
-        TextField loginTextField = new TextField("Login");
-        content.addComponent(loginTextField);
+		TextField passwordTextField = new PasswordField("Password");
+		content.addComponent(passwordTextField);
 
-        TextField passwordTextField = new PasswordField("Password");
-        content.addComponent(passwordTextField);
+		TextField nameTextField = new TextField("Name");
+		content.addComponent(nameTextField);
 
-        TextField nameTextField = new TextField("Name");
-        content.addComponent(nameTextField);
+		TextField surnameTextField = new TextField("Surname");
+		content.addComponent(surnameTextField);
 
-        TextField surnameTextField = new TextField("Surname");
-        content.addComponent(surnameTextField);
+		ComboBox<City> cityComboBox = new CityComboBox(cities, "City");
+		content.addComponent(cityComboBox);
 
-        ComboBox<City> cityComboBox = new CityComboBox(cities, "City");
-        content.addComponent(cityComboBox);
+		DateField birthdayDateField = new DateField("Birthday") {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -542755325515871347L;
 
-        DateField birthdayDateField = new DateField("Birthday") {
-            @Override
-            protected Result<LocalDate> handleUnparsableDateString(
-                    String dateString) {
-                try {
-                    // try to parse with alternative format
-                    LocalDate parsedAtServer = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE);
-                    return Result.ok(parsedAtServer);
-                } catch (DateTimeParseException e) {
-                    return Result.error("Bad date format");
-                }
-            }
-        };
-        content.addComponent(birthdayDateField);
+			@Override
+			protected Result<LocalDate> handleUnparsableDateString(String dateString) {
+				try {
+					// try to parse with alternative format
+					LocalDate parsedAtServer = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE);
+					return Result.ok(parsedAtServer);
+				} catch (DateTimeParseException e) {
+					return Result.error("Bad date format");
+				}
+			}
+		};
+		content.addComponent(birthdayDateField);
 
-        TextField mailTextField = new TextField("Mail");
-        content.addComponent(mailTextField);
+		TextField mailTextField = new TextField("Mail");
+		content.addComponent(mailTextField);
 
-        Button buttonRegister = new Button("Register"
-                , (Button.ClickListener) event -> listeners.forEach(viewListener -> viewListener.buttonRegisterClicked(
-                loginTextField.getValue(),
-                passwordTextField.getValue(),
-                nameTextField.getValue(),
-                surnameTextField.getValue(),
-                cityComboBox.getValue(),
-                birthdayDateField.getValue(),
-                mailTextField.getValue())));
+		Button buttonRegister = new Button("Register",
+				(Button.ClickListener) event -> listeners
+						.forEach(viewListener -> viewListener.buttonRegisterClicked(loginTextField.getValue(),
+								passwordTextField.getValue(), nameTextField.getValue(), surnameTextField.getValue(),
+								cityComboBox.getValue(), birthdayDateField.getValue(), mailTextField.getValue())));
 
-        buttonRegister.setSizeFull();
-        content.addComponent(buttonRegister);
+		buttonRegister.setSizeFull();
+		content.addComponent(buttonRegister);
 
 //        Button register = new Button("Register");
 //        register.addClickListener(clickEvent -> {
@@ -112,31 +115,31 @@ public class RegistrationViewImpl extends VerticalLayout implements Registration
 //                Notification.show("Invalid credentials", Notification.Type.ERROR_MESSAGE);
 //            }
 //        });
-        content.setSizeUndefined();
-        content.setMargin(true);
-        panel.setContent(content);
-        setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
-    }
+		content.setSizeUndefined();
+		content.setMargin(true);
+		panel.setContent(content);
+		setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
+	}
 
-    @Override
-    @Autowired
-    public void addListener(RegistrationView.ViewListener viewListener) {
-        viewListener.setView(this);
-        this.listeners.add(viewListener);
-    }
+	@Override
+	@Autowired
+	public void addListener(RegistrationView.ViewListener viewListener) {
+		viewListener.setView(this);
+		this.listeners.add(viewListener);
+	}
 
-    @Override
-    public void showWarning(String message) {
-        Notification.show(message, Notification.Type.WARNING_MESSAGE);
-    }
+	@Override
+	public void showWarning(String message) {
+		Notification.show(message, Notification.Type.WARNING_MESSAGE);
+	}
 
-    @Override
-    public void showError(String message) {
-        Notification.show(message, Notification.Type.ERROR_MESSAGE);
-    }
+	@Override
+	public void showError(String message) {
+		Notification.show(message, Notification.Type.ERROR_MESSAGE);
+	}
 
-    @Override
-    public void reload() {
-        Page.getCurrent().reload();
-    }
+	@Override
+	public void reload() {
+		Page.getCurrent().reload();
+	}
 }

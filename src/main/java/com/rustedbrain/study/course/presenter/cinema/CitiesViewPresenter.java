@@ -1,6 +1,5 @@
 package com.rustedbrain.study.course.presenter.cinema;
 
-
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.cinema.CitiesView;
@@ -16,47 +15,52 @@ import java.util.logging.Logger;
 @SpringComponent
 public class CitiesViewPresenter implements CitiesView.CitiesViewListener, Serializable {
 
-    private static final Logger logger = Logger.getLogger(CitiesViewPresenter.class.getName());
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6863586710948885079L;
 
-    private static final int START_CINEMAS_PAGE = 1;
-    private static final int CINEMAS_PER_PAGE = 10;
+	private static final Logger logger = Logger.getLogger(CitiesViewPresenter.class.getName());
 
-    private CitiesView view;
-    private CinemaService cinemaService;
+	private static final int START_CINEMAS_PAGE = 1;
+	private static final int CINEMAS_PER_PAGE = 10;
 
-    private int currentCitiesPageNumber = START_CINEMAS_PAGE;
-    private int currentCitiesPerPageCount = CINEMAS_PER_PAGE;
+	private CitiesView view;
+	private CinemaService cinemaService;
 
-    @Autowired
-    public CitiesViewPresenter(CinemaService cinemaService) {
-        this.cinemaService = cinemaService;
-    }
+	private int currentCitiesPageNumber = START_CINEMAS_PAGE;
+	private int currentCitiesPerPageCount = CINEMAS_PER_PAGE;
 
-    public void setView(CitiesView view) {
-        this.view = view;
-    }
+	@Autowired
+	public CitiesViewPresenter(CinemaService cinemaService) {
+		this.cinemaService = cinemaService;
+	}
 
-    @Override
-    public void buttonDeleteCityClicked(Long id) {
-        cinemaService.deleteCity(id);
-        reloadCities();
-    }
+	public void setView(CitiesView view) {
+		this.view = view;
+	}
 
-    @Override
-    public void buttonCitiesPerPageCountClicked(int citiesPerPageCount) {
-        currentCitiesPerPageCount = citiesPerPageCount;
-        reloadCities();
-    }
+	@Override
+	public void buttonDeleteCityClicked(Long id) {
+		cinemaService.deleteCity(id);
+		reloadCities();
+	}
 
-    @Override
-    public void buttonPageClicked(int page) {
-        currentCitiesPageNumber = page;
-        reloadCities();
-    }
+	@Override
+	public void buttonCitiesPerPageCountClicked(int citiesPerPageCount) {
+		currentCitiesPerPageCount = citiesPerPageCount;
+		reloadCities();
+	}
 
-    private void reloadCities() {
-        Page<City> cinemaPage = cinemaService.getCitiesPage(currentCitiesPageNumber, currentCitiesPerPageCount);
-        view.setCurrentCitiesPageNumber(currentCitiesPageNumber, cinemaPage.getTotalPages());
-        view.fillCitiesPanel(cinemaPage.getContent());
-    }
+	@Override
+	public void buttonPageClicked(int page) {
+		currentCitiesPageNumber = page;
+		reloadCities();
+	}
+
+	private void reloadCities() {
+		Page<City> cinemaPage = cinemaService.getCitiesPage(currentCitiesPageNumber, currentCitiesPerPageCount);
+		view.setCurrentCitiesPageNumber(currentCitiesPageNumber, cinemaPage.getTotalPages());
+		view.fillCitiesPanel(cinemaPage.getContent());
+	}
 }

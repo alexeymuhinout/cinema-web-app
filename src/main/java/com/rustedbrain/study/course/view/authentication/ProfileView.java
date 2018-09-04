@@ -17,67 +17,67 @@ import java.util.List;
 
 public interface ProfileView extends ApplicationView {
 
-    @Autowired
-    void addListener(ViewListener listener);
+	@Autowired
+	void addListener(ViewListener listener);
 
-    void addProfileInfoTab(User user);
+	void addProfileInfoTab(User user);
 
-    void showUserBlockWindow(long id, String login, UserRole userRole);
+	void showUserBlockWindow(long id, String login, UserRole userRole);
 
-    void addAdministrationTab(User currUser, List<City> cities);
+	void addAdministrationTab(User currUser, List<City> cities);
 
-    void addStatisticsTab();
+	void addStatisticsTab();
 
-    TabSheet createStatisticsTab();
+	TabSheet createStatisticsTab();
 
-    void setAdminEditUserSelected(User currentUser);
+	void setAdminEditUserSelected(User currentUser);
 
-    void addProfileEditTab(User currUser, List<City> cities);
+	void addProfileEditTab(User currUser, List<City> cities);
 
-    void addProfileAdminEditTab(User currUser, List<User> users, List<City> cities);
+	void addProfileAdminEditTab(User currUser, List<User> users, List<City> cities);
 
-    void closeUserBlockWindow();
+	void closeUserBlockWindow();
 
-    void addAdminProfileInfoTab(User authenticUser, List<User> users);
+	void addAdminProfileInfoTab(User authenticUser, List<User> users);
 
-    void setAdminInfoUserSelected(User selectedUser);
+	void setAdminInfoUserSelected(User selectedUser);
 
-    interface ViewListener {
+	interface ViewListener {
 
-        void entered(ViewChangeListener.ViewChangeEvent event);
+		void entered(ViewChangeListener.ViewChangeEvent event);
 
-        void setView(ProfileView view);
+		void setView(ProfileView view);
 
-        void buttonChangeNameClicked(long id, String newName);
+		void buttonChangeNameClicked(long id, String newName);
 
-        void buttonChangeLoginClicked(long id, String newLogin);
+		void buttonChangeLoginClicked(long id, String newLogin);
 
-        void buttonChangeMailClicked(long id, String newMail);
+		void buttonChangeMailClicked(long id, String newMail);
 
-        void buttonChangeSurnameClicked(long id, String surname);
+		void buttonChangeSurnameClicked(long id, String surname);
 
-        void buttonChangeCityClicked(long id, long cityId);
+		void buttonChangeCityClicked(long id, long cityId);
 
-        void buttonChangeBirthdayClicked(long id, LocalDate birthday);
+		void buttonChangeBirthdayClicked(long id, LocalDate birthday);
 
-        void comboBoxEditUserSelected(User currentUser);
+		void comboBoxEditUserSelected(User currentUser);
 
-        void buttonUnblockClicked(long id);
+		void buttonUnblockClicked(long id);
 
-        void buttonBlockClicked(long id);
+		void buttonBlockClicked(long id);
 
-        void buttonEditShowMeClicked(List<User> users);
+		void buttonEditShowMeClicked(List<User> users);
 
-        void buttonBlockSubmitClicked(long id, LocalDateTime blockDateTime, String blockDescription);
+		void buttonBlockSubmitClicked(long id, LocalDateTime blockDateTime, String blockDescription);
 
-        void comboBoxInfoUserSelected(User selectedUser);
+		void comboBoxInfoUserSelected(User selectedUser);
 
-        void buttonInfoShowMeClicked(List<User> users);
+		void buttonInfoShowMeClicked(List<User> users);
 
-        CityEditPresenter getCityEditPresenter();
+		CityEditPresenter getCityEditPresenter();
 
-        CinemaEditPresenter getCinemaEditPresenter();
+		CinemaEditPresenter getCinemaEditPresenter();
 
-        CinemaHallEditPresenter getCinemaHallEditPresenter();
-    }
+		CinemaHallEditPresenter getCinemaHallEditPresenter();
+	}
 }

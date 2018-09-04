@@ -10,16 +10,17 @@ import java.util.List;
 
 public interface RegistrationView extends ApplicationView {
 
-    void voidShowRegistrationPanel(List<City> cities);
+	void voidShowRegistrationPanel(List<City> cities);
 
-    @Autowired
-    void addListener(ViewListener viewListener);
+	@Autowired
+	void addListener(ViewListener viewListener);
 
-    interface ViewListener {
-        void entered(ViewChangeListener.ViewChangeEvent event);
+	interface ViewListener {
+		void entered(ViewChangeListener.ViewChangeEvent event);
 
-        void buttonRegisterClicked(String login, String password, String name, String surname, City city, LocalDate birthday, String mail);
+		void buttonRegisterClicked(String login, String password, String name, String surname, City city,
+				LocalDate birthday, String mail);
 
-        void setView(RegistrationView view);
-    }
+		void setView(RegistrationView view);
+	}
 }

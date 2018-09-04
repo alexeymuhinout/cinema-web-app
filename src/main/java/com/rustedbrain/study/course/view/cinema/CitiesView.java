@@ -7,20 +7,20 @@ import java.util.List;
 
 public interface CitiesView extends ApplicationView {
 
-    void fillCitiesPanel(List<City> cities);
+	void fillCitiesPanel(List<City> cities);
 
-    void addCitiesViewListener(CitiesView.CitiesViewListener listener);
+	void addCitiesViewListener(CitiesView.CitiesViewListener listener);
 
-    void setCurrentCitiesPageNumber(int currentCitiesPageNumber, int totalPages);
+	void setCurrentCitiesPageNumber(int currentCitiesPageNumber, int totalPages);
 
-    interface CitiesViewListener {
+	interface CitiesViewListener {
 
-        void buttonDeleteCityClicked(Long id);
+		void buttonDeleteCityClicked(Long id);
 
-        void buttonCitiesPerPageCountClicked(int citiesPerPageCount);
+		void buttonCitiesPerPageCountClicked(int citiesPerPageCount);
 
-        void buttonPageClicked(int page);
+		void buttonPageClicked(int page);
 
-        void setView(CitiesView citiesView);
-    }
+		void setView(CitiesView citiesView);
+	}
 }

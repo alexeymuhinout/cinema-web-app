@@ -14,32 +14,33 @@ import java.util.logging.Logger;
 @SpringComponent
 public class LoginPresenter implements LoginView.LoginViewListener {
 
-    private static final Logger logger = Logger.getLogger(LoginPresenter.class.getName());
-    private final AuthenticationService authenticationService;
-    private LoginView loginView;
+	private static final Logger logger = Logger.getLogger(LoginPresenter.class.getName());
+	private final AuthenticationService authenticationService;
+	private LoginView loginView;
 
-    @Autowired
-    public LoginPresenter(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
+	@Autowired
+	public LoginPresenter(AuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
+	}
 
-    @Override
-    public void loginButtonClicked(String login, String password, boolean rememberMe) {
-        try {
-            if (authenticationService.login(login, password, rememberMe)) {
-                logger.info("User with login \"" + login + "\" successfully logged in. Navigating to main view.");
-                new PageNavigator().navigateToMainView();
-            } else {
-                logger.info("User with login \"" + login + "\" and password \"" + password + "\" not exist. Can not login.");
-                loginView.showInvalidCredentialsNotification();
-            }
-        } catch (AccessControlException ex) {
-            loginView.showError(ex.getMessage());
-        }
-    }
+	@Override
+	public void loginButtonClicked(String login, String password, boolean rememberMe) {
+		try {
+			if (authenticationService.login(login, password, rememberMe)) {
+				logger.info("User with login \"" + login + "\" successfully logged in. Navigating to main view.");
+				new PageNavigator().navigateToMainView();
+			} else {
+				logger.info("User with login \"" + login + "\" and password \"" + password
+						+ "\" not exist. Can not login.");
+				loginView.showInvalidCredentialsNotification();
+			}
+		} catch (AccessControlException ex) {
+			loginView.showError(ex.getMessage());
+		}
+	}
 
-    @Override
-    public void setLoginView(LoginView loginView) {
-        this.loginView = loginView;
-    }
+	@Override
+	public void setLoginView(LoginView loginView) {
+		this.loginView = loginView;
+	}
 }

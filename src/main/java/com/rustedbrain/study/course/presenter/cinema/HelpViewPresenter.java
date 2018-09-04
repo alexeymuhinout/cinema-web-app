@@ -21,31 +21,36 @@ import java.util.logging.Logger;
 @SpringComponent
 public class HelpViewPresenter implements HelpView.HelpViewListener, Serializable {
 
-    private static final Logger logger = Logger.getLogger(HelpViewPresenter.class.getName());
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8239732496677642717L;
 
-    private final CinemaService cinemaService;
-    private final AuthenticationService authenticationService;
-    private HelpView helpView;
+	private static final Logger logger = Logger.getLogger(HelpViewPresenter.class.getName());
 
-    @Autowired
-    public HelpViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
-        this.cinemaService = cinemaService;
-        this.authenticationService = authenticationService;
-    }
+	private final CinemaService cinemaService;
+	private final AuthenticationService authenticationService;
+	private HelpView helpView;
 
-    @Override
-    public void entered(ViewChangeListener.ViewChangeEvent event) {
-        this.helpView.fillMenuPanel(authenticationService);
-        try {
-            Map<String, String> helpTittleTextMap = cinemaService.getHelpTittleTextMap();
-            helpView.setHelpTittleTextMap(helpTittleTextMap);
-        } catch (ParserConfigurationException | IOException | SAXException | ResourceException e) {
-            logger.log(Level.WARNING, "Error occurred during retrieving help for help page", e);
-            helpView.showError(e.getMessage());
-        }
-    }
+	@Autowired
+	public HelpViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
+		this.cinemaService = cinemaService;
+		this.authenticationService = authenticationService;
+	}
 
-    public void setView(HelpView helpView) {
-        this.helpView = helpView;
-    }
+	@Override
+	public void entered(ViewChangeListener.ViewChangeEvent event) {
+		this.helpView.fillMenuPanel(authenticationService);
+		try {
+			Map<String, String> helpTittleTextMap = cinemaService.getHelpTittleTextMap();
+			helpView.setHelpTittleTextMap(helpTittleTextMap);
+		} catch (ParserConfigurationException | IOException | SAXException | ResourceException e) {
+			logger.log(Level.WARNING, "Error occurred during retrieving help for help page", e);
+			helpView.showError(e.getMessage());
+		}
+	}
+
+	public void setView(HelpView helpView) {
+		this.helpView = helpView;
+	}
 }

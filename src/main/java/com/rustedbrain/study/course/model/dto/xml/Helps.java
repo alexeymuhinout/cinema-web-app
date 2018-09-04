@@ -10,14 +10,14 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Helps {
 
-    @XmlElement(name = "help")
-    private List<Help> helps;
+	@XmlElement(name = "help")
+	private List<Help> helps;
 
-    public List<Help> getHelps() {
-        return helps;
-    }
+	public List<Help> getHelps() {
+		return helps;
+	}
 
-    public void setHelps(List<Help> helps) {
-        this.helps = helps;
-    }
+	public void setHelps(List<Help> helps) {
+		this.helps = helps;
+	}
 }

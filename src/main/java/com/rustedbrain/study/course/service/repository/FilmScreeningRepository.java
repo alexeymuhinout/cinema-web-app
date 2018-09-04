@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface FilmScreeningRepository extends JpaRepository<FilmScreening, Long> {
 
-    @Query("select fs from FilmScreening fs where fs.cinema.id = ?1 and fs.endDate > ?2")
-    List<FilmScreening> getFilmScreening(long cinemaId, Date currDate);
+	@Query("select fs from FilmScreening fs where fs.cinema.id = ?1 and fs.endDate > ?2")
+	List<FilmScreening> getFilmScreening(long cinemaId, Date currDate);
 }

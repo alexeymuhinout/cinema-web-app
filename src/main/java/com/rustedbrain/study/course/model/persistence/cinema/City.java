@@ -15,69 +15,73 @@ import java.util.Set;
 @Table(name = "city")
 public class City extends DatabaseEntity implements Comparable<City> {
 
-    @Column(name = "name", length = 64, nullable = false, unique = true)
-    private String name;
-    @OneToMany(mappedBy = "city")
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
-    private Set<Cinema> cinemas;
-    @OneToMany(mappedBy = "city")
-    private Set<User> users;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -732856358445864096L;
+	@Column(name = "name", length = 64, nullable = false, unique = true)
+	private String name;
+	@OneToMany(mappedBy = "city")
+	@Cascade({ CascadeType.SAVE_UPDATE, CascadeType.DELETE })
+	private Set<Cinema> cinemas;
+	@OneToMany(mappedBy = "city")
+	private Set<User> users;
 
-    public City() {
-    }
+	public City() {
+	}
 
-    public City(String name) {
-        this.name = name;
-    }
+	public City(String name) {
+		this.name = name;
+	}
 
-    public Set<User> getUsers() {
-        return users;
-    }
+	public Set<User> getUsers() {
+		return users;
+	}
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
+	public void setUsers(Set<User> users) {
+		this.users = users;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public Set<Cinema> getCinemas() {
-        return cinemas;
-    }
+	public Set<Cinema> getCinemas() {
+		return cinemas;
+	}
 
-    public void setCinemas(Set<Cinema> cinemas) {
-        this.cinemas = cinemas;
-    }
+	public void setCinemas(Set<Cinema> cinemas) {
+		this.cinemas = cinemas;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-        City city = (City) o;
+		City city = (City) o;
 
-        return name.equals(city.name);
-    }
+		return name.equals(city.name);
+	}
 
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
 
-    @Override
-    public String toString() {
-        return "City{" +
-                "name='" + name + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "City{" + "name='" + name + '\'' + '}';
+	}
 
-    @Override
-    public int compareTo(City city) {
-        return this.name.compareTo(city.name);
-    }
+	@Override
+	public int compareTo(City city) {
+		return this.name.compareTo(city.name);
+	}
 }

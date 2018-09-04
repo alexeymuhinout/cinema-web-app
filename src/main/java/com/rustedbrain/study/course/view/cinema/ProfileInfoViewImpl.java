@@ -18,60 +18,67 @@ import java.util.List;
 @SpringView(name = VaadinUI.PROFILE_INFO_VIEW)
 public class ProfileInfoViewImpl extends VerticalLayout implements ProfileInfoView {
 
-    private List<ProfileInfoView.Listener> listeners = new ArrayList<>();
-    private Panel userInfoPanel;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4963542571831756477L;
+	private List<ProfileInfoView.Listener> listeners = new ArrayList<>();
+	private Panel userInfoPanel;
 
-    @Autowired
-    public ProfileInfoViewImpl(AuthenticationService authenticationService) {
-        addComponentsAndExpand(new Panel(new MenuComponent(authenticationService)));
-        addComponentsAndExpand(new Panel(getUserInfoPanel()));
-    }
+	@Autowired
+	public ProfileInfoViewImpl(AuthenticationService authenticationService) {
+		addComponentsAndExpand(new Panel(new MenuComponent(authenticationService)));
+		addComponentsAndExpand(new Panel(getUserInfoPanel()));
+	}
 
-    private Panel getUserInfoPanel() {
-        if (userInfoPanel == null) {
-            userInfoPanel = new Panel();
-        }
-        return userInfoPanel;
-    }
+	private Panel getUserInfoPanel() {
+		if (userInfoPanel == null) {
+			userInfoPanel = new Panel();
+		}
+		return userInfoPanel;
+	}
 
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-        listeners.forEach(listener -> listener.entered(event));
-    }
+	@Override
+	public void enter(ViewChangeListener.ViewChangeEvent event) {
+		listeners.forEach(listener -> listener.entered(event));
+	}
 
-    @Override
-    @Autowired
-    public void addCinemaViewListener(ProfileInfoView.Listener listener) {
-        listener.setView(this);
-        this.listeners.add(listener);
-    }
+	@Override
+	@Autowired
+	public void addCinemaViewListener(ProfileInfoView.Listener listener) {
+		listener.setView(this);
+		this.listeners.add(listener);
+	}
 
-    @Override
-    public void showUserInfo(UserInfo userInfo, boolean ableToEdit) {
+	@Override
+	public void showUserInfo(UserInfo userInfo, boolean ableToEdit) {
 
-    }
+	}
 
-    @Override
-    public void showNotAuthError() {
-        Label errorLabel = new Label("Only authorized users can see user info");
-        Button buttonAuthorize = new Button("Authorize", (Button.ClickListener) event -> listeners.forEach(ProfileInfoView.Listener::buttonAuthorizeClicked));
-        Button buttonRegister = new Button("Register", (Button.ClickListener) event -> listeners.forEach(ProfileInfoView.Listener::buttonRegisterClicked));
-        
-        getUserInfoPanel().setContent(new VerticalLayout(errorLabel, new HorizontalLayout(buttonAuthorize, buttonRegister)));
-    }
+	@Override
+	public void showNotAuthError() {
+		Label errorLabel = new Label("Only authorized users can see user info");
+		Button buttonAuthorize = new Button("Authorize",
+				(Button.ClickListener) event -> listeners.forEach(ProfileInfoView.Listener::buttonAuthorizeClicked));
+		Button buttonRegister = new Button("Register",
+				(Button.ClickListener) event -> listeners.forEach(ProfileInfoView.Listener::buttonRegisterClicked));
 
-    @Override
-    public void showWarning(String message) {
-        Notification.show(message, Notification.Type.WARNING_MESSAGE);
-    }
+		getUserInfoPanel()
+				.setContent(new VerticalLayout(errorLabel, new HorizontalLayout(buttonAuthorize, buttonRegister)));
+	}
 
-    @Override
-    public void showError(String message) {
-        Notification.show(message, Notification.Type.ERROR_MESSAGE);
-    }
+	@Override
+	public void showWarning(String message) {
+		Notification.show(message, Notification.Type.WARNING_MESSAGE);
+	}
 
-    @Override
-    public void reload() {
-        Page.getCurrent().reload();
-    }
+	@Override
+	public void showError(String message) {
+		Notification.show(message, Notification.Type.ERROR_MESSAGE);
+	}
+
+	@Override
+	public void reload() {
+		Page.getCurrent().reload();
+	}
 }

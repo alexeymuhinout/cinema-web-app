@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface CityRepository extends JpaRepository<City, Long> {
 
-    @Query("select c from City c where c.name = ?1")
-    City findByName(String name);
+	@Query("select c from City c where c.name = ?1")
+	City findByName(String name);
 
-    @Transactional
-    @Modifying
-    @Query("update City city set city.name = ?2 where city.id = ?1")
-    void renameCity(long id, String value);
+	@Transactional
+	@Modifying
+	@Query("update City city set city.name = ?2 where city.id = ?1")
+	void renameCity(long id, String value);
 }

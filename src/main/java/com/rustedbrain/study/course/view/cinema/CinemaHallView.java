@@ -9,24 +9,24 @@ import java.util.Set;
 
 public interface CinemaHallView extends ApplicationView {
 
-    void displaySelectedSeats(Set<Seat> seats);
+	void displaySelectedSeats(Set<Seat> seats);
 
-    void addListener(CinemaHallViewListener cinemaHallViewListener);
+	void addListener(CinemaHallViewListener cinemaHallViewListener);
 
-    void fillFilmScreeningEventPanel(FilmScreeningEvent filmScreeningEvent);
+	void fillFilmScreeningEventPanel(FilmScreeningEvent filmScreeningEvent);
 
-    void unsetSelectedSeat(Seat seat);
+	void unsetSelectedSeat(Seat seat);
 
-    void setSelectedSeat(Seat seat);
+	void setSelectedSeat(Seat seat);
 
-    interface CinemaHallViewListener {
+	interface CinemaHallViewListener {
 
-        void fireSeatSelected(Seat seat);
+		void fireSeatSelected(Seat seat);
 
-        void setView(CinemaHallView cinemaHallView);
+		void setView(CinemaHallView cinemaHallView);
 
-        void entered(ViewChangeListener.ViewChangeEvent event);
+		void entered(ViewChangeListener.ViewChangeEvent event);
 
-        void buttonBuyTicketClicked();
-    }
+		void buttonBuyTicketClicked();
+	}
 }

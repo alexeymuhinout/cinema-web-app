@@ -8,31 +8,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public interface MovieView extends ApplicationView {
 
-    void showMovieInfo(Movie movie, boolean authorized, String login, boolean admin, boolean moderator);
+	void showMovieInfo(Movie movie, boolean authorized, String login, boolean admin, boolean moderator);
 
-    @Autowired
-    void addCinemaViewListener(Listener listener);
+	@Autowired
+	void addCinemaViewListener(Listener listener);
 
-    interface Listener {
+	interface Listener {
 
-        void entered(ViewChangeListener.ViewChangeEvent event);
+		void entered(ViewChangeListener.ViewChangeEvent event);
 
-        void setView(MovieView view);
+		void setView(MovieView view);
 
-        void buttonProfileClicked(long id);
+		void buttonProfileClicked(long id);
 
-        void buttonCreateMessageClicked(String textArea);
+		void buttonCreateMessageClicked(String textArea);
 
-        void buttonDeleteCommentClicked(long id);
+		void buttonDeleteCommentClicked(long id);
 
-        void buttonEditeCommentClicked(long commentId);
+		void buttonEditeCommentClicked(long commentId);
 
-        void buttonPlusClicked(Comment comment);
+		void buttonPlusClicked(Comment comment);
 
-        void buttonMinusClicked(Comment comment);
+		void buttonMinusClicked(Comment comment);
 
-        void buttonBlockAndDeleteClicked(long commentId, long userId);
+		void buttonBlockAndDeleteClicked(long commentId, long userId);
 
-        void buttonBlockClicked(long userId);
-    }
+		void buttonBlockClicked(long userId);
+	}
 }

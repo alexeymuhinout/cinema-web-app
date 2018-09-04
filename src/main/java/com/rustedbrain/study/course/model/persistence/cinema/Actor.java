@@ -13,61 +13,65 @@ import java.util.Set;
 @Table(name = "actor")
 public class Actor extends DatabaseEntity {
 
-    @Column(name = "name", length = 64)
-    private String name;
-    @Column(name = "surname", length = 64)
-    private String surname;
-    @ManyToMany(mappedBy = "actors")
-    private Set<Movie> movies = new HashSet<>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5602366074810575732L;
+	@Column(name = "name", length = 64)
+	private String name;
+	@Column(name = "surname", length = 64)
+	private String surname;
+	@ManyToMany(mappedBy = "actors")
+	private Set<Movie> movies = new HashSet<>();
 
-    public Set<Movie> getMovies() {
-        return movies;
-    }
+	public Set<Movie> getMovies() {
+		return movies;
+	}
 
-    public void setMovies(Set<Movie> movies) {
-        this.movies = movies;
-    }
+	public void setMovies(Set<Movie> movies) {
+		this.movies = movies;
+	}
 
-    public String getSurname() {
-        return surname;
-    }
+	public String getSurname() {
+		return surname;
+	}
 
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		if (!super.equals(o))
+			return false;
 
-        Actor actor = (Actor) o;
+		Actor actor = (Actor) o;
 
-        return name.equals(actor.name) && surname.equals(actor.surname);
-    }
+		return name.equals(actor.name) && surname.equals(actor.surname);
+	}
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + surname.hashCode();
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + name.hashCode();
+		result = 31 * result + surname.hashCode();
+		return result;
+	}
 
-    @Override
-    public String toString() {
-        return "Actor{" +
-                "name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "Actor{" + "name='" + name + '\'' + ", surname='" + surname + '\'' + '}';
+	}
 }

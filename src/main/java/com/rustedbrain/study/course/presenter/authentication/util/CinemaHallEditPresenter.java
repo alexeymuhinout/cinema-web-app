@@ -10,22 +10,23 @@ import java.util.Optional;
 
 public class CinemaHallEditPresenter {
 
-    private final CinemaService cinemaService;
+	private final CinemaService cinemaService;
 
-    public CinemaHallEditPresenter(CinemaService cinemaService) {
-        this.cinemaService = cinemaService;
-    }
+	public CinemaHallEditPresenter(CinemaService cinemaService) {
+		this.cinemaService = cinemaService;
+	}
 
-    public void buttonDeleteCinemaHallClicked(long id) {
-        cinemaService.deleteCinemaHall(id);
-    }
+	public void buttonDeleteCinemaHallClicked(long id) {
+		cinemaService.deleteCinemaHall(id);
+	}
 
-    public void buttonSaveCinemaHallClicked(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema) {
-        cinemaService.editCinemaHall(selectedCinemaHall, newCinemaHallName, newCinema);
+	public void buttonSaveCinemaHallClicked(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema) {
+		cinemaService.editCinemaHall(selectedCinemaHall, newCinemaHallName, newCinema);
 
-    }
+	}
 
-    public void buttonAddNewCinemaHallClicked(String cinemaHallName, Optional<City> selectedItem, Optional<Cinema> selectedItem1) {
+	public void buttonAddNewCinemaHallClicked(String cinemaHallName, Optional<City> selectedItem,
+			Optional<Cinema> selectedItem1) {
 
-    }
+	}
 }

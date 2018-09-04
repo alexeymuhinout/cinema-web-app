@@ -9,4 +9,9 @@ import java.io.Serializable;
 @SpringComponent
 public class CityViewPresenter implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4316229556289354415L;
+
 }

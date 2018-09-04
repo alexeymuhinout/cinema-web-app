@@ -4,12 +4,12 @@ import com.vaadin.navigator.View;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public interface CinemaHallConstructorView extends View {
-    @Autowired
-    void addListener(ViewListener viewListener);
+	@Autowired
+	void addListener(ViewListener viewListener);
 
-    interface ViewListener {
-        void setCinemaHallConstructorView(CinemaHallConstructorView components);
+	interface ViewListener {
+		void setCinemaHallConstructorView(CinemaHallConstructorView components);
 
-        void addButtonClicked(String rows, String seats);
-    }
+		void addButtonClicked(String rows, String seats);
+	}
 }

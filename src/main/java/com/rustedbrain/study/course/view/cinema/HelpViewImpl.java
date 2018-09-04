@@ -19,73 +19,77 @@ import java.util.Map;
 @SpringView(name = VaadinUI.HELP_VIEW)
 public class HelpViewImpl extends VerticalLayout implements HelpView {
 
-    private Panel helpPanel;
-    private Panel menuPanel;
-    private List<HelpViewListener> helpViewListeners = new ArrayList<>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8207127625810289913L;
+	private Panel helpPanel;
+	private Panel menuPanel;
+	private List<HelpViewListener> helpViewListeners = new ArrayList<>();
 
-    public HelpViewImpl() {
-        addComponentsAndExpand(getMenuPanel());
-        addComponentsAndExpand(getHelpPanel());
-    }
+	public HelpViewImpl() {
+		addComponentsAndExpand(getMenuPanel());
+		addComponentsAndExpand(getHelpPanel());
+	}
 
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-        helpViewListeners.forEach(listener -> listener.entered(event));
-    }
+	@Override
+	public void enter(ViewChangeListener.ViewChangeEvent event) {
+		helpViewListeners.forEach(listener -> listener.entered(event));
+	}
 
-    private Panel getMenuPanel() {
-        if (menuPanel == null) {
-            menuPanel = new Panel();
-        }
-        return menuPanel;
-    }
+	private Panel getMenuPanel() {
+		if (menuPanel == null) {
+			menuPanel = new Panel();
+		}
+		return menuPanel;
+	}
 
-    private Panel getHelpPanel() {
-        if (helpPanel == null) {
-            helpPanel = new Panel();
-        }
-        return helpPanel;
-    }
+	private Panel getHelpPanel() {
+		if (helpPanel == null) {
+			helpPanel = new Panel();
+		}
+		return helpPanel;
+	}
 
-    @Override
-    public void showWarning(String message) {
-        Notification.show(message, Notification.Type.WARNING_MESSAGE);
-    }
+	@Override
+	public void showWarning(String message) {
+		Notification.show(message, Notification.Type.WARNING_MESSAGE);
+	}
 
-    @Override
-    public void showError(String message) {
-        Notification.show(message, Notification.Type.ERROR_MESSAGE);
-    }
+	@Override
+	public void showError(String message) {
+		Notification.show(message, Notification.Type.ERROR_MESSAGE);
+	}
 
-    @Override
-    public void reload() {
-        Page.getCurrent().reload();
-    }
+	@Override
+	public void reload() {
+		Page.getCurrent().reload();
+	}
 
-    @Override
-    public void setHelpTittleTextMap(Map<String, String> helpTittleTextMap) {
-        Accordion helpAccordion = new Accordion();
-        for (Map.Entry<String, String> entry : helpTittleTextMap.entrySet()) {
-            Label label = new Label(entry.getValue(), ContentMode.HTML);
-            label.setWidth(100.0f, Unit.PERCENTAGE);
+	@Override
+	public void setHelpTittleTextMap(Map<String, String> helpTittleTextMap) {
+		Accordion helpAccordion = new Accordion();
+		for (Map.Entry<String, String> entry : helpTittleTextMap.entrySet()) {
+			Label label = new Label(entry.getValue(), ContentMode.HTML);
+			label.setWidth(100.0f, Unit.PERCENTAGE);
 
-            final VerticalLayout layout = new VerticalLayout(label);
-            layout.setMargin(true);
+			final VerticalLayout layout = new VerticalLayout(label);
+			layout.setMargin(true);
 
-            helpAccordion.addTab(layout, entry.getKey());
-        }
-        getHelpPanel().setContent(helpAccordion);
-    }
+			helpAccordion.addTab(layout, entry.getKey());
+		}
+		getHelpPanel().setContent(helpAccordion);
+	}
 
-    @Override
-    @Autowired
-    public void addHelpViewListener(HelpViewListener helpViewListener) {
-        helpViewListener.setView(this);
-        this.helpViewListeners.add(helpViewListener);
-    }
+	@Override
+	@Autowired
+	public void addHelpViewListener(HelpViewListener helpViewListener) {
+		helpViewListener.setView(this);
+		this.helpViewListeners.add(helpViewListener);
+	}
 
-    @Override
-    public void fillMenuPanel(AuthenticationService authenticationService) {
-        getMenuPanel().setContent(new MenuComponent(authenticationService));
-    }
+	@Override
+	public void fillMenuPanel(AuthenticationService authenticationService) {
+		getMenuPanel().setContent(new MenuComponent(authenticationService));
+	}
 }

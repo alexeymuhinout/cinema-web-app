@@ -20,106 +20,117 @@ import java.util.List;
 @SpringView(name = VaadinUI.TICKET_BUYING_VIEW)
 public class TicketsBuyingViewImpl extends VerticalLayout implements TicketsBuyingView {
 
-    private List<TicketsBuyingView.TicketBuyViewListener> viewListeners = new ArrayList<>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4796514023161885274L;
 
-    private Panel ticketPanel;
-    private Panel ticketInfoPanel;
+	private List<TicketsBuyingView.TicketBuyViewListener> viewListeners = new ArrayList<>();
 
-    public TicketsBuyingViewImpl() {
-        ticketPanel = getTicketPanel();
-        ticketPanel.setContent(new VerticalLayout(getTicketInfoPanel()));
-        addComponent(ticketPanel);
-        setComponentAlignment(ticketPanel, Alignment.MIDDLE_CENTER);
-    }
+	private Panel ticketPanel;
+	private Panel ticketInfoPanel;
 
-    private Panel getTicketInfoPanel() {
-        if (ticketInfoPanel == null) {
-            ticketInfoPanel = new Panel();
-            ticketInfoPanel.setSizeUndefined();
-        }
-        return ticketInfoPanel;
-    }
+	public TicketsBuyingViewImpl() {
+		ticketPanel = getTicketPanel();
+		ticketPanel.setContent(new VerticalLayout(getTicketInfoPanel()));
+		addComponent(ticketPanel);
+		setComponentAlignment(ticketPanel, Alignment.MIDDLE_CENTER);
+	}
 
-    private Panel getTicketPanel() {
-        if (ticketPanel == null) {
-            ticketPanel = new Panel();
-            ticketPanel.setSizeFull();
-        }
-        return ticketPanel;
-    }
+	private Panel getTicketInfoPanel() {
+		if (ticketInfoPanel == null) {
+			ticketInfoPanel = new Panel();
+			ticketInfoPanel.setSizeUndefined();
+		}
+		return ticketInfoPanel;
+	}
 
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-        viewListeners.forEach(listener -> listener.entered(event));
-    }
+	private Panel getTicketPanel() {
+		if (ticketPanel == null) {
+			ticketPanel = new Panel();
+			ticketPanel.setSizeFull();
+		}
+		return ticketPanel;
+	}
 
-    @Override
-    public void showWarning(String message) {
-        Notification.show(message, Notification.Type.WARNING_MESSAGE);
-    }
+	@Override
+	public void enter(ViewChangeListener.ViewChangeEvent event) {
+		viewListeners.forEach(listener -> listener.entered(event));
+	}
 
-    @Override
-    public void showError(String message) {
-        Notification.show(message, Notification.Type.ERROR_MESSAGE);
-    }
+	@Override
+	public void showWarning(String message) {
+		Notification.show(message, Notification.Type.WARNING_MESSAGE);
+	}
 
-    @Override
-    public void reload() {
-        Page.getCurrent().reload();
-    }
+	@Override
+	public void showError(String message) {
+		Notification.show(message, Notification.Type.ERROR_MESSAGE);
+	}
 
-    @Override
-    @Autowired
-    public void addListener(TicketsBuyingView.TicketBuyViewListener ticketBuyViewListener) {
-        ticketBuyViewListener.setView(this);
-        this.viewListeners.add(ticketBuyViewListener);
-    }
+	@Override
+	public void reload() {
+		Page.getCurrent().reload();
+	}
 
-    @Override
-    public void showFilmScreeningEvent(FilmScreeningEvent event, List<Seat> seats, String userName, String userSurname, String mail) {
-        VerticalLayout ticketInfoPanelLayout = new VerticalLayout();
+	@Override
+	@Autowired
+	public void addListener(TicketsBuyingView.TicketBuyViewListener ticketBuyViewListener) {
+		ticketBuyViewListener.setView(this);
+		this.viewListeners.add(ticketBuyViewListener);
+	}
 
-        FilmScreening filmScreening = event.getFilmScreening();
-        Movie movie = filmScreening.getMovie();
+	@Override
+	public void showFilmScreeningEvent(FilmScreeningEvent event, List<Seat> seats, String userName, String userSurname,
+			String mail) {
+		VerticalLayout ticketInfoPanelLayout = new VerticalLayout();
 
-        Label filmNameLabel = new Label(movie.getLocalizedName() + " (" + movie.getOriginalName() + ")");
-        ticketInfoPanelLayout.addComponent(filmNameLabel);
+		FilmScreening filmScreening = event.getFilmScreening();
+		Movie movie = filmScreening.getMovie();
 
-        Label filmStartTimeLabel = new Label("Session start time: " + event.getTime());
-        ticketInfoPanelLayout.addComponent(filmStartTimeLabel);
+		Label filmNameLabel = new Label(movie.getLocalizedName() + " (" + movie.getOriginalName() + ")");
+		ticketInfoPanelLayout.addComponent(filmNameLabel);
 
-        Label cinemaHallNumberLabel = new Label("Cinema hall number: " + event.getCinemaHall().getName());
-        ticketInfoPanelLayout.addComponent(cinemaHallNumberLabel);
+		Label filmStartTimeLabel = new Label("Session start time: " + event.getTime());
+		ticketInfoPanelLayout.addComponent(filmStartTimeLabel);
 
-        StringBuilder seatsStringBuilder = new StringBuilder();
-        for (Seat seat : seats) {
-            seatsStringBuilder.append("Seat ").append(seat.getNumber())
-                    .append(", row ").append(seat.getRow().getNumber())
-                    .append(", price: ").append(seat.getPrice()).append(";\n");
-        }
-        seatsStringBuilder.append("\nTotal: ").append(seats.stream().mapToDouble(Seat::getPrice).sum());
+		Label cinemaHallNumberLabel = new Label("Cinema hall number: " + event.getCinemaHall().getName());
+		ticketInfoPanelLayout.addComponent(cinemaHallNumberLabel);
 
-        Label seatsLabel = new Label(seatsStringBuilder.toString(), ContentMode.PREFORMATTED);
-        ticketInfoPanelLayout.addComponent(seatsLabel);
+		StringBuilder seatsStringBuilder = new StringBuilder();
+		for (Seat seat : seats) {
+			seatsStringBuilder.append("Seat ").append(seat.getNumber()).append(", row ")
+					.append(seat.getRow().getNumber()).append(", price: ").append(seat.getPrice()).append(";\n");
+		}
+		seatsStringBuilder.append("\nTotal: ").append(seats.stream().mapToDouble(Seat::getPrice).sum());
 
-        TextField nameTextField = new TextField("Name", (userName == null ? "" : userName));
-        ticketInfoPanelLayout.addComponent(nameTextField);
-        TextField surnameTextField = new TextField("Surname", (userSurname == null ? "" : userSurname));
-        ticketInfoPanelLayout.addComponent(surnameTextField);
-        TextField mailTextField = new TextField("Mail", (mail == null ? "" : mail));
-        ticketInfoPanelLayout.addComponent(mailTextField);
+		Label seatsLabel = new Label(seatsStringBuilder.toString(), ContentMode.PREFORMATTED);
+		ticketInfoPanelLayout.addComponent(seatsLabel);
 
-        HorizontalLayout buttonsHorizontalLayout = new HorizontalLayout();
-        buttonsHorizontalLayout.addComponent(new Button("Reserve", (Button.ClickListener) event1 -> viewListeners.forEach(listener -> listener.buttonReserveClicked(nameTextField.getValue(), surnameTextField.getValue(), mailTextField.getValue()))));
-        buttonsHorizontalLayout.addComponent(new Button("Buy", (Button.ClickListener) event1 -> viewListeners.forEach(listener -> listener.buttonBuyClicked(nameTextField.getValue(), surnameTextField.getValue(), mailTextField.getValue()))));
+		TextField nameTextField = new TextField("Name", (userName == null ? "" : userName));
+		ticketInfoPanelLayout.addComponent(nameTextField);
+		TextField surnameTextField = new TextField("Surname", (userSurname == null ? "" : userSurname));
+		ticketInfoPanelLayout.addComponent(surnameTextField);
+		TextField mailTextField = new TextField("Mail", (mail == null ? "" : mail));
+		ticketInfoPanelLayout.addComponent(mailTextField);
 
-        ticketInfoPanelLayout.addComponent(buttonsHorizontalLayout);
+		HorizontalLayout buttonsHorizontalLayout = new HorizontalLayout();
+		buttonsHorizontalLayout.addComponent(new Button("Reserve",
+				(Button.ClickListener) event1 -> viewListeners
+						.forEach(listener -> listener.buttonReserveClicked(nameTextField.getValue(),
+								surnameTextField.getValue(), mailTextField.getValue()))));
+		buttonsHorizontalLayout.addComponent(new Button("Buy",
+				(Button.ClickListener) event1 -> viewListeners
+						.forEach(listener -> listener.buttonBuyClicked(nameTextField.getValue(),
+								surnameTextField.getValue(), mailTextField.getValue()))));
 
-        ticketInfoPanel.setContent(ticketInfoPanelLayout);
-    }
+		ticketInfoPanelLayout.addComponent(buttonsHorizontalLayout);
 
-    @Override
-    public void showSuccessReserveMessage(String message) {
-        Notification.show(message, Notification.Type.ASSISTIVE_NOTIFICATION);
-    }
+		ticketInfoPanel.setContent(ticketInfoPanelLayout);
+	}
+
+	@Override
+	public void showSuccessReserveMessage(String message) {
+		Notification.show(message, Notification.Type.ASSISTIVE_NOTIFICATION);
+	}
 }

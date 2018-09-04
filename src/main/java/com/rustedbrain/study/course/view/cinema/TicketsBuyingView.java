@@ -10,21 +10,22 @@ import java.util.List;
 
 public interface TicketsBuyingView extends ApplicationView {
 
-    @Autowired
-    void addListener(TicketBuyViewListener ticketBuyViewListener);
+	@Autowired
+	void addListener(TicketBuyViewListener ticketBuyViewListener);
 
-    void showFilmScreeningEvent(FilmScreeningEvent event, List<Seat> seatIds, String userName, String userSurname, String mail);
+	void showFilmScreeningEvent(FilmScreeningEvent event, List<Seat> seatIds, String userName, String userSurname,
+			String mail);
 
-    void showSuccessReserveMessage(String message);
+	void showSuccessReserveMessage(String message);
 
-    interface TicketBuyViewListener {
+	interface TicketBuyViewListener {
 
-        void entered(ViewChangeListener.ViewChangeEvent event);
+		void entered(ViewChangeListener.ViewChangeEvent event);
 
-        void setView(TicketsBuyingView ticketsBuyingView);
+		void setView(TicketsBuyingView ticketsBuyingView);
 
-        void buttonReserveClicked(String name, String surname, String value);
+		void buttonReserveClicked(String name, String surname, String value);
 
-        void buttonBuyClicked(String name, String surname, String value);
-    }
+		void buttonBuyClicked(String name, String surname, String value);
+	}
 }

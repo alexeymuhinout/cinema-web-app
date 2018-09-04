@@ -12,95 +12,99 @@ import java.util.Set;
 @Table(name = "filmScreening")
 public class FilmScreening extends DatabaseEntity {
 
-    @ManyToOne
-    private Cinema cinema;
-    @ManyToOne
-    private Movie movie;
-    @Column(name = "startDate")
-    private Date startDate;
-    @OneToMany(mappedBy = "filmScreening")
-    @Cascade({CascadeType.ALL})
-    private Set<FilmScreeningEvent> filmScreeningEvents;
-    @Column(name = "endDate")
-    private Date endDate;
-    @Column(name = "isAvailableToBuy")
-    private boolean isAvailableToBuy;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4155594195767991639L;
+	@ManyToOne
+	private Cinema cinema;
+	@ManyToOne
+	private Movie movie;
+	@Column(name = "startDate")
+	private Date startDate;
+	@OneToMany(mappedBy = "filmScreening")
+	@Cascade({ CascadeType.ALL })
+	private Set<FilmScreeningEvent> filmScreeningEvents;
+	@Column(name = "endDate")
+	private Date endDate;
+	@Column(name = "isAvailableToBuy")
+	private boolean isAvailableToBuy;
 
-    public boolean isAvailableToBuy() {
-        return isAvailableToBuy;
-    }
+	public boolean isAvailableToBuy() {
+		return isAvailableToBuy;
+	}
 
-    public void setAvailableToBuy(boolean availableToBuy) {
-        isAvailableToBuy = availableToBuy;
-    }
+	public void setAvailableToBuy(boolean availableToBuy) {
+		isAvailableToBuy = availableToBuy;
+	}
 
-    public Cinema getCinema() {
-        return cinema;
-    }
+	public Cinema getCinema() {
+		return cinema;
+	}
 
-    public void setCinema(Cinema cinema) {
-        this.cinema = cinema;
-    }
+	public void setCinema(Cinema cinema) {
+		this.cinema = cinema;
+	}
 
-    public Movie getMovie() {
-        return movie;
-    }
+	public Movie getMovie() {
+		return movie;
+	}
 
-    public void setMovie(Movie movie) {
-        this.movie = movie;
-    }
+	public void setMovie(Movie movie) {
+		this.movie = movie;
+	}
 
-    public Date getStartDate() {
-        return startDate;
-    }
+	public Date getStartDate() {
+		return startDate;
+	}
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
 
-    public Date getEndDate() {
-        return endDate;
-    }
+	public Date getEndDate() {
+		return endDate;
+	}
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 
-    public Set<FilmScreeningEvent> getFilmScreeningEvents() {
-        return filmScreeningEvents;
-    }
+	public Set<FilmScreeningEvent> getFilmScreeningEvents() {
+		return filmScreeningEvents;
+	}
 
-    public void setFilmScreeningEvents(Set<FilmScreeningEvent> filmScreeningEvents) {
-        this.filmScreeningEvents = filmScreeningEvents;
-    }
+	public void setFilmScreeningEvents(Set<FilmScreeningEvent> filmScreeningEvents) {
+		this.filmScreeningEvents = filmScreeningEvents;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		if (!super.equals(o))
+			return false;
 
-        FilmScreening that = (FilmScreening) o;
+		FilmScreening that = (FilmScreening) o;
 
-        return (movie != null ? movie.equals(that.movie) : that.movie == null) && startDate.equals(that.startDate) && endDate.equals(that.endDate);
-    }
+		return (movie != null ? movie.equals(that.movie) : that.movie == null) && startDate.equals(that.startDate)
+				&& endDate.equals(that.endDate);
+	}
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (movie != null ? movie.hashCode() : 0);
-        result = 31 * result + startDate.hashCode();
-        result = 31 * result + endDate.hashCode();
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + (movie != null ? movie.hashCode() : 0);
+		result = 31 * result + startDate.hashCode();
+		result = 31 * result + endDate.hashCode();
+		return result;
+	}
 
-    @Override
-    public String toString() {
-        return "FilmScreening{" +
-                "movie=" + movie +
-                ", startDate=" + startDate +
-                ", filmScreeningEvents=" + filmScreeningEvents +
-                ", endDate=" + endDate +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "FilmScreening{" + "movie=" + movie + ", startDate=" + startDate + ", filmScreeningEvents="
+				+ filmScreeningEvents + ", endDate=" + endDate + '}';
+	}
 }

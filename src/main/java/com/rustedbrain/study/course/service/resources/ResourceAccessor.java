@@ -17,25 +17,27 @@ import java.util.logging.Logger;
 @Component
 public class ResourceAccessor {
 
-    private static final Logger LOG = Logger.getLogger(ResourceAccessor.class.getName());
+	private static final Logger LOG = Logger.getLogger(ResourceAccessor.class.getName());
 
-    private static final String IP_GEO_DATABASE_RESOURCE = "GeoLiteCity.dat";
-    private static final String HELP_FILE_NAME = "help.xml";
+	private static final String IP_GEO_DATABASE_RESOURCE = "GeoLiteCity.dat";
+	private static final String HELP_FILE_NAME = "help.xml";
 
-    public Map<String, String> getHelpTittleTextMap() throws ParserConfigurationException, IOException, SAXException, ResourceException {
-        try {
-            return new HelpParser().getHelpTittleTextMap(getResourceFile(HELP_FILE_NAME));
-        } catch (JAXBException e) {
-            LOG.log(Level.WARNING, "Error occurred during getting info for help page", e);
-            throw new ResourceException(e);
-        }
-    }
+	public Map<String, String> getHelpTittleTextMap()
+			throws ParserConfigurationException, IOException, SAXException, ResourceException {
+		try {
+			return new HelpParser().getHelpTittleTextMap(getResourceFile(HELP_FILE_NAME));
+		} catch (JAXBException e) {
+			LOG.log(Level.WARNING, "Error occurred during getting info for help page", e);
+			throw new ResourceException(e);
+		}
+	}
 
-    public File getIPGeoDatabaseFile() {
-        return new File(Objects.requireNonNull(getClass().getClassLoader().getResource(IP_GEO_DATABASE_RESOURCE)).getFile());
-    }
+	public File getIPGeoDatabaseFile() {
+		return new File(
+				Objects.requireNonNull(getClass().getClassLoader().getResource(IP_GEO_DATABASE_RESOURCE)).getFile());
+	}
 
-    private File getResourceFile(String fileName) {
-        return new File(Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).getFile());
-    }
+	private File getResourceFile(String fileName) {
+		return new File(Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).getFile());
+	}
 }

@@ -15,168 +15,182 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AdministrationCinemaPanel extends Panel {
-    protected VerticalLayout layout = new VerticalLayout();
-    private List<ProfileView.ViewListener> listeners;
-    private Set<Cinema> cinemas = new HashSet<>();
-    private List<City> cities = new ArrayList<>();
-    private Grid<Cinema> grid = new Grid<>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2082376201001091998L;
+	protected VerticalLayout layout = new VerticalLayout();
+	private List<ProfileView.ViewListener> listeners;
+	private Set<Cinema> cinemas = new HashSet<>();
+	private List<City> cities = new ArrayList<>();
+	private Grid<Cinema> grid = new Grid<>();
 
+	public AdministrationCinemaPanel(List<ProfileView.ViewListener> listeners, List<City> cities) {
+		this.listeners = listeners;
+		this.cities = cities;
+		this.cities.forEach(city -> cinemas.addAll(city.getCinemas()));
+		this.layout.addComponent(new Panel(showCinemaSelectionPanel(cinemas)));
+		setContent(this.layout);
+	}
 
-    public AdministrationCinemaPanel(List<ProfileView.ViewListener> listeners, List<City> cities) {
-        this.listeners = listeners;
-        this.cities = cities;
-        this.cities.forEach(city -> cinemas.addAll(city.getCinemas()));
-        this.layout.addComponent(new Panel(showCinemaSelectionPanel(cinemas)));
-        setContent(this.layout);
-    }
+	private Layout showCinemaSelectionPanel(Set<Cinema> cinemas) {
+		VerticalLayout mainLayout = new VerticalLayout();
 
-    private Layout showCinemaSelectionPanel(Set<Cinema> cinemas) {
-        VerticalLayout mainLayout = new VerticalLayout();
+		grid.setItems(cinemas);
+		grid.addColumn(Cinema::getName).setCaption("Name");
+		grid.addColumn(cinema -> cinema.getCity().getName()).setCaption("City");
+		grid.addColumn(Cinema::getLocation).setCaption("Location");
+		grid.setSelectionMode(Grid.SelectionMode.SINGLE);
+		grid.setSizeFull();
 
-        grid.setItems(cinemas);
-        grid.addColumn(Cinema::getName).setCaption("Name");
-        grid.addColumn(cinema -> cinema.getCity().getName()).setCaption("City");
-        grid.addColumn(Cinema::getLocation).setCaption("Location");
-        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
-        grid.setSizeFull();
+		TextField filterTextField = new TextField();
+		filterTextField.setPlaceholder("Filter by cinema name...");
+		filterTextField.setValueChangeMode(ValueChangeMode.EAGER);
+		filterTextField.addValueChangeListener(event -> getFilteredByCinemaName(event.getValue()));
 
-        TextField filterTextField = new TextField();
-        filterTextField.setPlaceholder("Filter by cinema name...");
-        filterTextField.setValueChangeMode(ValueChangeMode.EAGER);
-        filterTextField.addValueChangeListener(event ->
-                getFilteredByCinemaName(event.getValue())
-        );
+		Button clearFilterTextButton = new Button(VaadinIcons.CLOSE);
+		clearFilterTextButton.setDescription("clear the current filter");
+		clearFilterTextButton.addClickListener(clickEvent -> filterTextField.clear());
 
-        Button clearFilterTextButton = new Button(VaadinIcons.CLOSE);
-        clearFilterTextButton.setDescription("clear the current filter");
-        clearFilterTextButton.addClickListener(clickEvent -> filterTextField.clear());
+		HorizontalLayout filterLayout = new HorizontalLayout(filterTextField, clearFilterTextButton);
+		filterLayout.setSpacing(false);
 
-        HorizontalLayout filterLayout = new HorizontalLayout(filterTextField, clearFilterTextButton);
-        filterLayout.setSpacing(false);
+		Button addNewCinemaButton = new Button("Add new cinema");
+		addNewCinemaButton.addClickListener(clickEvent -> {
+			grid.deselectAll();
+			filterLayout.addComponent(addNewCinemaButtonClick());
+		});
 
-        Button addNewCinemaButton = new Button("Add new cinema");
-        addNewCinemaButton.addClickListener(clickEvent -> {
-            grid.deselectAll();
-            filterLayout.addComponent(addNewCinemaButtonClick());
-        });
+		HorizontalLayout toolbar = new HorizontalLayout(filterLayout, addNewCinemaButton);
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterLayout, addNewCinemaButton);
+		SaveDeleteForm saveDeleteForm = new SaveDeleteForm();
 
+		grid.addSelectionListener(selectionEvent -> {
+			if (grid.getSelectionModel().getFirstSelectedItem().isPresent()) {
+				saveDeleteForm.setSelectedCinema(selectionEvent.getFirstSelectedItem().get());
+				saveDeleteForm.setVisible(true);
+			} else {
+				saveDeleteForm.setVisible(false);
+			}
+		});
+		saveDeleteForm.setVisible(false);
 
-        SaveDeleteForm saveDeleteForm = new SaveDeleteForm();
+		HorizontalLayout gridFormLayout = new HorizontalLayout(grid, saveDeleteForm);
+		gridFormLayout.setSizeFull();
+		gridFormLayout.setExpandRatio(grid, 1);
 
-        grid.addSelectionListener(selectionEvent -> {
-            if (grid.getSelectionModel().getFirstSelectedItem().isPresent()) {
-                saveDeleteForm.setSelectedCinema(selectionEvent.getFirstSelectedItem().get());
-                saveDeleteForm.setVisible(true);
-            } else {
-                saveDeleteForm.setVisible(false);
-            }
-        });
-        saveDeleteForm.setVisible(false);
+		mainLayout.addComponents(toolbar, gridFormLayout);
 
-        HorizontalLayout gridFormLayout = new HorizontalLayout(grid, saveDeleteForm);
-        gridFormLayout.setSizeFull();
-        gridFormLayout.setExpandRatio(grid, 1);
+		return mainLayout;
+	}
 
-        mainLayout.addComponents(toolbar, gridFormLayout);
+	private Component addNewCinemaButtonClick() {
+		VerticalLayout createPopupContent = new VerticalLayout();
 
-        return mainLayout;
-    }
+		TextField cinemaNameTextField = new TextField("Cinema name");
+		TextField cinemaLocationTextField = new TextField("Location");
+		ComboBox<City> cinemaCityComboBox = new ComboBox<>("City");
 
-    private Component addNewCinemaButtonClick() {
-        VerticalLayout createPopupContent = new VerticalLayout();
+		cinemaCityComboBox.setEmptySelectionAllowed(false);
+		cinemaCityComboBox.setItems(cities);
+		cinemaCityComboBox.setItemCaptionGenerator(City::getName);
+		cinemaCityComboBox.setSelectedItem(cities.get(0));
 
-        TextField cinemaNameTextField = new TextField("Cinema name");
-        TextField cinemaLocationTextField = new TextField("Location");
-        ComboBox<City> cinemaCityComboBox = new ComboBox<>("City");
+		createPopupContent.addComponent(cinemaNameTextField);
+		createPopupContent.addComponent(cinemaCityComboBox);
+		createPopupContent.addComponent(cinemaLocationTextField);
 
-        cinemaCityComboBox.setEmptySelectionAllowed(false);
-        cinemaCityComboBox.setItems(cities);
-        cinemaCityComboBox.setItemCaptionGenerator(City::getName);
-        cinemaCityComboBox.setSelectedItem(cities.get(0));
+		createPopupContent.addComponent(new Button("Create", (Button.ClickListener) event -> {
+			listeners.forEach(cinemaViewListener -> {
+				if (cinemaCityComboBox.getSelectedItem().isPresent()) {
+					cinemaViewListener.getCinemaEditPresenter().buttonAddNewCinemaClicked(
+							cinemaNameTextField.getValue(), cinemaCityComboBox.getSelectedItem().get(),
+							cinemaLocationTextField.getValue());
+					Notification.show("Cinema create", "Cinema name: " + cinemaNameTextField.getValue(),
+							Notification.Type.HUMANIZED_MESSAGE);
+				} else {
+					Notification.show("Please select City", "", Notification.Type.ERROR_MESSAGE);
+				}
+			});
+		}));
 
-        createPopupContent.addComponent(cinemaNameTextField);
-        createPopupContent.addComponent(cinemaCityComboBox);
-        createPopupContent.addComponent(cinemaLocationTextField);
+		PopupView createPopup = new PopupView(null, createPopupContent);
+		createPopup.setSizeUndefined();
+		createPopup.setPopupVisible(true);
+		return createPopup;
+	}
 
-        createPopupContent.addComponent(new Button("Create", (Button.ClickListener) event -> {
-            listeners.forEach(cinemaViewListener -> {
-                if (cinemaCityComboBox.getSelectedItem().isPresent()) {
-                    cinemaViewListener.getCinemaEditPresenter().buttonAddNewCinemaClicked(cinemaNameTextField.getValue(), cinemaCityComboBox.getSelectedItem().get(), cinemaLocationTextField.getValue());
-                    Notification.show("Cinema create", "Cinema name: " + cinemaNameTextField.getValue(), Notification.Type.HUMANIZED_MESSAGE);
-                } else {
-                    Notification.show("Please select City", "", Notification.Type.ERROR_MESSAGE);
-                }
-            });
-        }));
+	private void getFilteredByCinemaName(String filterText) {
+		if (StringUtils.isEmpty(filterText)) {
+			grid.setItems(cinemas);
+		} else {
+			List<Cinema> filteredCinemas = cinemas.stream().filter(cinema -> cinema.getName().contains(filterText))
+					.collect(Collectors.toList());
+			grid.setItems(filteredCinemas);
+		}
+	}
 
-        PopupView createPopup = new PopupView(null, createPopupContent);
-        createPopup.setSizeUndefined();
-        createPopup.setPopupVisible(true);
-        return createPopup;
-    }
+	private class SaveDeleteForm extends FormLayout {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1039337242156285553L;
+		private Cinema selectedCinema;
+		private TextField cinemaNameTextField;
+		private ComboBox<City> cinemaCityComboBox;
+		private TextField cinemaLocationTextField;
+		private Button saveButton;
+		private Button deleteButton;
 
-    private void getFilteredByCinemaName(String filterText) {
-        if (StringUtils.isEmpty(filterText)) {
-            grid.setItems(cinemas);
-        } else {
-            List<Cinema> filteredCinemas = cinemas.stream().filter(cinema -> cinema.getName().contains(filterText)).collect(Collectors.toList());
-            grid.setItems(filteredCinemas);
-        }
-    }
+		private SaveDeleteForm() {
+			cinemaNameTextField = new TextField("Cinema Name");
+			cinemaCityComboBox = new ComboBox<>("City");
+			cinemaLocationTextField = new TextField("Location");
+			saveButton = new Button("Save");
+			deleteButton = new Button("Delete");
+			saveButton.addStyleName("friendly");
+			deleteButton.addStyleName("danger");
+			setSizeUndefined();
 
-    private class SaveDeleteForm extends FormLayout {
-        private Cinema selectedCinema;
-        private TextField cinemaNameTextField;
-        private ComboBox<City> cinemaCityComboBox;
-        private TextField cinemaLocationTextField;
-        private Button saveButton;
-        private Button deleteButton;
+			HorizontalLayout buttons = new HorizontalLayout(saveButton, deleteButton);
+			addComponents(cinemaNameTextField, cinemaCityComboBox, cinemaLocationTextField, buttons);
 
-        private SaveDeleteForm() {
-            cinemaNameTextField = new TextField("Cinema Name");
-            cinemaCityComboBox = new ComboBox<>("City");
-            cinemaLocationTextField = new TextField("Location");
-            saveButton = new Button("Save");
-            deleteButton = new Button("Delete");
-            saveButton.addStyleName("friendly");
-            deleteButton.addStyleName("danger");
-            setSizeUndefined();
+			deleteButton.addClickListener(clickEvent -> {
+				this.deleteCinema(this.selectedCinema);
+				Notification.show("Cinema deleted", "Cinema name: " + this.selectedCinema.getName(),
+						Notification.Type.HUMANIZED_MESSAGE);
+			});
+			saveButton.addClickListener(clickEvent -> {
+				this.editCinema(this.selectedCinema, cinemaNameTextField.getValue(),
+						cinemaCityComboBox.getSelectedItem().get(), cinemaLocationTextField.getValue());
+				Notification.show("Cinema edit", "Cinema name: " + this.selectedCinema.getName(),
+						Notification.Type.HUMANIZED_MESSAGE);
+			});
+		}
 
-            HorizontalLayout buttons = new HorizontalLayout(saveButton, deleteButton);
-            addComponents(cinemaNameTextField, cinemaCityComboBox, cinemaLocationTextField, buttons);
+		private void deleteCinema(Cinema selectedCinema) {
+			listeners.forEach(
+					listener -> listener.getCinemaEditPresenter().buttonDeleteCinemaClicked(selectedCinema.getId()));
+			this.setVisible(false);
+			cinemas.remove(selectedCinema);
+			grid.setItems(cinemas);
+		}
 
-            deleteButton.addClickListener(clickEvent -> {
-                this.deleteCinema(this.selectedCinema);
-                Notification.show("Cinema deleted", "Cinema name: " + this.selectedCinema.getName(), Notification.Type.HUMANIZED_MESSAGE);
-            });
-            saveButton.addClickListener(clickEvent -> {
-                this.editCinema(this.selectedCinema, cinemaNameTextField.getValue(), cinemaCityComboBox.getSelectedItem().get(), cinemaLocationTextField.getValue());
-                Notification.show("Cinema edit", "Cinema name: " + this.selectedCinema.getName(), Notification.Type.HUMANIZED_MESSAGE);
-            });
-        }
+		private void editCinema(Cinema selectedCinema, String newCinemaName, City newCinemaCity,
+				String newCinemaLocation) {
+			listeners.forEach(listener -> listener.getCinemaEditPresenter().buttonSaveCinemaClicked(selectedCinema,
+					newCinemaName, newCinemaCity, newCinemaLocation));
+		}
 
-        private void deleteCinema(Cinema selectedCinema) {
-            listeners.forEach(listener -> listener.getCinemaEditPresenter().buttonDeleteCinemaClicked(selectedCinema.getId()));
-            this.setVisible(false);
-            cinemas.remove(selectedCinema);
-            grid.setItems(cinemas);
-        }
+		void setSelectedCinema(Cinema selectedCinema) {
+			this.selectedCinema = selectedCinema;
+			cinemaNameTextField.setValue(selectedCinema.getName());
+			cinemaLocationTextField.setValue(selectedCinema.getLocation());
 
-        private void editCinema(Cinema selectedCinema, String newCinemaName, City newCinemaCity, String newCinemaLocation) {
-            listeners.forEach(listener -> listener.getCinemaEditPresenter().buttonSaveCinemaClicked(selectedCinema, newCinemaName, newCinemaCity, newCinemaLocation));
-        }
-
-        void setSelectedCinema(Cinema selectedCinema) {
-            this.selectedCinema = selectedCinema;
-            cinemaNameTextField.setValue(selectedCinema.getName());
-            cinemaLocationTextField.setValue(selectedCinema.getLocation());
-
-            cinemaCityComboBox.setItems(cities);
-            cinemaCityComboBox.setItemCaptionGenerator(City::getName);
-            cinemaCityComboBox.setEmptySelectionAllowed(false);
-            cinemaCityComboBox.setSelectedItem(selectedCinema.getCity());
-        }
-    }
+			cinemaCityComboBox.setItems(cities);
+			cinemaCityComboBox.setItemCaptionGenerator(City::getName);
+			cinemaCityComboBox.setEmptySelectionAllowed(false);
+			cinemaCityComboBox.setSelectedItem(selectedCinema.getCity());
+		}
+	}
 }

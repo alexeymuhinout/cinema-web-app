@@ -20,77 +20,81 @@ import java.util.List;
 @SpringView(name = VaadinUI.CITY_CINEMAS_VIEW)
 public class CityCinemasViewImpl extends VerticalLayout implements CityCinemasView {
 
-    private List<CityCinemasViewListener> listeners = new ArrayList<>();
-    private Panel cinemasPanel = new Panel();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7998168209329334788L;
+	private List<CityCinemasViewListener> listeners = new ArrayList<>();
+	private Panel cinemasPanel = new Panel();
 
-    @Autowired
-    public CityCinemasViewImpl(AuthenticationService authenticationService) {
-        addComponentsAndExpand(new Panel(new MenuComponent(authenticationService)));
-        addComponentsAndExpand(initCinemasPanel());
-    }
+	@Autowired
+	public CityCinemasViewImpl(AuthenticationService authenticationService) {
+		addComponentsAndExpand(new Panel(new MenuComponent(authenticationService)));
+		addComponentsAndExpand(initCinemasPanel());
+	}
 
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-        listeners.forEach(listener -> listener.entered(event));
-    }
+	@Override
+	public void enter(ViewChangeListener.ViewChangeEvent event) {
+		listeners.forEach(listener -> listener.entered(event));
+	}
 
-    @Override
-    public void showCinemasPanel(List<Cinema> cinemas) {
-        Accordion cinemasAccordion = new Accordion();
-        for (Cinema cinema : cinemas) {
-            VerticalLayout cinemaInfoLayout = new VerticalLayout();
+	@Override
+	public void showCinemasPanel(List<Cinema> cinemas) {
+		Accordion cinemasAccordion = new Accordion();
+		for (Cinema cinema : cinemas) {
+			VerticalLayout cinemaInfoLayout = new VerticalLayout();
 
-            cinemaInfoLayout.addComponent(new Label("Location: " + cinema.getLocation()));
+			cinemaInfoLayout.addComponent(new Label("Location: " + cinema.getLocation()));
 
-            StringBuilder featuresStringBuilder = new StringBuilder("Features: ");
-            for (Feature feature : cinema.getFeatures()) {
-                featuresStringBuilder.append(feature.getName());
-            }
-            cinemaInfoLayout.addComponent(new Label(featuresStringBuilder.toString()));
+			StringBuilder featuresStringBuilder = new StringBuilder("Features: ");
+			for (Feature feature : cinema.getFeatures()) {
+				featuresStringBuilder.append(feature.getName());
+			}
+			cinemaInfoLayout.addComponent(new Label(featuresStringBuilder.toString()));
 
-            Button navigateButton = new Button("Show Cinema", clickEvent -> new PageNavigator().navigateToCinemaView(cinema.getId()));
-            navigateButton.setSizeFull();
-            cinemaInfoLayout.addComponent(navigateButton);
-            cinemasAccordion.addTab(cinemaInfoLayout, cinema.getName());
-        }
-        cinemasPanel.setContent(cinemasAccordion);
-    }
+			Button navigateButton = new Button("Show Cinema",
+					clickEvent -> new PageNavigator().navigateToCinemaView(cinema.getId()));
+			navigateButton.setSizeFull();
+			cinemaInfoLayout.addComponent(navigateButton);
+			cinemasAccordion.addTab(cinemaInfoLayout, cinema.getName());
+		}
+		cinemasPanel.setContent(cinemasAccordion);
+	}
 
+	private Component initCinemasPanel() {
+		this.cinemasPanel = new Panel();
+		return cinemasPanel;
+	}
 
-    private Component initCinemasPanel() {
-        this.cinemasPanel = new Panel();
-        return cinemasPanel;
-    }
+	@Override
+	@Autowired
+	public void addCityCinemasViewListener(CityCinemasViewListener listener) {
+		listener.setView(this);
+		this.listeners.add(listener);
+	}
 
-    @Override
-    @Autowired
-    public void addCityCinemasViewListener(CityCinemasViewListener listener) {
-        listener.setView(this);
-        this.listeners.add(listener);
-    }
+	@Override
+	public void setCinemasPageCount(int totalPages) {
 
-    @Override
-    public void setCinemasPageCount(int totalPages) {
+	}
 
-    }
+	@Override
+	public void setCurrentCinemasPage(int currentCinemasPage) {
 
-    @Override
-    public void setCurrentCinemasPage(int currentCinemasPage) {
+	}
 
-    }
+	@Override
+	public void showWarning(String message) {
+		Notification.show(message, Notification.Type.WARNING_MESSAGE);
+	}
 
-    @Override
-    public void showWarning(String message) {
-        Notification.show(message, Notification.Type.WARNING_MESSAGE);
-    }
+	@Override
+	public void showError(String message) {
+		Notification.show(message, Notification.Type.ERROR_MESSAGE);
+	}
 
-    @Override
-    public void showError(String message) {
-        Notification.show(message, Notification.Type.ERROR_MESSAGE);
-    }
-
-    @Override
-    public void reload() {
-        Page.getCurrent().reload();
-    }
+	@Override
+	public void reload() {
+		Page.getCurrent().reload();
+	}
 }

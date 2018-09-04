@@ -17,7 +17,7 @@ public interface MainView extends ApplicationView {
 
     void showCitySelectionPanel(List<City> cities);
 
-    void setSelectedCharacterCities(Character character);
+	void setSelectedCharacterCities(Character character);
 
     interface MainViewListener {
 

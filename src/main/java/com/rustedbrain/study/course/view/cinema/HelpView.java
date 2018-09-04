@@ -9,17 +9,17 @@ import java.util.Map;
 
 public interface HelpView extends ApplicationView {
 
-    void setHelpTittleTextMap(Map<String, String> helpTittleTextMap);
+	void setHelpTittleTextMap(Map<String, String> helpTittleTextMap);
 
-    @Autowired
-    void addHelpViewListener(HelpViewListener helpViewListener);
+	@Autowired
+	void addHelpViewListener(HelpViewListener helpViewListener);
 
-    void fillMenuPanel(AuthenticationService authenticationService);
+	void fillMenuPanel(AuthenticationService authenticationService);
 
-    interface HelpViewListener {
+	interface HelpViewListener {
 
-        void entered(ViewChangeListener.ViewChangeEvent event);
+		void entered(ViewChangeListener.ViewChangeEvent event);
 
-        void setView(HelpView helpView);
-    }
+		void setView(HelpView helpView);
+	}
 }

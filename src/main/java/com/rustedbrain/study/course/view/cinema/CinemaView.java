@@ -13,31 +13,31 @@ import java.util.Set;
 
 public interface CinemaView extends ApplicationView {
 
-    @Autowired
-    void addCinemaViewListener(CinemaViewListener listener);
+	@Autowired
+	void addCinemaViewListener(CinemaViewListener listener);
 
-    void fillCinemaPanel(Cinema cinema, UserRole role, int availableToOrderDays, int currentDay);
+	void fillCinemaPanel(Cinema cinema, UserRole role, int availableToOrderDays, int currentDay);
 
-    void setFilmScreenings(Set<FilmScreening> filmScreenings);
+	void setFilmScreenings(Set<FilmScreening> filmScreenings);
 
-    void fillMenuPanel(AuthenticationService authenticationService);
+	void fillMenuPanel(AuthenticationService authenticationService);
 
-    void setSelectedDay(LocalDate day);
+	void setSelectedDay(LocalDate day);
 
-    interface CinemaViewListener {
+	interface CinemaViewListener {
 
-        void entered(ViewChangeListener.ViewChangeEvent event);
+		void entered(ViewChangeListener.ViewChangeEvent event);
 
-        void setView(CinemaView cinemaView);
+		void setView(CinemaView cinemaView);
 
-        void buttonFilmViewTimeClicked(long id);
+		void buttonFilmViewTimeClicked(long id);
 
-        void buttonDeleteCinemaClicked(long id);
+		void buttonDeleteCinemaClicked(long id);
 
-        void buttonDayClicked(LocalDate day);
+		void buttonDayClicked(LocalDate day);
 
-        void buttonRenameClicked(String value);
+		void buttonRenameClicked(String value);
 
-        void buttonShowMovieClicked(long id);
-    }
+		void buttonShowMovieClicked(long id);
+	}
 }
