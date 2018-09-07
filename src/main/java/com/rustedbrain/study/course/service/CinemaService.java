@@ -32,8 +32,6 @@ public interface CinemaService {
 
 	void deleteCity(String city);
 
-	void createCity(String name);
-
 	void createCinema(City city, String name, String street);
 
 	Cinema getCinema(Long cinemaId);
@@ -92,13 +90,13 @@ public interface CinemaService {
 
 	void renameCity(City selectedCity, String newCityName);
 
-	void addCity(String newCityName);
+	void createCity(String newCityName);
 
 	void editCinema(Cinema selectedCinema, String newCinemaName, City newCity, String newCinemaLocation);
-
-	void addCinema(String cinemaName, City city, String location);
 
 	void editCinemaHall(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema);
 
 	void deleteCinemaHall(long id);
+
+	void createCinemaHall(String cinemaHallName, Cinema cinema);
 }

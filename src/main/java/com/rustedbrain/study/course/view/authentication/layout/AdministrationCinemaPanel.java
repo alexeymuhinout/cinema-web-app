@@ -104,7 +104,7 @@ public class AdministrationCinemaPanel extends Panel {
 			listeners.forEach(cinemaViewListener -> {
 				if (cinemaCityComboBox.getSelectedItem().isPresent()) {
 					cinemaViewListener.getCinemaEditPresenter().buttonAddNewCinemaClicked(
-							cinemaNameTextField.getValue(), cinemaCityComboBox.getSelectedItem().get(),
+							cinemaCityComboBox.getSelectedItem().get(), cinemaNameTextField.getValue(),
 							cinemaLocationTextField.getValue());
 					Notification.show("Cinema create", "Cinema name: " + cinemaNameTextField.getValue(),
 							Notification.Type.HUMANIZED_MESSAGE);

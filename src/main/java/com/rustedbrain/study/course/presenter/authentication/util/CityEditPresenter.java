@@ -19,6 +19,6 @@ public class CityEditPresenter {
 	}
 
 	public void buttonAddNewCityClicked(String newCityName) {
-		cinemaService.addCity(newCityName);
+		cinemaService.createCity(newCityName);
 	}
 }

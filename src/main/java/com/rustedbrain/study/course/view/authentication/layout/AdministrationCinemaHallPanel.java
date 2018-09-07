@@ -1,19 +1,29 @@
 package com.rustedbrain.study.course.view.authentication.layout;
 
-import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
-import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
-import com.rustedbrain.study.course.model.persistence.cinema.City;
-import com.rustedbrain.study.course.view.authentication.ProfileView;
-import com.rustedbrain.study.course.view.util.PageNavigator;
-import com.vaadin.icons.VaadinIcons;
-import com.vaadin.shared.ui.ValueChangeMode;
-import com.vaadin.ui.*;
-import org.springframework.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.util.StringUtils;
+
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
+import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.view.authentication.ProfileView;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.ValueChangeMode;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.PopupView;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 
 public class AdministrationCinemaHallPanel extends Panel {
 	/**
@@ -121,9 +131,7 @@ public class AdministrationCinemaHallPanel extends Panel {
 					if (cinemaComboBox.getSelectedItem().isPresent()) {
 						if (!cinemaHallName.getValue().isEmpty()) {
 							cinemaHallViewListener.getCinemaHallEditPresenter().buttonAddNewCinemaHallClicked(
-									cinemaHallName.getValue(), cityComboBox.getSelectedItem(),
-									cinemaComboBox.getSelectedItem());
-							new PageNavigator().navigateToCinemaHallConstructorView();
+									cinemaHallName.getValue(), cinemaComboBox.getSelectedItem());
 						} else {
 							Notification.show("Please enter name", "", Notification.Type.ERROR_MESSAGE);
 						}

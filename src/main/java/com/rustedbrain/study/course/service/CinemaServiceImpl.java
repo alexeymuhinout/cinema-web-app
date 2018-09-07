@@ -159,26 +159,6 @@ public class CinemaServiceImpl implements CinemaService {
 	}
 
 	@Override
-	public void createCity(String name) {
-		if (name == null || name.isEmpty()) {
-			throw new IllegalArgumentException("City name cannot be empty");
-		} else {
-			cityRepository.save(new City(name));
-		}
-	}
-
-	@Override
-	public void createCinema(City city, String name, String street) {
-		if (name == null || name.isEmpty()) {
-			throw new IllegalArgumentException("Cinema name cannot be empty");
-		} else if (street == null || street.isEmpty()) {
-			throw new IllegalArgumentException("Cinema street cannot be empty");
-		} else {
-			cinemaRepository.save(new Cinema(city, name, street));
-		}
-	}
-
-	@Override
 	public Cinema getCinema(Long cinemaId) {
 		return cinemaRepository.getOne(cinemaId);
 	}
@@ -413,8 +393,8 @@ public class CinemaServiceImpl implements CinemaService {
 	}
 
 	@Override
-	public void addCity(String newCityName) {
-		City city = new City(newCityName);
+	public void createCity(String name) {
+		City city = new City(name);
 		cityRepository.save(city);
 	}
 
@@ -424,11 +404,16 @@ public class CinemaServiceImpl implements CinemaService {
 	}
 
 	@Override
-	public void addCinema(String cinemaName, City city, String location) {
-		Cinema cinema = new Cinema(city, cinemaName, location);
-		cinemaRepository.save(cinema);
+	public void createCinema(City city, String name, String street) {
+		if (name == null || name.isEmpty()) {
+			throw new IllegalArgumentException("Cinema name cannot be empty");
+		} else if (street == null || street.isEmpty()) {
+			throw new IllegalArgumentException("Cinema street cannot be empty");
+		} else {
+			cinemaRepository.save(new Cinema(city, name, street));
+		}
 	}
-
+	
 	@Override
 	public void editCinemaHall(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema) {
 		cinemaHallRepository.editCinemaHall(selectedCinemaHall.getId(), newCinemaHallName, newCinema);
@@ -458,5 +443,12 @@ public class CinemaServiceImpl implements CinemaService {
 		}
 		Optional<Map.Entry<Double, Cinema>> optionalDistanceCinema = Optional.ofNullable(cinemaDistanceMap.lastEntry());
 		return optionalDistanceCinema.map(Map.Entry::getValue);
+	}
+
+	@Override
+	public void createCinemaHall(String cinemaHallName, Cinema cinema) {
+		CinemaHall cinemaHall = new CinemaHall(cinemaHallName);
+		cinemaHall.setCinema(cinema);
+		cinemaHallRepository.save(cinemaHall);
 	}
 }

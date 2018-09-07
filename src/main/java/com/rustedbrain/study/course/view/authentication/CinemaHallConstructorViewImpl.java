@@ -4,6 +4,8 @@ import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
@@ -32,7 +34,6 @@ public class CinemaHallConstructorViewImpl extends VerticalLayout implements Cin
 		tabSheet.addStyleName(ValoTheme.TABSHEET_EQUAL_WIDTH_TABS);
 		tabSheet.addStyleName(ValoTheme.TABSHEET_FRAMED);
 		addComponentsAndExpand(tabSheet);
-		addComponentsAndExpand(getVerticalComponents());
 	}
 
 	@Override
@@ -42,15 +43,43 @@ public class CinemaHallConstructorViewImpl extends VerticalLayout implements Cin
 		viewListeners.add(viewListener);
 	}
 
-	private VerticalLayout getVerticalComponents() {
+	@Override
+	public void enter(ViewChangeListener.ViewChangeEvent event) {
+		viewListeners.forEach(viewListener -> viewListener.entered(event));
+	}
+	
+	@Override
+	public void showWarning(String message) {
+		Notification.show(message, Notification.Type.WARNING_MESSAGE);
+	}
+
+	@Override
+	public void showError(String message) {
+		Notification.show(message, Notification.Type.ERROR_MESSAGE);
+	}
+
+	@Override
+	public void reload() {
+		Page.getCurrent().reload();
+	}
+	
+	@Override
+	public void addVerticalMenuComponents() {
 		VerticalLayout verticalLayout = new VerticalLayout();
 		Button seatsIconButton = new Button(VaadinIcons.ALIGN_JUSTIFY);
 		seatsIconButton.setCaption("Seats");
+		seatsIconButton.setWidth("110px");
 		seatsIconButton.addClickListener(clickEvent -> {
-			addComponent(getAddNewSeatsPopupView());
+			this.addComponent(getAddNewSeatsPopupView());
 		});
+
+		Button screenIconButton = new Button(VaadinIcons.PRESENTATION);
+		screenIconButton.setCaption("Screen");
+		screenIconButton.setWidth("110px");
 		verticalLayout.addComponent(seatsIconButton);
-		return verticalLayout;
+		verticalLayout.addComponent(screenIconButton);
+
+		this.tabSheet.addComponent(verticalLayout);
 	}
 
 	private PopupView getAddNewSeatsPopupView() {

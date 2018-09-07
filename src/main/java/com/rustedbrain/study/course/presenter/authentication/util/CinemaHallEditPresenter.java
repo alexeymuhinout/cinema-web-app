@@ -2,8 +2,8 @@ package com.rustedbrain.study.course.presenter.authentication.util;
 
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
-import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.service.CinemaService;
+import com.rustedbrain.study.course.view.util.PageNavigator;
 import com.vaadin.ui.TextField;
 
 import java.util.Optional;
@@ -25,8 +25,8 @@ public class CinemaHallEditPresenter {
 
 	}
 
-	public void buttonAddNewCinemaHallClicked(String cinemaHallName, Optional<City> selectedItem,
-			Optional<Cinema> selectedItem1) {
-
+	public void buttonAddNewCinemaHallClicked(String cinemaHallName, Optional<Cinema> cinema) {
+		cinemaService.createCinemaHall(cinemaHallName, cinema.get());
+		new PageNavigator().navigateToCinemaHallConstructorView();
 	}
 }

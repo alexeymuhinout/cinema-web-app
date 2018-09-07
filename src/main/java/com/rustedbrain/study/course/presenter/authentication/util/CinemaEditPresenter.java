@@ -20,7 +20,7 @@ public class CinemaEditPresenter {
 		cinemaService.deleteCinema(id);
 	}
 
-	public void buttonAddNewCinemaClicked(String cinemaName, City city, String location) {
-		cinemaService.addCinema(cinemaName, city, location);
+	public void buttonAddNewCinemaClicked(City city, String cinemaName, String location) {
+		cinemaService.createCinema(city, cinemaName, location);
 	}
 }
