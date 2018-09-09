@@ -249,6 +249,12 @@ public class CinemaServiceImpl implements CinemaService {
 	}
 
 	@Override
+	public Map<Integer, Integer> getCinemaHallSeatMap()
+			throws ParserConfigurationException, ResourceException, SAXException, IOException {
+		return resourceAccessor.getCinemaHallSeatMap();
+	}
+	
+	@Override
 	public List<Cinema> getCityCinemas(Long id) {
 		return cinemaRepository.getCinemasByCityId(id);
 	}

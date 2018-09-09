@@ -99,4 +99,7 @@ public interface CinemaService {
 	void deleteCinemaHall(long id);
 
 	void createCinemaHall(String cinemaHallName, Cinema cinema);
+
+	Map<Integer, Integer> getCinemaHallSeatMap()
+			throws ParserConfigurationException, ResourceException, SAXException, IOException;
 }
