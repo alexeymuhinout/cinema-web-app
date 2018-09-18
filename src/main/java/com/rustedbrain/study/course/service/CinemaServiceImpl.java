@@ -81,7 +81,7 @@ public class CinemaServiceImpl implements CinemaService {
 	private TicketRepository ticketRepository;
 
 	private SeatRepository seatRepository;
-	
+
 	private RowRepository rowRepository;
 
 	private MemberRepository memberRepository;
@@ -126,7 +126,7 @@ public class CinemaServiceImpl implements CinemaService {
 	public void setSeatRepository(SeatRepository seatRepository) {
 		this.seatRepository = seatRepository;
 	}
-	
+
 	@Autowired
 	public void setRowRepository(RowRepository rowRepository) {
 		this.rowRepository = rowRepository;
@@ -184,11 +184,11 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public void deleteCity(String cityName) {
-		if (cityName == null || cityName.isEmpty()) {
+		if ( cityName == null || cityName.isEmpty() ) {
 			throw new IllegalArgumentException("City name cannot be empty");
 		} else {
 			Optional<City> optionalCity = Optional.ofNullable(cityRepository.findByName(cityName));
-			if (optionalCity.isPresent()) {
+			if ( optionalCity.isPresent() ) {
 				cityRepository.delete(optionalCity.get());
 			} else {
 				throw new IllegalArgumentException("City with specified name not found");
@@ -211,7 +211,7 @@ public class CinemaServiceImpl implements CinemaService {
 			LookupService lookupService = new LookupService(resourceAccessor.getIPGeoDatabaseFile(),
 					LookupService.GEOIP_MEMORY_CACHE | LookupService.GEOIP_CHECK_CACHE);
 			Optional<Location> optionalLocation = Optional.ofNullable(lookupService.getLocation(ipAddress));
-			if (optionalLocation.isPresent()) {
+			if ( optionalLocation.isPresent() ) {
 				return optionalLocation.get();
 			}
 		} catch (IOException e) {
@@ -229,11 +229,11 @@ public class CinemaServiceImpl implements CinemaService {
 	@Override
 	public Optional<Cinema> getNearestCinema(InetAddress address) throws IOException {
 		Location userLocation = getUserLocation(address.getHostAddress());
-		String userStreetLocation = GoogleMapApiUtil.getAddressByCoordinates(userLocation.longitude,
-				userLocation.latitude);
+		String userStreetLocation =
+				GoogleMapApiUtil.getAddressByCoordinates(userLocation.longitude, userLocation.latitude);
 
 		Optional<City> optionalCity = getCityByName(userLocation.city);
-		if (optionalCity.isPresent()) {
+		if ( optionalCity.isPresent() ) {
 			return calculateNearestCinemaToAddress(optionalCity.get().getCinemas(), userStreetLocation);
 		} else {
 			return Optional.empty();
@@ -249,13 +249,13 @@ public class CinemaServiceImpl implements CinemaService {
 	public List<FilmScreening> getTodayCinemaFilmScreenings(Cinema cinema) {
 		List<FilmScreening> filmScreenings = new ArrayList<>();
 		for (FilmScreening filmScreening : cinema.getFilmScreenings()) {
-			if (filmScreening.isAvailableToBuy() && filmScreening.getStartDate().before(Date.from(Instant.now()))
-					&& filmScreening.getEndDate().after(Date.from(Instant.now()))) {
+			if ( filmScreening.isAvailableToBuy() && filmScreening.getStartDate().before(Date.from(Instant.now()))
+					&& filmScreening.getEndDate().after(Date.from(Instant.now())) ) {
 				FilmScreening todayFilmScreening = new FilmScreening();
 				todayFilmScreening.setMovie(filmScreening.getMovie());
 				todayFilmScreening.setFilmScreeningEvents(filmScreening.getFilmScreeningEvents().stream().filter(
 						filmScreeningEvent -> filmScreeningEvent.getTime().toLocalTime().isAfter(LocalTime.now()))
-						.collect(Collectors.toSet()));
+						.collect(Collectors.toList()));
 				filmScreenings.add(todayFilmScreening);
 			}
 		}
@@ -265,8 +265,8 @@ public class CinemaServiceImpl implements CinemaService {
 	@Override
 	public Optional<Cinema> getNearestCinema(InetAddress address, City city) throws IOException {
 		Location userLocation = getUserLocation(address.getHostAddress());
-		String userStreetLocation = GoogleMapApiUtil.getAddressByCoordinates(userLocation.longitude,
-				userLocation.latitude);
+		String userStreetLocation =
+				GoogleMapApiUtil.getAddressByCoordinates(userLocation.longitude, userLocation.latitude);
 		return calculateNearestCinemaToAddress(city.getCinemas(), userStreetLocation);
 	}
 
@@ -306,7 +306,7 @@ public class CinemaServiceImpl implements CinemaService {
 	public List<TicketInfo> reserveTickets(String name, String surname, String login,
 			FilmScreeningEvent filmScreeningEvent, List<Seat> seats) {
 		Optional<Member> optionalMember = Optional.ofNullable(memberRepository.findByLogin(login));
-		if (optionalMember.isPresent()) {
+		if ( optionalMember.isPresent() ) {
 			List<TicketInfo> tickets = new ArrayList<>();
 			for (Seat seat : seats) {
 				Ticket ticket = new Ticket();
@@ -355,8 +355,8 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public Set<FilmScreening> getDayFilmScreenings(long cinemaId, LocalDate day) {
-		Set<FilmScreening> filmScreenings = new HashSet<>(
-				filmScreeningRepository.getFilmScreening(cinemaId, java.sql.Date.valueOf(day)));
+		Set<FilmScreening> filmScreenings =
+				new HashSet<>(filmScreeningRepository.getFilmScreening(cinemaId, java.sql.Date.valueOf(day)));
 
 		for (FilmScreening filmScreening : filmScreenings) {
 			filmScreening.getFilmScreeningEvents()
@@ -379,10 +379,10 @@ public class CinemaServiceImpl implements CinemaService {
 	@Override
 	public void registerMember(String login, String password, String name, String surname, long cityId,
 			LocalDate birthday, String mail) {
-		if (!Validator.LOGIN_VALIDATOR.isValid(login)) {
+		if ( !Validator.LOGIN_VALIDATOR.isValid(login) ) {
 			throw new IllegalArgumentException(
 					"Login is not valid. You can use only characters and digits in your login.");
-		} else if (!Validator.MAIL_VALIDATOR.isValid(mail)) {
+		} else if ( !Validator.MAIL_VALIDATOR.isValid(mail) ) {
 			throw new IllegalArgumentException("Mail is not valid. Please check inputted mail.");
 		}
 		Member member = new Member(login, password, mail);
@@ -449,9 +449,9 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public void createCinema(City city, String name, String street) {
-		if (name == null || name.isEmpty()) {
+		if ( name == null || name.isEmpty() ) {
 			throw new IllegalArgumentException("Cinema name cannot be empty");
-		} else if (street == null || street.isEmpty()) {
+		} else if ( street == null || street.isEmpty() ) {
 			throw new IllegalArgumentException("Cinema street cannot be empty");
 		} else {
 			cinemaRepository.save(new Cinema(city, name, street));
@@ -509,30 +509,35 @@ public class CinemaServiceImpl implements CinemaService {
 	}
 
 	@Override
-	public void editCinemaHallSeats(long cinemaHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap) {
+	public void saveCinemaHallSeatsFromXML(long cinemaHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap) {
 		CinemaHall cinemaHall = cinemaHallRepository.getOne(cinemaHallId);
-		
-		Set<Row> rows = new HashSet<>();
-		cinemaHallSeatCoordinateMap.entrySet().stream().forEach(enty -> {
+		rowRepository.delete(cinemaHall.getRows());
+		cinemaHall.setRows(mapSeatCoordinateMapToRowsSet(cinemaHall, cinemaHallSeatCoordinateMap));
+		cinemaHallRepository.save(cinemaHall);
+		logger.log(Level.INFO, cinemaHallRepository.getOne(cinemaHallId).getRows().toString());
+	}
+
+	private List<Row> mapSeatCoordinateMapToRowsSet(CinemaHall cinemaHall,
+			Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap) {
+		List<Row> rows = new ArrayList<>();
+		for (Map.Entry<Integer, List<Integer>> entry : cinemaHallSeatCoordinateMap.entrySet()) {
 			Row row = new Row();
 			row.setCinemaHall(cinemaHall);
-			row.setNumber(enty.getKey() + 1);
+			row.setNumber(entry.getKey() + 1);
 			row.setRegistrationDate(new Date());
 			row.setLastAccessDate(new Date());
 
 			Set<Seat> seats = new HashSet<>();
-			enty.getValue().forEach(value -> {
-				Seat seat = new Seat(value + 1, 1, 12.50);
+			for (Integer seatNum : entry.getValue()) {
+				Seat seat = new Seat(seatNum + 1, 1, 12.50);
 				seat.setRow(row);
 				seat.setLastAccessDate(new Date());
 				seat.setRegistrationDate(new Date());
 				seats.add(seat);
-				
-			});
+			}
 			row.setSeats(seats);
 			rows.add(row);
-		});
-
-		cinemaHallRepository.editCinemaHallSeats(cinemaHallId, rows);
+		}
+		return rows;
 	}
 }

@@ -6,6 +6,7 @@ import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,7 +25,7 @@ public class FilmScreening extends DatabaseEntity {
 	private Date startDate;
 	@OneToMany(mappedBy = "filmScreening")
 	@Cascade({ CascadeType.ALL })
-	private Set<FilmScreeningEvent> filmScreeningEvents;
+	private List<FilmScreeningEvent> filmScreeningEvents;
 	@Column(name = "endDate")
 	private Date endDate;
 	@Column(name = "isAvailableToBuy")
@@ -70,11 +71,11 @@ public class FilmScreening extends DatabaseEntity {
 		this.endDate = endDate;
 	}
 
-	public Set<FilmScreeningEvent> getFilmScreeningEvents() {
+	public List<FilmScreeningEvent> getFilmScreeningEvents() {
 		return filmScreeningEvents;
 	}
 
-	public void setFilmScreeningEvents(Set<FilmScreeningEvent> filmScreeningEvents) {
+	public void setFilmScreeningEvents(List<FilmScreeningEvent> filmScreeningEvents) {
 		this.filmScreeningEvents = filmScreeningEvents;
 	}
 

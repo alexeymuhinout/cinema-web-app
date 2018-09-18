@@ -163,7 +163,7 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
 
 		CinemaHallLayout(FilmScreeningEvent filmScreeningEvent) {
 			CinemaHall cinemaHall = filmScreeningEvent.getCinemaHall();
-			seatButtonList = new ArrayList<>();
+			this.seatButtonList = new ArrayList<>();
 			for (Row row : new TreeSet<>(cinemaHall.getRows())) {
 				HorizontalLayout rowHorizontalLayout = new HorizontalLayout();
 				rowHorizontalLayout.addComponent(new Label(Integer.toString(row.getNumber())));

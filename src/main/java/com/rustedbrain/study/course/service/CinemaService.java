@@ -117,5 +117,5 @@ public interface CinemaService {
 
 	Optional<CinemaHall> getCinemaHall(long id);
 
-	void editCinemaHallSeats(long cinemaHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap);
+	void saveCinemaHallSeatsFromXML(long cinemaHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap);
 }

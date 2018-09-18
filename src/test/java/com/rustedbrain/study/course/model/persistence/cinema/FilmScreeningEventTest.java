@@ -47,7 +47,7 @@ public class FilmScreeningEventTest {
         rowList.add(setUpSeatList(row));
         row.setId(1);
         row.setNumber(8);
-        cinemaHall.setRows(new HashSet<>(rowList));
+        cinemaHall.setRows(rowList);
     }
 
     private static Row setUpSeatList(Row row) {

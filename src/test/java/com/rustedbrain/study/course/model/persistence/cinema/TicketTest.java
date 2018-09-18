@@ -64,7 +64,7 @@ public class TicketTest {
         rowList.add(setUpSeatList(row));
         row.setId(1);
         row.setNumber(9);
-        cinemaHall.setRows(new HashSet<>(rowList));
+        cinemaHall.setRows(rowList);
     }
 
     private static Row setUpSeatList(Row row) {

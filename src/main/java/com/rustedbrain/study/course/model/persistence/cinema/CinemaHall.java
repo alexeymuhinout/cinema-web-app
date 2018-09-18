@@ -1,12 +1,20 @@
 package com.rustedbrain.study.course.model.persistence.cinema;
 
-import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
 
 @Entity
 @Table(name = "cinemaHall")
@@ -19,12 +27,12 @@ public class CinemaHall extends DatabaseEntity {
 	@Column(name = "name", length = 64, nullable = false)
 	private String name;
 	@OneToMany(mappedBy = "cinemaHall")
-	@Cascade({ CascadeType.SAVE_UPDATE, CascadeType.DELETE })
-	private Set<Row> rows = new HashSet<>();
+	@Cascade({ CascadeType.ALL })
+	private List<Row> rows = new LinkedList<>();
 	@ManyToOne
 	private Cinema cinema;
 	@OneToMany(mappedBy = "cinemaHall")
-	@Cascade({ CascadeType.SAVE_UPDATE, CascadeType.DELETE })
+	@Cascade({ CascadeType.ALL })
 	private Set<FilmScreeningEvent> filmScreeningEvents = new HashSet<>();
 
 	public CinemaHall(String name) {
@@ -58,11 +66,11 @@ public class CinemaHall extends DatabaseEntity {
 		this.name = name;
 	}
 
-	public Set<Row> getRows() {
+	public List<Row> getRows() {
 		return rows;
 	}
 
-	public void setRows(Set<Row> rows) {
+	public void setRows(List<Row> rows) {
 		this.rows = rows;
 	}
 

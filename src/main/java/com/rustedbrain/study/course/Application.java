@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -21,7 +22,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.util.MultiValueMap;
 import org.xml.sax.SAXException;
 
 import com.rustedbrain.study.course.model.exception.ResourceException;
@@ -129,7 +129,7 @@ public class Application {
 
 			for (CinemaHall cinemaHall : cinemaHalls2) {
 				cinemaHallRepository.save(cinemaHall);
-				Set<Row> row = cinemaHall.getRows();
+				List<Row> row = cinemaHall.getRows();
 				for (Row row1 : row) {
 					rowRepository.save(row1);
 					for (Seat seat : row1.getSeats()) {
@@ -182,13 +182,13 @@ public class Application {
 			FilmScreening filmScreening3 = createFilmScreening(cinemaRepository.getOne(cinema6.getId()),
 					movieRepository.getOne(movie3.getId()));
 
-			filmScreening.setFilmScreeningEvents(new HashSet<>(createFilmScreeningEvents(filmScreening,
+			filmScreening.setFilmScreeningEvents(createFilmScreeningEvents(filmScreening,
 					(CinemaHall) cinemaHalls2.toArray()[0], new Time(14, 30, 00), new Time(16, 30, 00),
-					new Time(18, 30, 00), new Time(20, 30, 00), new Time(22, 30, 00))));
-			filmScreening2.setFilmScreeningEvents(new HashSet<>(createFilmScreeningEvents(filmScreening2,
-					(CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00))));
-			filmScreening2.setFilmScreeningEvents(new HashSet<>(createFilmScreeningEvents(filmScreening2,
-					(CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00))));
+					new Time(18, 30, 00), new Time(20, 30, 00), new Time(22, 30, 00)));
+			filmScreening2.setFilmScreeningEvents(createFilmScreeningEvents(filmScreening2,
+					(CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00)));
+			filmScreening2.setFilmScreeningEvents(createFilmScreeningEvents(filmScreening2,
+					(CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00)));
 
 			filmScreeningRepository.save(filmScreening);
 			filmScreeningRepository.save(filmScreening2);
@@ -269,7 +269,7 @@ public class Application {
 			Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap = new ResourceAccessor()
 					.getCinemaHallSeatCoordinateMap(cinemaHall);
 
-			Set<Row> rows = new HashSet<>();
+			List<Row> rows = new ArrayList<>();
 			cinemaHallSeatCoordinateMap.entrySet().stream().forEach(enty -> {
 				Row row = new Row();
 				row.setCinemaHall(cinemaHall);

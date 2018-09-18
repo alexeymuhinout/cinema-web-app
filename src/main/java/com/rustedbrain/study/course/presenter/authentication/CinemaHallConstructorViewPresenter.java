@@ -30,7 +30,7 @@ public class CinemaHallConstructorViewPresenter implements CinemaHallConstructor
 	private final AuthenticationService authenticationService;
 	private final CinemaService cinemaService;
 	private CinemaHallConstructorView cinemaHallConstructorView;
-	private Map <Integer, List<Integer>> cinemaHallSeatCoordinateMultiMap;
+	private Map<Integer, List<Integer>> cinemaHallSeatCoordinateMultiMap;
 	private CinemaHall cinemaHall;
 
 	private static final Logger logger = Logger.getLogger(CinemaHallConstructorViewPresenter.class.getName());
@@ -59,7 +59,7 @@ public class CinemaHallConstructorViewPresenter implements CinemaHallConstructor
 		cinemaHallSeatCoordinateMultiMap.put(rowNumber, seatsList);
 		try {
 			cinemaService.setCinemaHallSeatMap(cinameHallId, cinemaHallSeatCoordinateMultiMap);
-			cinemaHallConstructorView.reload();		
+			cinemaHallConstructorView.reload();
 		} catch (ParserConfigurationException | ResourceException | SAXException | IOException e) {
 			e.printStackTrace();
 		}
@@ -141,7 +141,7 @@ public class CinemaHallConstructorViewPresenter implements CinemaHallConstructor
 
 	@Override
 	public void buttonSaveCinemaHallSeatsButtonClicked() {
-		cinemaService.editCinemaHallSeats(cinemaHall.getId(),cinemaHallSeatCoordinateMultiMap);
-		/*new PageNavigator().navigateToProfileInfoView(id);*/
+		cinemaService.saveCinemaHallSeatsFromXML(cinemaHall.getId(), cinemaHallSeatCoordinateMultiMap);
+		/* new PageNavigator().navigateToProfileInfoView(id); */
 	}
 }

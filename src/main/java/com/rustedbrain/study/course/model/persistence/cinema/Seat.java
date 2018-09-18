@@ -9,10 +9,8 @@ import java.sql.Date;
 @Table(name = "seat")
 public class Seat extends DatabaseEntity implements Comparable<Seat> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6063911824287131532L;
+	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "rowId")
 	private Row row;
@@ -107,7 +105,7 @@ public class Seat extends DatabaseEntity implements Comparable<Seat> {
 
 	@Override
 	public String toString() {
-		return "Seat{" + "number=" + number + ", clientCount=" + clientCount + ", price=" + price + '}';
+		return "Seat{" + "num:" + number + ", clients:" + clientCount + ", price:" + price + '}';
 	}
 
 	@Override
