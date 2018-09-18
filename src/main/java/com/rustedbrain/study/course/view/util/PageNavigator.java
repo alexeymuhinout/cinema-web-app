@@ -110,8 +110,8 @@ public class PageNavigator {
         VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.REGISTRATION_VIEW);
     }
 
-    public void navigateToCinemaHallConstructorView() {
-        VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.CINEMA_HALL_CONSTRUCTOR_VIEW);
+    public void navigateToCinemaHallConstructorView(long cinamaHallId) {
+        VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.CINEMA_HALL_CONSTRUCTOR_VIEW + "/" + cinamaHallId);
     }
 
 }

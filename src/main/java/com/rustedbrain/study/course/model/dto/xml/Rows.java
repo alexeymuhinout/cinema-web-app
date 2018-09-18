@@ -21,4 +21,9 @@ public class Rows {
 	public void setRows(List<Row> rows) {
 		this.rows = rows;
 	}
+
+	@Override
+	public String toString() {
+		return "Rows [rows=" + rows + "]";
+	}
 }

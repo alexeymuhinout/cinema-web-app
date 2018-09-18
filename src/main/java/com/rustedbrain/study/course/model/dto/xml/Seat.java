@@ -10,6 +10,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Seat {
 	@XmlElement(name = "coordinate")
 	private Coordinate coordinate;
+	
+	@XmlElement(name = "number")
+	private String number;
 
 	public Coordinate getCoordinate() {
 		return coordinate;
@@ -19,4 +22,17 @@ public class Seat {
 		this.coordinate = coordinate;
 	}
 
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	@Override
+	public String toString() {
+		return "Seat [coordinate=" + coordinate + "]";
+	}
+	
 }

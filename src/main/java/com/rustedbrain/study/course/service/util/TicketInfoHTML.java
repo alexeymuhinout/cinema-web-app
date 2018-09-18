@@ -12,7 +12,7 @@ import java.util.Locale;
 
 public class TicketInfoHTML {
 
-	private static final String TEMPLATES_PATH = "/home/alexey/IdeaProjects/cinema-web-app/target/classes";
+	private static final String TEMPLATES_PATH = "C:\\Users\\User\\eclipse-workspace\\cinema-web-app\\target\\classes";
 	private static final String DEFAULT_ENCODING = "UTF-8";
 	private static final String TICKET_TEMPLATE = "ticket.ftl";
 

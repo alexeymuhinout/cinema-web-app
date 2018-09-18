@@ -1,16 +1,26 @@
 package com.rustedbrain.study.course.service;
 
-import com.maxmind.geoip.Location;
-import com.maxmind.geoip.LookupService;
-import com.rustedbrain.study.course.model.dto.TicketInfo;
-import com.rustedbrain.study.course.model.exception.ResourceException;
-import com.rustedbrain.study.course.model.persistence.authorization.Member;
-import com.rustedbrain.study.course.model.persistence.authorization.User;
-import com.rustedbrain.study.course.model.persistence.cinema.*;
-import com.rustedbrain.study.course.service.repository.*;
-import com.rustedbrain.study.course.service.resources.ResourceAccessor;
-import com.rustedbrain.study.course.service.util.GoogleMapApiUtil;
-import com.rustedbrain.study.course.service.util.Validator;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,17 +28,38 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import com.maxmind.geoip.Location;
+import com.maxmind.geoip.LookupService;
+import com.rustedbrain.study.course.model.dto.TicketInfo;
+import com.rustedbrain.study.course.model.exception.ResourceException;
+import com.rustedbrain.study.course.model.persistence.authorization.Member;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
+import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.Comment;
+import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
+import com.rustedbrain.study.course.model.persistence.cinema.Movie;
+import com.rustedbrain.study.course.model.persistence.cinema.Row;
+import com.rustedbrain.study.course.model.persistence.cinema.Seat;
+import com.rustedbrain.study.course.model.persistence.cinema.Ticket;
+import com.rustedbrain.study.course.service.repository.CinemaHallRepository;
+import com.rustedbrain.study.course.service.repository.CinemaRepository;
+import com.rustedbrain.study.course.service.repository.CityRepository;
+import com.rustedbrain.study.course.service.repository.CommentRepository;
+import com.rustedbrain.study.course.service.repository.CommentReputationRepository;
+import com.rustedbrain.study.course.service.repository.FilmScreeningEventRepository;
+import com.rustedbrain.study.course.service.repository.FilmScreeningRepository;
+import com.rustedbrain.study.course.service.repository.MemberRepository;
+import com.rustedbrain.study.course.service.repository.MovieRepository;
+import com.rustedbrain.study.course.service.repository.RowRepository;
+import com.rustedbrain.study.course.service.repository.SeatRepository;
+import com.rustedbrain.study.course.service.repository.TicketRepository;
+import com.rustedbrain.study.course.service.resources.ResourceAccessor;
+import com.rustedbrain.study.course.service.util.GoogleMapApiUtil;
+import com.rustedbrain.study.course.service.util.Validator;
 
 @Service
 public class CinemaServiceImpl implements CinemaService {
@@ -50,6 +81,8 @@ public class CinemaServiceImpl implements CinemaService {
 	private TicketRepository ticketRepository;
 
 	private SeatRepository seatRepository;
+	
+	private RowRepository rowRepository;
 
 	private MemberRepository memberRepository;
 
@@ -92,6 +125,11 @@ public class CinemaServiceImpl implements CinemaService {
 	@Autowired
 	public void setSeatRepository(SeatRepository seatRepository) {
 		this.seatRepository = seatRepository;
+	}
+	
+	@Autowired
+	public void setRowRepository(RowRepository rowRepository) {
+		this.rowRepository = rowRepository;
 	}
 
 	@Autowired
@@ -249,11 +287,11 @@ public class CinemaServiceImpl implements CinemaService {
 	}
 
 	@Override
-	public Map<Integer, Integer> getCinemaHallSeatMap()
+	public Map<Integer, List<Integer>> getCinemaHallSeatCoordinateMap(CinemaHall cinemaHall)
 			throws ParserConfigurationException, ResourceException, SAXException, IOException {
-		return resourceAccessor.getCinemaHallSeatMap();
+		return resourceAccessor.getCinemaHallSeatCoordinateMap(cinemaHall);
 	}
-	
+
 	@Override
 	public List<Cinema> getCityCinemas(Long id) {
 		return cinemaRepository.getCinemasByCityId(id);
@@ -419,7 +457,7 @@ public class CinemaServiceImpl implements CinemaService {
 			cinemaRepository.save(new Cinema(city, name, street));
 		}
 	}
-	
+
 	@Override
 	public void editCinemaHall(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema) {
 		cinemaHallRepository.editCinemaHall(selectedCinemaHall.getId(), newCinemaHallName, newCinema);
@@ -452,9 +490,49 @@ public class CinemaServiceImpl implements CinemaService {
 	}
 
 	@Override
-	public void createCinemaHall(String cinemaHallName, Cinema cinema) {
+	public long createCinemaHall(String cinemaHallName, Cinema cinema) {
 		CinemaHall cinemaHall = new CinemaHall(cinemaHallName);
 		cinemaHall.setCinema(cinema);
 		cinemaHallRepository.save(cinemaHall);
+		return cinemaHall.getId();
+	}
+
+	@Override
+	public void setCinemaHallSeatMap(long cinameHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMultiMap)
+			throws ParserConfigurationException, ResourceException, SAXException, IOException {
+		resourceAccessor.setCinemaHallSeatMap(cinameHallId, cinemaHallSeatCoordinateMultiMap);
+	}
+
+	@Override
+	public Optional<CinemaHall> getCinemaHall(long id) {
+		return Optional.ofNullable(cinemaHallRepository.findOne(id));
+	}
+
+	@Override
+	public void editCinemaHallSeats(long cinemaHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap) {
+		CinemaHall cinemaHall = cinemaHallRepository.getOne(cinemaHallId);
+		
+		Set<Row> rows = new HashSet<>();
+		cinemaHallSeatCoordinateMap.entrySet().stream().forEach(enty -> {
+			Row row = new Row();
+			row.setCinemaHall(cinemaHall);
+			row.setNumber(enty.getKey() + 1);
+			row.setRegistrationDate(new Date());
+			row.setLastAccessDate(new Date());
+
+			Set<Seat> seats = new HashSet<>();
+			enty.getValue().forEach(value -> {
+				Seat seat = new Seat(value + 1, 1, 12.50);
+				seat.setRow(row);
+				seat.setLastAccessDate(new Date());
+				seat.setRegistrationDate(new Date());
+				seats.add(seat);
+				
+			});
+			row.setSeats(seats);
+			rows.add(row);
+		});
+
+		cinemaHallRepository.editCinemaHallSeats(cinemaHallId, rows);
 	}
 }

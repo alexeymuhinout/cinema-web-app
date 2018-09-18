@@ -1,7 +1,10 @@
 package com.rustedbrain.study.course.presenter.authentication;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,10 +15,12 @@ import org.xml.sax.SAXException;
 
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.exception.ResourceException;
+import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.authentication.CinemaHallConstructorView;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.rustedbrain.study.course.view.util.PageNavigator;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 
@@ -25,6 +30,8 @@ public class CinemaHallConstructorViewPresenter implements CinemaHallConstructor
 	private final AuthenticationService authenticationService;
 	private final CinemaService cinemaService;
 	private CinemaHallConstructorView cinemaHallConstructorView;
+	private Map <Integer, List<Integer>> cinemaHallSeatCoordinateMultiMap;
+	private CinemaHall cinemaHall;
 
 	private static final Logger logger = Logger.getLogger(CinemaHallConstructorViewPresenter.class.getName());
 
@@ -41,13 +48,26 @@ public class CinemaHallConstructorViewPresenter implements CinemaHallConstructor
 	}
 
 	@Override
-	public void addButtonClicked(String rows, String seats) {
-		checkRowsSeats(rows, seats);
+	public void addSeatsButtonClicked(long cinameHallId, String row, String seats) {
+		checkRowsSeats(row, seats);
+		int rowNumber = Integer.parseInt(row) - 1;
+		List<Integer> seatsList = new LinkedList<>();
+		cinemaHallSeatCoordinateMultiMap.remove(rowNumber);
+		for (int i = 0; i < Integer.parseInt(seats); i++) {
+			seatsList.add(i);
+		}
+		cinemaHallSeatCoordinateMultiMap.put(rowNumber, seatsList);
+		try {
+			cinemaService.setCinemaHallSeatMap(cinameHallId, cinemaHallSeatCoordinateMultiMap);
+			cinemaHallConstructorView.reload();		
+		} catch (ParserConfigurationException | ResourceException | SAXException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	private void checkRowsSeats(String rows, String seats) {
+	private void checkRowsSeats(String row, String seats) {
 		try {
-			int rowsInt = Integer.parseInt(rows);
+			int rowsInt = Integer.parseInt(row);
 			if (rowsInt <= 0) {
 				cinemaHallConstructorView.showError("Rows number must be under 0.");
 			}
@@ -65,48 +85,63 @@ public class CinemaHallConstructorViewPresenter implements CinemaHallConstructor
 	}
 
 	@Override
-	public void entered(ViewChangeEvent event) {
-		UserRole role = authenticationService.getUserRole();
+	public void entered(ViewChangeListener.ViewChangeEvent event) {
+		Optional<String> optionalId = Optional.ofNullable(event.getParameters());
+		if (optionalId.isPresent()) {
+			Optional<CinemaHall> optionalCinemaHall = cinemaService.getCinemaHall(Long.parseLong(optionalId.get()));
+			if (optionalCinemaHall.isPresent()) {
+				this.cinemaHall = optionalCinemaHall.get();
+				UserRole role = authenticationService.getUserRole();
 
-		switch (role) {
-		case ADMINISTRATOR: {
-			addVerticalMenuComponents();
-			setCinemaHallSeatMap();
+				switch (role) {
+				case ADMINISTRATOR: {
+					addCinemaHallConstructorMenuComponents(cinemaHall);
+					setCinemaHallSeatCoordinateMap(cinemaHall);
+				}
+					break;
+				case PAYMASTER:
+					addCinemaHallConstructorMenuComponents(cinemaHall);
+					break;
+				case MANAGER:
+					addCinemaHallConstructorMenuComponents(cinemaHall);
+					break;
+				case MEMBER:
+					addCinemaHallConstructorMenuComponents(cinemaHall);
+					break;
+				case MODERATOR: {
+					addCinemaHallConstructorMenuComponents(cinemaHall);
+					setCinemaHallSeatCoordinateMap(cinemaHall);
+				}
+					break;
+				case NOT_AUTHORIZED:
+					cinemaHallConstructorView.showError("User not authorized.");
+					break;
+				}
+			} else {
+				this.cinemaHallConstructorView.showError("Cinema Hall with specified id not exist.");
+			}
+		} else {
+			this.cinemaHallConstructorView.showError("Cinema Hall id not presented.");
 		}
-			break;
-		case PAYMASTER:
-			addVerticalMenuComponents();
-
-			break;
-		case MANAGER:
-			addVerticalMenuComponents();
-
-			break;
-		case MEMBER:
-			addVerticalMenuComponents();
-
-			break;
-		case MODERATOR:
-			addVerticalMenuComponents();
-			break;
-		case NOT_AUTHORIZED:
-			cinemaHallConstructorView.showError("User not authorized.");
-			break;
-		}
-
 	}
 
-	private void addVerticalMenuComponents() {
-		cinemaHallConstructorView.addContent();
+	private void addCinemaHallConstructorMenuComponents(CinemaHall cinemaHall) {
+		cinemaHallConstructorView.addCinemaHallConstructorMenuComponents(cinemaHall);
 	}
 
-	private void setCinemaHallSeatMap() {
+	private void setCinemaHallSeatCoordinateMap(CinemaHall cinemaHall) {
 		try {
-			Map<Integer, Integer> cinemaHallSeatMap = cinemaService.getCinemaHallSeatMap();
-			cinemaHallConstructorView.setCinemaHallSeatMap(cinemaHallSeatMap);
+			this.cinemaHallSeatCoordinateMultiMap = cinemaService.getCinemaHallSeatCoordinateMap(cinemaHall);
+			cinemaHallConstructorView.setCinemaHallSeatMap(cinemaHallSeatCoordinateMultiMap);
 		} catch (ParserConfigurationException | IOException | SAXException | ResourceException e) {
 			logger.log(Level.WARNING, "Error occurred during retrieving seat map for cienma hall constructor view", e);
 			cinemaHallConstructorView.showError(e.getMessage());
 		}
+	}
+
+	@Override
+	public void buttonSaveCinemaHallSeatsButtonClicked() {
+		cinemaService.editCinemaHallSeats(cinemaHall.getId(),cinemaHallSeatCoordinateMultiMap);
+		/*new PageNavigator().navigateToProfileInfoView(id);*/
 	}
 }

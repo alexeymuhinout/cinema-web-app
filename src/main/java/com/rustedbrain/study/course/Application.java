@@ -1,20 +1,61 @@
 package com.rustedbrain.study.course;
 
-import com.rustedbrain.study.course.model.persistence.authorization.*;
-import com.rustedbrain.study.course.model.persistence.cinema.*;
-import com.rustedbrain.study.course.service.repository.*;
+import java.io.IOException;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.util.MultiValueMap;
+import org.xml.sax.SAXException;
 
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import com.rustedbrain.study.course.model.exception.ResourceException;
+import com.rustedbrain.study.course.model.persistence.authorization.Administrator;
+import com.rustedbrain.study.course.model.persistence.authorization.Manager;
+import com.rustedbrain.study.course.model.persistence.authorization.Member;
+import com.rustedbrain.study.course.model.persistence.authorization.Moderator;
+import com.rustedbrain.study.course.model.persistence.authorization.Paymaster;
+import com.rustedbrain.study.course.model.persistence.cinema.Actor;
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
+import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
+import com.rustedbrain.study.course.model.persistence.cinema.Genre;
+import com.rustedbrain.study.course.model.persistence.cinema.Movie;
+import com.rustedbrain.study.course.model.persistence.cinema.Row;
+import com.rustedbrain.study.course.model.persistence.cinema.Seat;
+import com.rustedbrain.study.course.service.repository.ActorRepository;
+import com.rustedbrain.study.course.service.repository.AdministratorRepository;
+import com.rustedbrain.study.course.service.repository.CinemaHallRepository;
+import com.rustedbrain.study.course.service.repository.CinemaRepository;
+import com.rustedbrain.study.course.service.repository.CityRepository;
+import com.rustedbrain.study.course.service.repository.FilmScreeningEventRepository;
+import com.rustedbrain.study.course.service.repository.FilmScreeningRepository;
+import com.rustedbrain.study.course.service.repository.GenreRepository;
+import com.rustedbrain.study.course.service.repository.ManagerRepository;
+import com.rustedbrain.study.course.service.repository.MemberRepository;
+import com.rustedbrain.study.course.service.repository.ModeratorRepository;
+import com.rustedbrain.study.course.service.repository.MovieRepository;
+import com.rustedbrain.study.course.service.repository.PaymasterRepository;
+import com.rustedbrain.study.course.service.repository.RowRepository;
+import com.rustedbrain.study.course.service.repository.SeatRepository;
+import com.rustedbrain.study.course.service.resources.ResourceAccessor;
 
 @SpringBootApplication
 public class Application {
@@ -117,7 +158,7 @@ public class Application {
 							+ "Свой рассказ Ник начинает воспоминанием о том, как в 1922 году переехал со Среднего Запада в Нью-Йорк и арендовал дом в Уэст Эгге на Лонг-Айленде. Ник посещает роскошное поместье Тома и Дэйзи Бьюкененов. Дэйзи была троюродной сестрой Ника, а её муж, Том, некогда играл в поло в Йеле, а ныне наслаждается богатством. Дейзи знакомит Ника со своей подругой, известной гольфисткой Джордан Бейкер. За ужином внезапно начинает звонить телефон: это звонит любовница Тома, о которой всем уже давно известно.\n"
 							+ "Для встреч с этой любовницей, Миртл Уилсон, женой ничего не подозревающего автомеханика Джорджа из шахтёрского района штата Нью-Йорк, Том арендует квартиру в городе. Том приглашает туда Ника, где тот также знакомится с Кэтрин, сестрой Миртл, и с четой МакКи, друзьями Миртл. Ночь заканчивается всеобщей попойкой и разбитым носом Миртл, раздражавшей Тома упоминанием имени Дэйзи.",
 					new Date(), new Date(), new Date(2013, 1, 1), theTerminatorActorSet, genreSet, 130,
-					"/home/alexey/Downloads/greatgatsby.jpg", "http://www.youtube.com/v/rARN6agiW7o"
+					"C:\\Users\\User\\Downloads\\greatgatsby.jpg", "http://www.youtube.com/v/rARN6agiW7o"
 
 			);
 			movieRepository.saveAndFlush(movie1);
@@ -125,13 +166,13 @@ public class Application {
 			Movie movie2 = createMovie("Терминатор", "The Terminator", 18,
 					"Созданный в недалеком будущем военный компьютер Скайнет развязал ядерную войну, а затем поработил остатки человечества. Однако у людей появился великий лидер — Джон Коннор, организовавший Сопротивление и сумевший выиграть Войну. Поверженный Скайнет отправляет в прошлое робота-терминатора с целью убить мать Джона Коннора — Сару Коннор. Сара работает обычной официанткой и не подозревает о своей великой миссии. На её защиту люди посылают человека — сержанта Сопротивления Кайла Риз. Силы противников не равны. Ризу противостоит чрезвычайно мощная боевая машина, неуязвимая для огнестрельного оружия. Терминатор внешне неотличим от человека: он специально предназначен для внедрения в человеческое общество и уничтожения людей. Ризу приходится не только бороться с роботом, но и убеждать шокированную Сару, а также полицию, которая принимает его за сумасшедшего террориста. В тяжёлых испытаниях недоверие, возникшее между Сарой и Ризом, уступает место симпатии и сменяется пылкой страстью. В результате на свет появляется Джон. В финале Риз погибает, но Саре удаётся уничтожить терминатора. При этом остатки его процессора и часть металлической руки попадают к сотрудникам компании «Кибердайн Системс» — будущей создательнице Скайнет. Таким образом, попытка коррекции будущего приводит к противоположному результату — всё встаёт на свои места.",
 					new Date(), new Date(), new Date(1984, 1, 1), theTerminatorActorSet, genreSet, 130,
-					"/home/alexey/Downloads/terminator.jpg", "http://www.youtube.com/v/k64P4l2Wmeg");
+					"C:\\Users\\User\\Downloads\\terminator.jpg", "http://www.youtube.com/v/k64P4l2Wmeg");
 			movieRepository.saveAndFlush(movie2);
 
 			Movie movie3 = createMovie("Hellboy", "Hellboy ", 13,
 					"In 1944, with the help of Russian mystic Grigori Rasputin, the Nazis build a dimensional portal off the coast of Scotland and intend to free the Ogdru Jahad—monstrous entities imprisoned in deep space—to aid them in defeating the Allies. Rasputin opens the portal with the aid of his disciples, Ilsa von Haupstein and Obersturmbannführer Karl Ruprecht Kroenen, member of the Thule Society and Adolf Hitler's top assassin. An Allied team is sent to destroy the portal, guided by a young scientist named Trevor Bruttenholm, who is well-versed in the occult. The German team is killed and the portal is destroyed—in the process absorbing Rasputin—while Haupstein and Kroenen escape. The Allied team discovers that an infant demon with a right hand of stone came through the portal; they dub him \"Hellboy\" and Bruttenholm adopts him.",
 					new Date(), new Date(), new Date(2004, 4, 30), hellBoyActorSet, genreSet, 122,
-					"/home/alexey/Downloads/hellboy.jpeg", "http://www.youtube.com/v/kA9vtXbbhVs");
+					"C:\\Users\\User\\Downloads\\hellboy.jpg", "http://www.youtube.com/v/kA9vtXbbhVs");
 			movieRepository.saveAndFlush(movie3);
 
 			FilmScreening filmScreening = createFilmScreening(cinemaRepository.getOne(cinema6.getId()),
@@ -215,7 +256,8 @@ public class Application {
 		return filmScreeningEvents;
 	}
 
-	private Set<CinemaHall> getTestCinemaHallSet(int cinemaHallsCount, Cinema cinema) {
+	private Set<CinemaHall> getTestCinemaHallSet(int cinemaHallsCount, Cinema cinema)
+			throws ParserConfigurationException, IOException, SAXException, ResourceException {
 		Set<CinemaHall> cinemaHalls = new HashSet<>();
 		for (int i = 1; i <= cinemaHallsCount; i++) {
 			CinemaHall cinemaHall = new CinemaHall();
@@ -224,24 +266,29 @@ public class Application {
 			cinemaHall.setRegistrationDate(new Date());
 			cinemaHall.setName(String.valueOf(i));
 
+			Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap = new ResourceAccessor()
+					.getCinemaHallSeatCoordinateMap(cinemaHall);
+
 			Set<Row> rows = new HashSet<>();
-			for (int j = 1; j <= 8; j++) {
+			cinemaHallSeatCoordinateMap.entrySet().stream().forEach(enty -> {
 				Row row = new Row();
 				row.setCinemaHall(cinemaHall);
-				row.setNumber(j);
+				row.setNumber(enty.getKey() + 1);
 				row.setRegistrationDate(new Date());
 				row.setLastAccessDate(new Date());
+
 				Set<Seat> seats = new HashSet<>();
-				for (int k = 1; k < 10; k++) {
-					Seat seat = new Seat(k, 1, 12.50);
+				enty.getValue().forEach(value -> {
+					Seat seat = new Seat(value + 1, 1, 12.50);
 					seat.setRow(row);
 					seat.setLastAccessDate(new Date());
 					seat.setRegistrationDate(new Date());
 					seats.add(seat);
-				}
+				});
 				row.setSeats(seats);
 				rows.add(row);
-			}
+			});
+
 			cinemaHall.setRows(rows);
 			cinemaHalls.add(cinemaHall);
 		}

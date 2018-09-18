@@ -1,12 +1,13 @@
 package com.rustedbrain.study.course.view.authentication;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.ui.VerticalLayout;
 
 public interface CinemaHallConstructorView extends View {
 	@Autowired
@@ -15,12 +16,14 @@ public interface CinemaHallConstructorView extends View {
 	interface ViewListener {
 		void setCinemaHallConstructorView(CinemaHallConstructorView components);
 
-		void addButtonClicked(String rows, String seats);
-
 		void entered(ViewChangeEvent event);
+
+		void addSeatsButtonClicked(long cinameHallId, String row, String seats);
+
+		void buttonSaveCinemaHallSeatsButtonClicked();
 	}
 
-	void addContent();
+	void addCinemaHallConstructorMenuComponents(CinemaHall cinemaHall);
 
 	void showWarning(String message);
 
@@ -28,5 +31,5 @@ public interface CinemaHallConstructorView extends View {
 
 	void reload();
 
-	void setCinemaHallSeatMap(Map<Integer, Integer> cinemaHallSeatMap);
+	void setCinemaHallSeatMap(Map<Integer, List<Integer>> cinemaHallSeatCoordinateMultiMap);
 }

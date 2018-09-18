@@ -24,4 +24,9 @@ public class Row {
 		this.seats = seats;
 	}
 
+	@Override
+	public String toString() {
+		return "Row [seats=" + seats + "]";
+	}
+
 }

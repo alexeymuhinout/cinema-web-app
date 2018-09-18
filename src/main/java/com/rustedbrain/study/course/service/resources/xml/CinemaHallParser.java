@@ -1,10 +1,14 @@
 package com.rustedbrain.study.course.service.resources.xml;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -15,62 +19,66 @@ import com.rustedbrain.study.course.model.dto.xml.Coordinate;
 import com.rustedbrain.study.course.model.dto.xml.Row;
 import com.rustedbrain.study.course.model.dto.xml.Rows;
 import com.rustedbrain.study.course.model.dto.xml.Seat;
+import com.rustedbrain.study.course.service.resources.ResourceAccessor;
 
 public class CinemaHallParser {
-	public void marshaling() {
 
-		Coordinate coordinate = new Coordinate();
-		coordinate.setX(0);
-		coordinate.setY(0);
-		Seat firstSeat = new Seat();
-		firstSeat.setCoordinate(coordinate);
-		Seat secondSeat = new Seat();
-		secondSeat.setCoordinate(coordinate);
-		Seat thirdSeat = new Seat();
-		thirdSeat.setCoordinate(coordinate);
-		List<Seat> seats = Arrays.asList(firstSeat, secondSeat, thirdSeat);
+	public Map<Integer, List<Integer>> getCinemaHallSeatCoordinateMap(File file) throws JAXBException {
+		Unmarshaller jaUnmarshaller = JAXBContext.newInstance(Rows.class).createUnmarshaller();
+		Rows rows = (Rows) jaUnmarshaller.unmarshal(file);
+		Map<Integer, List<Integer>> cinemaHallSeatMap = new TreeMap<>();
 
-		Row firstRow = new Row();
-		firstRow.setSeats(seats);
-		Row secondRow = new Row();
-		secondRow.setSeats(seats);
-		Row thirdRow = new Row();
-		thirdRow.setSeats(seats);
+		for (Row row : rows.getRows()) {
+			List<Integer> yList = new ArrayList<>();
+			int x = 0;
+			for (Seat seat : row.getSeats()) {
+				yList.add(seat.getCoordinate().getY());
+				x = seat.getCoordinate().getX();
+			}
+			cinemaHallSeatMap.put(x, yList);
+		}
+		return cinemaHallSeatMap;
+	}
 
-		List<Row> rowsList = Arrays.asList(firstRow, secondRow, thirdRow);
+	public void setCinemaHallSeatMap(long cinemaHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMultiMap)
+			throws IOException, JAXBException {
 
+		List<Row> rowsList = new LinkedList<>();
+		cinemaHallSeatCoordinateMultiMap.entrySet().stream().forEach(enty -> {
+			Row row = new Row();
+			List<Seat> seats = new LinkedList<>();
+			enty.getValue().forEach(value -> {
+				Seat seat = new Seat();
+				seat.setCoordinate(new Coordinate(enty.getKey(), value));
+				seats.add(seat);
+			});
+			row.setSeats(seats);
+			rowsList.add(row);
+		});
 		Rows rows = new Rows();
 		rows.setRows(rowsList);
 
-		try {
+		createHallSeatsMapXMLFile(cinemaHallId, rows);
 
-			File file = new File("src/main/resources/cinemaHall.xml");
-			JAXBContext jaxbContext = JAXBContext.newInstance(Rows.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-			// output pretty printed
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-			jaxbMarshaller.marshal(rows, file);
-			jaxbMarshaller.marshal(rows, System.out);
-
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
 	}
 
-	public Map<Integer, Integer> getCinemaHallSeatMap(File file) throws JAXBException {
-		Unmarshaller jaUnmarshaller = JAXBContext.newInstance(Rows.class).createUnmarshaller();
-		Rows rows = (Rows) jaUnmarshaller.unmarshal(file);
-
-		Map<Integer, Integer> cinemaHallSeatMap = new HashMap<>();
-
-		for (Row row : rows.getRows()) {
-			for (Seat seat : row.getSeats()) {
-				cinemaHallSeatMap.put(seat.getCoordinate().getX(), seat.getCoordinate().getY());
-			}
+	private void createHallSeatsMapXMLFile(long cinemaHallId, Rows rows) throws IOException, JAXBException {
+		Path hallsPath = Paths.get(ResourceAccessor.CREATED_CINEMA_HALL_DIR_NAME);
+		boolean folderExists = hallsPath.toFile().exists();
+		if (!folderExists) {
+			hallsPath.toFile().mkdirs();
 		}
-		return cinemaHallSeatMap;
+		Path path = Paths.get(ResourceAccessor.CREATED_CINEMA_HALL_DIR_NAME + cinemaHallId + ".xml");
+		File file = path.toAbsolutePath().toFile();
+		boolean fileExists = file.exists();
+		if (!fileExists) {
+			fileExists = file.createNewFile();
+		}
+		
+		JAXBContext jaxbContext = JAXBContext.newInstance(Rows.class);
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		jaxbMarshaller.marshal(rows, file);
 	}
 
 }

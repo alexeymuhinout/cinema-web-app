@@ -26,7 +26,11 @@ public class CinemaHallEditPresenter {
 	}
 
 	public void buttonAddNewCinemaHallClicked(String cinemaHallName, Optional<Cinema> cinema) {
-		cinemaService.createCinemaHall(cinemaHallName, cinema.get());
-		new PageNavigator().navigateToCinemaHallConstructorView();
+		long cinamaHallId = cinemaService.createCinemaHall(cinemaHallName, cinema.get());
+		new PageNavigator().navigateToCinemaHallConstructorView(cinamaHallId);
+	}
+
+	public void buttonChangeCinemaHallSeatsClicked(CinemaHall selectedCinemaHall) {
+		new PageNavigator().navigateToCinemaHallConstructorView(selectedCinemaHall.getId());
 	}
 }

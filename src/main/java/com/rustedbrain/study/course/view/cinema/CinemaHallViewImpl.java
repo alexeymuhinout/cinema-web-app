@@ -124,9 +124,6 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
 
 	private class TicketBuyLayout extends VerticalLayout {
 
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = -6631468621446960167L;
 		private Label selectedSeatsLabel;
 		private Button buttonBuyTickets;
@@ -161,9 +158,6 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
 
 	private class CinemaHallLayout extends VerticalLayout {
 
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 6543704383454790019L;
 		private List<SeatButton> seatButtonList;
 

@@ -1,15 +1,5 @@
 package com.rustedbrain.study.course.service;
 
-import com.rustedbrain.study.course.model.dto.TicketInfo;
-import com.rustedbrain.study.course.model.exception.ResourceException;
-import com.rustedbrain.study.course.model.persistence.authorization.Member;
-import com.rustedbrain.study.course.model.persistence.authorization.User;
-import com.rustedbrain.study.course.model.persistence.cinema.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDate;
@@ -17,6 +7,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.xml.sax.SAXException;
+
+import com.rustedbrain.study.course.model.dto.TicketInfo;
+import com.rustedbrain.study.course.model.exception.ResourceException;
+import com.rustedbrain.study.course.model.persistence.authorization.Member;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
+import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
+import com.rustedbrain.study.course.model.persistence.cinema.Movie;
+import com.rustedbrain.study.course.model.persistence.cinema.Seat;
 
 public interface CinemaService {
 
@@ -98,8 +107,15 @@ public interface CinemaService {
 
 	void deleteCinemaHall(long id);
 
-	void createCinemaHall(String cinemaHallName, Cinema cinema);
+	long createCinemaHall(String cinemaHallName, Cinema cinema);
 
-	Map<Integer, Integer> getCinemaHallSeatMap()
+	void setCinemaHallSeatMap(long cinameHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap)
 			throws ParserConfigurationException, ResourceException, SAXException, IOException;
+
+	Map<Integer, List<Integer>> getCinemaHallSeatCoordinateMap(CinemaHall cinemaHall)
+			throws ParserConfigurationException, ResourceException, SAXException, IOException;
+
+	Optional<CinemaHall> getCinemaHall(long id);
+
+	void editCinemaHallSeats(long cinemaHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap);
 }

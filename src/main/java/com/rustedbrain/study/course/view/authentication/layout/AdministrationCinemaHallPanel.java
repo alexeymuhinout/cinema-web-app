@@ -11,6 +11,7 @@ import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.view.authentication.ProfileView;
+import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.Button;
@@ -168,20 +169,23 @@ public class AdministrationCinemaHallPanel extends Panel {
 		private CinemaHall selectedCinemaHall;
 		private TextField cinemaHallNameTextField;
 		private ComboBox<Cinema> cinemaComboBox;
+		private Button changeCinemaHallSeatsButton;
 		private Button saveButton;
 		private Button deleteButton;
 
 		private SaveDeleteForm() {
 			cinemaHallNameTextField = new TextField("Cinema hall name");
 			cinemaComboBox = new ComboBox<>("Cinema");
+			changeCinemaHallSeatsButton = new Button("Change hall seats");
 			saveButton = new Button("Save");
 			deleteButton = new Button("Delete");
 			saveButton.addStyleName("friendly");
 			deleteButton.addStyleName("danger");
 			setSizeUndefined();
 
-			HorizontalLayout buttons = new HorizontalLayout(saveButton, deleteButton);
-			addComponents(cinemaHallNameTextField, cinemaComboBox, buttons);
+			HorizontalLayout saveDeleteButtonsLayout = new HorizontalLayout(saveButton, deleteButton);
+			addComponents(cinemaHallNameTextField, cinemaComboBox, changeCinemaHallSeatsButton,
+					saveDeleteButtonsLayout);
 
 			deleteButton.addClickListener(clickEvent -> {
 				this.deleteCinemaHall(this.selectedCinemaHall);
@@ -193,6 +197,9 @@ public class AdministrationCinemaHallPanel extends Panel {
 						cinemaComboBox.getSelectedItem().get());
 				Notification.show("Cinema hall edit", "Cinema hall name: " + this.selectedCinemaHall.getName(),
 						Notification.Type.HUMANIZED_MESSAGE);
+			});
+			changeCinemaHallSeatsButton.addClickListener(clickEvent -> {
+				this.changeCinemaHallSeats(this.selectedCinemaHall);
 			});
 		}
 
@@ -207,6 +214,11 @@ public class AdministrationCinemaHallPanel extends Panel {
 		private void editCinema(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema) {
 			listeners.forEach(listener -> listener.getCinemaHallEditPresenter()
 					.buttonSaveCinemaHallClicked(selectedCinemaHall, newCinemaHallName, newCinema));
+		}
+		
+		private void changeCinemaHallSeats(CinemaHall selectedCinemaHall) {
+			listeners.forEach(listener -> listener.getCinemaHallEditPresenter()
+					.buttonChangeCinemaHallSeatsClicked(selectedCinemaHall));
 		}
 
 		public void setSelectedCinemaHall(CinemaHall selectedCinemaHall) {
