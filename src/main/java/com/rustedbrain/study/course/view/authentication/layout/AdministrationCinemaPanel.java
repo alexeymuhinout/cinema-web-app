@@ -43,17 +43,7 @@ public class AdministrationCinemaPanel extends Panel {
 		grid.setSelectionMode(Grid.SelectionMode.SINGLE);
 		grid.setSizeFull();
 
-		TextField filterTextField = new TextField();
-		filterTextField.setPlaceholder("Filter by cinema name...");
-		filterTextField.setValueChangeMode(ValueChangeMode.EAGER);
-		filterTextField.addValueChangeListener(event -> getFilteredByCinemaName(event.getValue()));
-
-		Button clearFilterTextButton = new Button(VaadinIcons.CLOSE);
-		clearFilterTextButton.setDescription("clear the current filter");
-		clearFilterTextButton.addClickListener(clickEvent -> filterTextField.clear());
-
-		HorizontalLayout filterLayout = new HorizontalLayout(filterTextField, clearFilterTextButton);
-		filterLayout.setSpacing(false);
+		HorizontalLayout filterLayout = getFilterLayout();
 
 		Button addNewCinemaButton = new Button("Add new cinema");
 		addNewCinemaButton.addClickListener(clickEvent -> {
@@ -66,7 +56,7 @@ public class AdministrationCinemaPanel extends Panel {
 		SaveDeleteForm saveDeleteForm = new SaveDeleteForm();
 
 		grid.addSelectionListener(selectionEvent -> {
-			if (grid.getSelectionModel().getFirstSelectedItem().isPresent()) {
+			if ( grid.getSelectionModel().getFirstSelectedItem().isPresent() ) {
 				saveDeleteForm.setSelectedCinema(selectionEvent.getFirstSelectedItem().get());
 				saveDeleteForm.setVisible(true);
 			} else {
@@ -82,6 +72,21 @@ public class AdministrationCinemaPanel extends Panel {
 		mainLayout.addComponents(toolbar, gridFormLayout);
 
 		return mainLayout;
+	}
+
+	private HorizontalLayout getFilterLayout() {
+		TextField filterTextField = new TextField();
+		filterTextField.setPlaceholder("Filter by cinema name...");
+		filterTextField.setValueChangeMode(ValueChangeMode.EAGER);
+		filterTextField.addValueChangeListener(event -> getFilteredByCinemaName(event.getValue()));
+
+		Button clearFilterTextButton = new Button(VaadinIcons.CLOSE);
+		clearFilterTextButton.setDescription("clear the current filter");
+		clearFilterTextButton.addClickListener(clickEvent -> filterTextField.clear());
+
+		HorizontalLayout filterLayout = new HorizontalLayout(filterTextField, clearFilterTextButton);
+		filterLayout.setSpacing(false);
+		return filterLayout;
 	}
 
 	private Component addNewCinemaButtonClick() {
@@ -102,7 +107,7 @@ public class AdministrationCinemaPanel extends Panel {
 
 		createPopupContent.addComponent(new Button("Create", (Button.ClickListener) event -> {
 			listeners.forEach(cinemaViewListener -> {
-				if (cinemaCityComboBox.getSelectedItem().isPresent()) {
+				if ( cinemaCityComboBox.getSelectedItem().isPresent() ) {
 					cinemaViewListener.getCinemaEditPresenter().buttonAddNewCinemaClicked(
 							cinemaCityComboBox.getSelectedItem().get(), cinemaNameTextField.getValue(),
 							cinemaLocationTextField.getValue());
@@ -121,7 +126,7 @@ public class AdministrationCinemaPanel extends Panel {
 	}
 
 	private void getFilteredByCinemaName(String filterText) {
-		if (StringUtils.isEmpty(filterText)) {
+		if ( StringUtils.isEmpty(filterText) ) {
 			grid.setItems(cinemas);
 		} else {
 			List<Cinema> filteredCinemas = cinemas.stream().filter(cinema -> cinema.getName().contains(filterText))
@@ -178,8 +183,12 @@ public class AdministrationCinemaPanel extends Panel {
 
 		private void editCinema(Cinema selectedCinema, String newCinemaName, City newCinemaCity,
 				String newCinemaLocation) {
-			listeners.forEach(listener -> listener.getCinemaEditPresenter().buttonSaveCinemaClicked(selectedCinema,
-					newCinemaName, newCinemaCity, newCinemaLocation));
+			listeners.forEach(listener -> {
+				listener.getCinemaEditPresenter().buttonSaveCinemaClicked(selectedCinema, newCinemaName, newCinemaCity,
+						newCinemaLocation);
+				listener.reload();
+			});
+
 		}
 
 		void setSelectedCinema(Cinema selectedCinema) {

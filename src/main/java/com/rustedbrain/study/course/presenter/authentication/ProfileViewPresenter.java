@@ -7,6 +7,7 @@ import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaHallEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.CityEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.MovieEditPresenter;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.authentication.ProfileView;
@@ -42,6 +43,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	private ProfileView view;
 	private CinemaEditPresenter cinemaEditPresenter;
 	private CinemaHallEditPresenter cinemaHallEditPresenter;
+	private MovieEditPresenter movieEditPresenter;
 
 	@Autowired
 	public ProfileViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
@@ -50,6 +52,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 		cityEditPresenter = new CityEditPresenter(cinemaService);
 		cinemaEditPresenter = new CinemaEditPresenter(cinemaService);
 		cinemaHallEditPresenter = new CinemaHallEditPresenter(cinemaService);
+		movieEditPresenter = new MovieEditPresenter(cinemaService);
 	}
 
 	@Override
@@ -252,5 +255,16 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	@Override
 	public CinemaHallEditPresenter getCinemaHallEditPresenter() {
 		return cinemaHallEditPresenter;
+	}
+
+	@Override
+	public void reload() {
+		view.reload();
+		
+	}
+
+	@Override
+	public MovieEditPresenter getMovieEditPresenter() {
+		return movieEditPresenter;
 	}
 }

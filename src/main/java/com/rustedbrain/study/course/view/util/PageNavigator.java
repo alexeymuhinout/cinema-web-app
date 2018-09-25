@@ -102,6 +102,10 @@ public class PageNavigator {
         VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.PROFILE_INFO_VIEW + "/" + id);
     }
 
+    public void navigateToProfileView() {
+        VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.PROFILE_VIEW);
+    }
+    
     public void navigateToLoginView() {
         VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.LOGIN_VIEW);
     }
@@ -113,5 +117,10 @@ public class PageNavigator {
     public void navigateToCinemaHallConstructorView(long cinamaHallId) {
         VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.CINEMA_HALL_CONSTRUCTOR_VIEW + "/" + cinamaHallId);
     }
+
+	public void navigateToMovieEditView(long movieId) {
+		VaadinUI.getCurrent().getNavigator().navigateTo(VaadinUI.MOVIE_EDIT_VIEW + "/" + movieId);
+		
+	}
 
 }

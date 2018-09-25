@@ -109,8 +109,8 @@ public class CinemaHallConstructorViewImpl extends VerticalLayout implements Cin
 		saveSeatsContent.addComponent(label);
 		saveSeatsContent.addComponent(new Button("Save", (Button.ClickListener) event -> {
 			viewListeners.forEach(listener -> listener.buttonSaveCinemaHallSeatsButtonClicked());
+			showNotification("Cinema Hall saved ");
 		}));
-		
 		saveSeatsContent.setSizeUndefined();
 		saveSeatsContent.setMargin(true);
 
@@ -118,6 +118,11 @@ public class CinemaHallConstructorViewImpl extends VerticalLayout implements Cin
 		createPopup.setSizeUndefined();
 		createPopup.setPopupVisible(true);
 		return createPopup;
+	}
+
+	private void showNotification(String message) {
+		Notification notification = new Notification(message, Notification.Type.HUMANIZED_MESSAGE);
+		notification.show(Page.getCurrent());
 	}
 
 	private Panel getCinemaHallConstructorPanel() {

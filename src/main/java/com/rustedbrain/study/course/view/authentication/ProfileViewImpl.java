@@ -2,6 +2,7 @@ package com.rustedbrain.study.course.view.authentication;
 
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
@@ -41,6 +42,7 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 	private AdministrationCinemaPanel administrationCinemaPanel;
 	private AdministrationStatisticPanel administrationStatisticPanel;
 	private AdministrationCinemaHallPanel administrationCinemaHallPanel;
+	private AdministartionMoviePanel administrationMoviePanel;
 
 	@Autowired
 	public ProfileViewImpl(AuthenticationService authenticationService) {
@@ -181,9 +183,13 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 		administrationCityPanel = new AdministrationCityPanel(listeners, cities);
 		administrationCinemaPanel = new AdministrationCinemaPanel(listeners, cities);
 		administrationCinemaHallPanel = new AdministrationCinemaHallPanel(listeners, cities);
+		List<Cinema> cinemas = new ArrayList<>();
+		cities.forEach(city -> cinemas.addAll(city.getCinemas()));
+		administrationMoviePanel = new AdministartionMoviePanel(listeners, cinemas);
 		tabSheet.addTab(administrationCityPanel, "City");
 		tabSheet.addTab(administrationCinemaPanel, "Cinema");
 		tabSheet.addTab(administrationCinemaHallPanel, "Cinema Hall");
+		tabSheet.addTab(administrationMoviePanel, "Movie");
 		return tabSheet;
 	}
 

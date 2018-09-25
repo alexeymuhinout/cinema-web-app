@@ -11,7 +11,6 @@ import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.view.authentication.ProfileView;
-import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.Button;
@@ -49,26 +48,7 @@ public class AdministrationCinemaHallPanel extends Panel {
 
 	private Layout showCinemaHallSelectionPanel(List<CinemaHall> cinemaHalls) {
 		VerticalLayout mainLayout = new VerticalLayout();
-
-		grid.setItems(cinemaHalls);
-		grid.addColumn(CinemaHall::getName).setCaption("Name");
-		grid.addColumn(cinemaHall -> cinemaHall.getCinema().getName()).setCaption("Cinema");
-		grid.addColumn(cinemaHall -> cinemaHall.getCinema().getCity().getName()).setCaption("City");
-		grid.setSelectionMode(Grid.SelectionMode.SINGLE);
-		grid.setSizeFull();
-
-		TextField filterTextField = new TextField();
-		filterTextField.setPlaceholder("Filter by cinema name...");
-		filterTextField.setValueChangeMode(ValueChangeMode.EAGER);
-		filterTextField.addValueChangeListener(event -> getFilteredByCinemaHallName(event.getValue()));
-
-		Button clearFilterTextButton = new Button(VaadinIcons.CLOSE);
-		clearFilterTextButton.setDescription("clear the current filter");
-		clearFilterTextButton.addClickListener(clickEvent -> filterTextField.clear());
-
-		HorizontalLayout filterLayout = new HorizontalLayout(filterTextField, clearFilterTextButton);
-		filterLayout.setSpacing(false);
-
+		HorizontalLayout filterLayout = getFilterLayout();
 		Button addNewCinemaButton = new Button("Add new cinema hall");
 
 		addNewCinemaButton.addClickListener(clickEvent -> {
@@ -77,11 +57,22 @@ public class AdministrationCinemaHallPanel extends Panel {
 		});
 
 		HorizontalLayout toolbar = new HorizontalLayout(filterLayout, addNewCinemaButton);
+		HorizontalLayout gridFormLayout = getGridSaveDeleteFormLayout(cinemaHalls);
+		mainLayout.addComponents(toolbar, gridFormLayout);
+		return mainLayout;
+	}
 
+	private HorizontalLayout getGridSaveDeleteFormLayout(List<CinemaHall> cinemaHalls) {
+		grid.setItems(cinemaHalls);
+		grid.addColumn(CinemaHall::getName).setCaption("Name");
+		grid.addColumn(cinemaHall -> cinemaHall.getCinema().getName()).setCaption("Cinema");
+		grid.addColumn(cinemaHall -> cinemaHall.getCinema().getCity().getName()).setCaption("City");
+		grid.setSelectionMode(Grid.SelectionMode.SINGLE);
+		grid.setSizeFull();
 		SaveDeleteForm saveDeleteForm = new SaveDeleteForm();
 
 		grid.addSelectionListener(selectionEvent -> {
-			if (grid.getSelectionModel().getFirstSelectedItem().isPresent()) {
+			if ( grid.getSelectionModel().getFirstSelectedItem().isPresent() ) {
 				saveDeleteForm.setSelectedCinemaHall(selectionEvent.getFirstSelectedItem().get());
 				saveDeleteForm.setVisible(true);
 			} else {
@@ -93,10 +84,22 @@ public class AdministrationCinemaHallPanel extends Panel {
 		HorizontalLayout gridFormLayout = new HorizontalLayout(grid, saveDeleteForm);
 		gridFormLayout.setSizeFull();
 		gridFormLayout.setExpandRatio(grid, 1);
+		return gridFormLayout;
+	}
 
-		mainLayout.addComponents(toolbar, gridFormLayout);
+	private HorizontalLayout getFilterLayout() {
+		TextField filterTextField = new TextField();
+		filterTextField.setPlaceholder("Filter by cinema name...");
+		filterTextField.setValueChangeMode(ValueChangeMode.EAGER);
+		filterTextField.addValueChangeListener(event -> getFilteredByCinemaHallName(event.getValue()));
 
-		return mainLayout;
+		Button clearFilterTextButton = new Button(VaadinIcons.CLOSE);
+		clearFilterTextButton.setDescription("clear the current filter");
+		clearFilterTextButton.addClickListener(clickEvent -> filterTextField.clear());
+
+		HorizontalLayout filterLayout = new HorizontalLayout(filterTextField, clearFilterTextButton);
+		filterLayout.setSpacing(false);
+		return filterLayout;
 	}
 
 	private PopupView addNewCinemaHallButtonClick() {
@@ -122,15 +125,13 @@ public class AdministrationCinemaHallPanel extends Panel {
 		cinemaComboBox.setItems(cinemas.stream().filter(cinema -> cinema.getCity().equals(cities.get(0))));
 		cinemaComboBox.setItemCaptionGenerator(Cinema::getName);
 
-		createPopupContent.addComponent(cinemaHallName);
-		createPopupContent.addComponent(cityComboBox);
-		createPopupContent.addComponent(cinemaComboBox);
+		createPopupContent.addComponents(cinemaHallName, cityComboBox, cinemaComboBox);
 
 		createPopupContent.addComponent(new Button("Next", (Button.ClickListener) event -> {
 			listeners.forEach(cinemaHallViewListener -> {
-				if (cityComboBox.getSelectedItem().isPresent()) {
-					if (cinemaComboBox.getSelectedItem().isPresent()) {
-						if (!cinemaHallName.getValue().isEmpty()) {
+				if ( cityComboBox.getSelectedItem().isPresent() ) {
+					if ( cinemaComboBox.getSelectedItem().isPresent() ) {
+						if ( !cinemaHallName.getValue().isEmpty() ) {
 							cinemaHallViewListener.getCinemaHallEditPresenter().buttonAddNewCinemaHallClicked(
 									cinemaHallName.getValue(), cinemaComboBox.getSelectedItem());
 						} else {
@@ -152,7 +153,7 @@ public class AdministrationCinemaHallPanel extends Panel {
 	}
 
 	private void getFilteredByCinemaHallName(String filterText) {
-		if (StringUtils.isEmpty(filterText)) {
+		if ( StringUtils.isEmpty(filterText) ) {
 			grid.setItems(cinemaHalls);
 		} else {
 			List<CinemaHall> filteredCinemaHalls = cinemaHalls.stream()
@@ -193,7 +194,7 @@ public class AdministrationCinemaHallPanel extends Panel {
 						Notification.Type.HUMANIZED_MESSAGE);
 			});
 			saveButton.addClickListener(clickEvent -> {
-				this.editCinema(this.selectedCinemaHall, cinemaHallNameTextField.getValue(),
+				this.editCinemaHall(this.selectedCinemaHall, cinemaHallNameTextField.getValue(),
 						cinemaComboBox.getSelectedItem().get());
 				Notification.show("Cinema hall edit", "Cinema hall name: " + this.selectedCinemaHall.getName(),
 						Notification.Type.HUMANIZED_MESSAGE);
@@ -211,11 +212,14 @@ public class AdministrationCinemaHallPanel extends Panel {
 			grid.setItems(cinemaHalls);
 		}
 
-		private void editCinema(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema) {
-			listeners.forEach(listener -> listener.getCinemaHallEditPresenter()
-					.buttonSaveCinemaHallClicked(selectedCinemaHall, newCinemaHallName, newCinema));
+		private void editCinemaHall(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema) {
+			listeners.forEach(listener -> {
+				listener.getCinemaHallEditPresenter().buttonSaveCinemaHallClicked(selectedCinemaHall, newCinemaHallName,
+						newCinema);
+				listener.reload();
+			});
 		}
-		
+
 		private void changeCinemaHallSeats(CinemaHall selectedCinemaHall) {
 			listeners.forEach(listener -> listener.getCinemaHallEditPresenter()
 					.buttonChangeCinemaHallSeatsClicked(selectedCinemaHall));

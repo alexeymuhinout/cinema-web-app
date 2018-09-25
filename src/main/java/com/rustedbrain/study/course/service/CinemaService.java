@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.service;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,12 +19,14 @@ import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.exception.ResourceException;
 import com.rustedbrain.study.course.model.persistence.authorization.Member;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.model.persistence.cinema.Actor;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
+import com.rustedbrain.study.course.model.persistence.cinema.Genre;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.model.persistence.cinema.Seat;
 
@@ -73,6 +76,10 @@ public interface CinemaService {
 
 	List<TicketInfo> reserveTickets(String name, String surname, FilmScreeningEvent filmScreeningEvent,
 			List<Seat> seats);
+	
+	List<Actor> getActors();
+	
+	List<Genre> getGenres();
 
 	Member getMemberByLogin(String userLogin);
 
@@ -118,4 +125,13 @@ public interface CinemaService {
 	Optional<CinemaHall> getCinemaHall(long id);
 
 	void saveCinemaHallSeatsFromXML(long cinemaHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap);
+
+	void deleteMovie(long movieId);
+
+	void editMovie(Movie selectedMovie, String newOriginalMovieName, String newLocalizeMovieName, String newCountry, LocalDateTime newMovieReleaseDate);
+
+	void editMovie(Movie editedMovie);
+
+	long createMovie(String localizedName, String originalName, LocalDateTime releaseDate);
+
 }

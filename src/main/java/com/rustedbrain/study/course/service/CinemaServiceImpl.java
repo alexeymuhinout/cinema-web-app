@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.exception.ResourceException;
 import com.rustedbrain.study.course.model.persistence.authorization.Member;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.model.persistence.cinema.Actor;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
@@ -41,10 +43,12 @@ import com.rustedbrain.study.course.model.persistence.cinema.Comment;
 import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
+import com.rustedbrain.study.course.model.persistence.cinema.Genre;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.model.persistence.cinema.Row;
 import com.rustedbrain.study.course.model.persistence.cinema.Seat;
 import com.rustedbrain.study.course.model.persistence.cinema.Ticket;
+import com.rustedbrain.study.course.service.repository.ActorRepository;
 import com.rustedbrain.study.course.service.repository.CinemaHallRepository;
 import com.rustedbrain.study.course.service.repository.CinemaRepository;
 import com.rustedbrain.study.course.service.repository.CityRepository;
@@ -52,6 +56,7 @@ import com.rustedbrain.study.course.service.repository.CommentRepository;
 import com.rustedbrain.study.course.service.repository.CommentReputationRepository;
 import com.rustedbrain.study.course.service.repository.FilmScreeningEventRepository;
 import com.rustedbrain.study.course.service.repository.FilmScreeningRepository;
+import com.rustedbrain.study.course.service.repository.GenreRepository;
 import com.rustedbrain.study.course.service.repository.MemberRepository;
 import com.rustedbrain.study.course.service.repository.MovieRepository;
 import com.rustedbrain.study.course.service.repository.RowRepository;
@@ -68,29 +73,20 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Autowired
 	private ResourceAccessor resourceAccessor;
-
 	private CityRepository cityRepository;
-
 	private CinemaRepository cinemaRepository;
 	private CinemaHallRepository cinemaHallRepository;
-
 	private FilmScreeningEventRepository filmScreeningEventRepository;
-
 	private FilmScreeningRepository filmScreeningRepository;
-
 	private TicketRepository ticketRepository;
-
 	private SeatRepository seatRepository;
-
 	private RowRepository rowRepository;
-
 	private MemberRepository memberRepository;
-
 	private MovieRepository movieRepository;
-
 	private CommentRepository commentRepository;
-
 	private CommentReputationRepository commentReputationRepository;
+	private ActorRepository actorRepository;
+	private GenreRepository genreRepository;
 
 	@Autowired
 	public void setCommentReputationRepository(CommentReputationRepository commentReputationRepository) {
@@ -155,6 +151,16 @@ public class CinemaServiceImpl implements CinemaService {
 	@Autowired
 	public void setFilmScreeningEventRepository(FilmScreeningEventRepository filmScreeningEventRepository) {
 		this.filmScreeningEventRepository = filmScreeningEventRepository;
+	}
+
+	@Autowired
+	public void setActorRepository(ActorRepository actorRepository) {
+		this.actorRepository = actorRepository;
+	}
+
+	@Autowired
+	public void setGenreRepository(GenreRepository genreRepository) {
+		this.genreRepository = genreRepository;
 	}
 
 	@Override
@@ -349,6 +355,16 @@ public class CinemaServiceImpl implements CinemaService {
 	}
 
 	@Override
+	public List<Actor> getActors() {
+		return actorRepository.findAll();
+	}
+
+	@Override
+	public List<Genre> getGenres() {
+		return genreRepository.findAll();
+	}
+
+	@Override
 	public Member getMemberByLogin(String userLogin) {
 		return memberRepository.findByLogin(userLogin);
 	}
@@ -539,5 +555,37 @@ public class CinemaServiceImpl implements CinemaService {
 			rows.add(row);
 		}
 		return rows;
+	}
+
+	@Override
+	public void deleteMovie(long movieId) {
+		movieRepository.delete(movieId);
+	}
+
+	@Override
+	public void editMovie(Movie selectedMovie, String newOriginalMovieName, String newLocalizeMovieName,
+			String newCountry, LocalDateTime newMovieReleaseDate) {
+		movieRepository.editMovie(selectedMovie.getId(), newOriginalMovieName, newLocalizeMovieName, newCountry,
+				Date.from(newMovieReleaseDate.atZone(ZoneId.systemDefault()).toInstant()));
+
+	}
+
+	@Override
+	public void editMovie(Movie editedMovie) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public long createMovie(String localizedName, String originalName, LocalDateTime releaseDate) {
+		Movie movie = new Movie();
+		movie.setLocalizedName(localizedName);
+		movie.setOriginalName(originalName);
+		movie.setReleaseDate(Date.from(releaseDate.atZone(ZoneId.systemDefault()).toInstant()));
+		movie.setPosterPath("");
+		movie.setDescription("");
+		movie.setTrailerURL("");
+		movieRepository.save(movie);
+		return movie.getId();
 	}
 }

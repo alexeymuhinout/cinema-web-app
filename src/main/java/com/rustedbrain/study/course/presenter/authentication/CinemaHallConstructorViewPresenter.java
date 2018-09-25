@@ -100,17 +100,12 @@ public class CinemaHallConstructorViewPresenter implements CinemaHallConstructor
 				}
 					break;
 				case PAYMASTER:
-					addCinemaHallConstructorMenuComponents(cinemaHall);
 					break;
 				case MANAGER:
-					addCinemaHallConstructorMenuComponents(cinemaHall);
 					break;
 				case MEMBER:
-					addCinemaHallConstructorMenuComponents(cinemaHall);
 					break;
 				case MODERATOR: {
-					addCinemaHallConstructorMenuComponents(cinemaHall);
-					setCinemaHallSeatCoordinateMap(cinemaHall);
 				}
 					break;
 				case NOT_AUTHORIZED:
@@ -142,6 +137,6 @@ public class CinemaHallConstructorViewPresenter implements CinemaHallConstructor
 	@Override
 	public void buttonSaveCinemaHallSeatsButtonClicked() {
 		cinemaService.saveCinemaHallSeatsFromXML(cinemaHall.getId(), cinemaHallSeatCoordinateMultiMap);
-		/* new PageNavigator().navigateToProfileInfoView(id); */
+		new PageNavigator().navigateToProfileView();
 	}
 }

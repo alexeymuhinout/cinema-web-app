@@ -14,7 +14,7 @@ public interface CinemaHallConstructorView extends View {
 	void addListener(ViewListener viewListener);
 
 	interface ViewListener {
-		void setCinemaHallConstructorView(CinemaHallConstructorView components);
+		void setCinemaHallConstructorView(CinemaHallConstructorView cinemaHallConstructorView);
 
 		void entered(ViewChangeEvent event);
 

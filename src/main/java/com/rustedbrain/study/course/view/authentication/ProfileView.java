@@ -5,6 +5,7 @@ import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.CityEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.MovieEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaHallEditPresenter;
 import com.rustedbrain.study.course.view.ApplicationView;
 import com.vaadin.navigator.ViewChangeListener;
@@ -79,5 +80,9 @@ public interface ProfileView extends ApplicationView {
 		CinemaEditPresenter getCinemaEditPresenter();
 
 		CinemaHallEditPresenter getCinemaHallEditPresenter();
+
+		void reload();
+
+		MovieEditPresenter getMovieEditPresenter();
 	}
 }

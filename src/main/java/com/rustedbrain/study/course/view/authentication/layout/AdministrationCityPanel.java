@@ -13,9 +13,6 @@ import java.util.stream.Collectors;
 
 public class AdministrationCityPanel extends Panel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 188371442011236419L;
 	protected List<City> cities;
 	protected VerticalLayout layout = new VerticalLayout();
@@ -85,17 +82,20 @@ public class AdministrationCityPanel extends Panel {
 		createPopupContent.addComponent(new Button("Create", (Button.ClickListener) event -> {
 			listeners.forEach(cityViewListener -> {
 				cityViewListener.getCityEditPresenter().buttonAddNewCityClicked(cityNameTextField.getValue());
+				showNotification("City create! City name: " + cityNameTextField.getValue());
+				cityViewListener.reload();
 			});
-			Notification notification = new Notification("City create", "City name: " + cityNameTextField.getValue(),
-					Notification.Type.HUMANIZED_MESSAGE);
-			notification.setDelayMsec(600);
-			notification.show(Page.getCurrent());
 		}));
 
 		PopupView createPopup = new PopupView(null, createPopupContent);
 		createPopup.setSizeUndefined();
 		createPopup.setPopupVisible(true);
 		return createPopup;
+	}
+
+	private void showNotification(String message) {
+		Notification notification = new Notification(message, Notification.Type.HUMANIZED_MESSAGE);
+		notification.show(Page.getCurrent());
 	}
 
 	private void getFilteredByNameCities(String filterText) {
@@ -142,8 +142,10 @@ public class AdministrationCityPanel extends Panel {
 		}
 
 		private void renameCity(City selectedCity, String newCityName) {
-			listeners.forEach(
-					listener -> listener.getCityEditPresenter().buttonSaveCityClicked(selectedCity, newCityName));
+			listeners.forEach(listener -> {
+				listener.getCityEditPresenter().buttonSaveCityClicked(selectedCity, newCityName);
+				listener.reload();
+			});
 		}
 
 		void setSelectedCity(City selectedCity) {
