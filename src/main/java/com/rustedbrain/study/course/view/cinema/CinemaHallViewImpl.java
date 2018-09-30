@@ -1,6 +1,19 @@
 package com.rustedbrain.study.course.view.cinema;
 
-import com.rustedbrain.study.course.model.persistence.cinema.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
+import com.rustedbrain.study.course.model.persistence.cinema.Movie;
+import com.rustedbrain.study.course.model.persistence.cinema.Row;
+import com.rustedbrain.study.course.model.persistence.cinema.Seat;
+import com.rustedbrain.study.course.model.persistence.cinema.Ticket;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.components.MenuComponent;
@@ -9,11 +22,14 @@ import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.*;
 
 @UIScope
 @SpringView(name = VaadinUI.CINEMA_HALL_VIEW)
@@ -40,7 +56,7 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
 	}
 
 	private Panel getCinemaHallPanel() {
-		if (cinemaHallPanel == null) {
+		if ( cinemaHallPanel == null ) {
 			cinemaHallPanel = new Panel();
 		}
 		return cinemaHallPanel;
@@ -78,9 +94,12 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
 
 	private Component createMovieInfoPanel(FilmScreeningEvent filmScreeningEvent) {
 		Movie movie = filmScreeningEvent.getFilmScreening().getMovie();
-		VerticalLayout verticalLayout = new VerticalLayout(
-				new Label(movie.getLocalizedName() + " " + "(" + movie.getOriginalName() + ")" + "</br> "
-						+ filmScreeningEvent.getDate() + " " + filmScreeningEvent.getTime(), ContentMode.HTML));
+		VerticalLayout verticalLayout =
+				new VerticalLayout(
+						new Label(
+								movie.getLocalizedName() + " " + "(" + movie.getOriginalName() + ")" + "</br> "
+										+ filmScreeningEvent.getDate() + " " + filmScreeningEvent.getTime(),
+								ContentMode.HTML));
 		verticalLayout.setSpacing(true);
 		return new Panel(verticalLayout);
 	}
@@ -140,7 +159,7 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
 		}
 
 		void displaySelectedSeats(Set<Seat> seats) {
-			if (seats.isEmpty()) {
+			if ( seats.isEmpty() ) {
 				this.selectedSeatsLabel.setValue("No seats selected.");
 				this.buttonBuyTickets.setEnabled(false);
 			} else {
@@ -172,9 +191,9 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
 					Button button = new Button(Integer.toString(seat.getNumber()));
 					Optional<Ticket> optionalTicket = filmScreeningEvent.getTickets().stream()
 							.filter(ticket -> ticket.getSeat().equals(seat)).findAny();
-					if (optionalTicket.isPresent()) {
+					if ( optionalTicket.isPresent() ) {
 						button.setStyleName(ValoTheme.BUTTON_DANGER);
-						if (authenticationService.isCinemaManagementAvailable(cinemaHall.getCinema().getId())) {
+						if ( authenticationService.isCinemaManagementAvailable(cinemaHall.getCinema().getId()) ) {
 							Ticket ticket = optionalTicket.get();
 							button.setDescription("<ul>" + "<li>Name: " + ticket.getClientName() + "</li>"
 									+ "<li>Surname: " + ticket.getClientSurname() + "</li>" + "<li>Sold: "
@@ -194,14 +213,14 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
 		}
 
 		void unsetSelectedSeat(Seat seat) {
-			Optional<SeatButton> seatButton = seatButtonList.stream().filter(button -> button.getSeat().equals(seat))
-					.findAny();
+			Optional<SeatButton> seatButton =
+					seatButtonList.stream().filter(button -> button.getSeat().equals(seat)).findAny();
 			seatButton.ifPresent(button -> button.getButton().removeStyleName(ValoTheme.BUTTON_FRIENDLY));
 		}
 
 		void setSelectedSeat(Seat seat) {
-			Optional<SeatButton> seatButton = seatButtonList.stream().filter(button -> button.getSeat().equals(seat))
-					.findAny();
+			Optional<SeatButton> seatButton =
+					seatButtonList.stream().filter(button -> button.getSeat().equals(seat)).findAny();
 			seatButton.ifPresent(button -> button.getButton().setStyleName(ValoTheme.BUTTON_FRIENDLY));
 		}
 
@@ -225,9 +244,9 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
 
 			@Override
 			public boolean equals(Object o) {
-				if (this == o)
+				if ( this == o )
 					return true;
-				if (o == null || getClass() != o.getClass())
+				if ( o == null || getClass() != o.getClass() )
 					return false;
 
 				SeatButton that = (SeatButton) o;

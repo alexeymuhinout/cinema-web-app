@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -125,8 +124,8 @@ public class Application {
 			Set<CinemaHall> cinemaHalls1 = getTestCinemaHallSet(3, cinema5);
 			Set<CinemaHall> cinemaHalls2 = getTestCinemaHallSet(5, cinema6);
 
-			cinemaHallRepository.save(cinemaHalls1);
-			cinemaHallRepository.save(cinemaHalls2);
+			cinemaHallRepository.saveAll(cinemaHalls1);
+			cinemaHallRepository.saveAll(cinemaHalls2);
 
 			for (CinemaHall cinemaHall : cinemaHalls2) {
 				cinemaHallRepository.save(cinemaHall);
@@ -141,41 +140,41 @@ public class Application {
 
 			Set<Actor> hellBoyActorSet = getActorSet("Ron Perlman", "Selma Blair", "Jeffrey Tambor", "Karel Roden",
 					"Rupert Evans", "John Hurt");
-			actorRepository.save(hellBoyActorSet);
+			//actorRepository.saveAll(hellBoyActorSet);
 
 			Set<Actor> theGreatGatsbyActorSet = getActorSet("Leonardo DiCaprio", "Tobey Maguire", "Carey Mulligan",
 					"Joel Edgerton", "Isla Fisher", "Jason Clarke", "Amitabh Bachchan");
-			actorRepository.save(theGreatGatsbyActorSet);
+			//actorRepository.saveAll(theGreatGatsbyActorSet);
 
 			Set<Actor> theTerminatorActorSet =
 					getActorSet("Arnold Schwarzenegger", "Michael Biehn", "Linda Hamilton", "Paul Winfield");
-			actorRepository.save(theTerminatorActorSet);
+			//actorRepository.saveAll(theTerminatorActorSet);
 
 			Set<Genre> genreSet = getGenreSet("adventure", "comedy", "drama", "horror", "historical");
-			genreRepository.save(genreSet);
+			genreRepository.saveAll(genreSet);
 
 			Movie movie1 = createMovie("Великий Гэтсби", "The Great Gatsby", 13,
 					"Ник Кэррауэй, выпускник Йельского университета, находится в санатории, где лечится от алкоголизма. Он рассказывает о человеке по имени Гэтсби, с которым его свела судьба в Нью-Йорке. Нику трудно говорить об этом, и врач предлагает ему описать эту историю на бумаге.\n"
 							+ "Свой рассказ Ник начинает воспоминанием о том, как в 1922 году переехал со Среднего Запада в Нью-Йорк и арендовал дом в Уэст Эгге на Лонг-Айленде. Ник посещает роскошное поместье Тома и Дэйзи Бьюкененов. Дэйзи была троюродной сестрой Ника, а её муж, Том, некогда играл в поло в Йеле, а ныне наслаждается богатством. Дейзи знакомит Ника со своей подругой, известной гольфисткой Джордан Бейкер. За ужином внезапно начинает звонить телефон: это звонит любовница Тома, о которой всем уже давно известно.\n"
 							+ "Для встреч с этой любовницей, Миртл Уилсон, женой ничего не подозревающего автомеханика Джорджа из шахтёрского района штата Нью-Йорк, Том арендует квартиру в городе. Том приглашает туда Ника, где тот также знакомится с Кэтрин, сестрой Миртл, и с четой МакКи, друзьями Миртл. Ночь заканчивается всеобщей попойкой и разбитым носом Миртл, раздражавшей Тома упоминанием имени Дэйзи.",
-					new Date(), new Date(), new GregorianCalendar(2013, 1, 1).getTime(), theTerminatorActorSet,
+					new Date(), new Date(), new GregorianCalendar(2013, 1, 1).getTime(), theGreatGatsbyActorSet,
 					genreSet, 130, "C:\\Users\\User\\Downloads\\greatgatsby.jpg", "http://www.youtube.com/v/rARN6agiW7o"
 
 			);
-			movieRepository.saveAndFlush(movie1);
+			movieRepository.save(movie1);
 
 			Movie movie2 = createMovie("Терминатор", "The Terminator", 18,
 					"Созданный в недалеком будущем военный компьютер Скайнет развязал ядерную войну, а затем поработил остатки человечества. Однако у людей появился великий лидер — Джон Коннор, организовавший Сопротивление и сумевший выиграть Войну. Поверженный Скайнет отправляет в прошлое робота-терминатора с целью убить мать Джона Коннора — Сару Коннор. Сара работает обычной официанткой и не подозревает о своей великой миссии. На её защиту люди посылают человека — сержанта Сопротивления Кайла Риз. Силы противников не равны. Ризу противостоит чрезвычайно мощная боевая машина, неуязвимая для огнестрельного оружия. Терминатор внешне неотличим от человека: он специально предназначен для внедрения в человеческое общество и уничтожения людей. Ризу приходится не только бороться с роботом, но и убеждать шокированную Сару, а также полицию, которая принимает его за сумасшедшего террориста. В тяжёлых испытаниях недоверие, возникшее между Сарой и Ризом, уступает место симпатии и сменяется пылкой страстью. В результате на свет появляется Джон. В финале Риз погибает, но Саре удаётся уничтожить терминатора. При этом остатки его процессора и часть металлической руки попадают к сотрудникам компании «Кибердайн Системс» — будущей создательнице Скайнет. Таким образом, попытка коррекции будущего приводит к противоположному результату — всё встаёт на свои места.",
 					new Date(), new Date(), new GregorianCalendar(1984, 1, 1).getTime(), theTerminatorActorSet,
 					genreSet, 130, "C:\\Users\\User\\Downloads\\terminator.jpg",
 					"http://www.youtube.com/v/k64P4l2Wmeg");
-			movieRepository.saveAndFlush(movie2);
+			movieRepository.save(movie2);
 
 			Movie movie3 = createMovie("Hellboy", "Hellboy ", 13,
 					"In 1944, with the help of Russian mystic Grigori Rasputin, the Nazis build a dimensional portal off the coast of Scotland and intend to free the Ogdru Jahad—monstrous entities imprisoned in deep space—to aid them in defeating the Allies. Rasputin opens the portal with the aid of his disciples, Ilsa von Haupstein and Obersturmbannführer Karl Ruprecht Kroenen, member of the Thule Society and Adolf Hitler's top assassin. An Allied team is sent to destroy the portal, guided by a young scientist named Trevor Bruttenholm, who is well-versed in the occult. The German team is killed and the portal is destroyed—in the process absorbing Rasputin—while Haupstein and Kroenen escape. The Allied team discovers that an infant demon with a right hand of stone came through the portal; they dub him \"Hellboy\" and Bruttenholm adopts him.",
 					new Date(), new Date(), new GregorianCalendar(2004, 4, 30).getTime(), hellBoyActorSet, genreSet,
 					122, "C:\\Users\\User\\Downloads\\hellboy.jpg", "http://www.youtube.com/v/kA9vtXbbhVs");
-			movieRepository.saveAndFlush(movie3);
+			movieRepository.save(movie3);
 
 			FilmScreening filmScreening = createFilmScreening(cinemaRepository.getOne(cinema6.getId()),
 					movieRepository.getOne(movie1.getId()));

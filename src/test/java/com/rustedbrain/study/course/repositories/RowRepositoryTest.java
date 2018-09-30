@@ -40,7 +40,7 @@ public class RowRepositoryTest {
     public void deleteRow() throws Exception {
         repository.save(row);
         repository.delete(row);
-        Assert.assertEquals(Optional.empty(), repository.findOne(row.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findById(row.getId()));
     }
 
     @After

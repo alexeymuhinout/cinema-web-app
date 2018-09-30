@@ -76,9 +76,9 @@ public interface CinemaService {
 
 	List<TicketInfo> reserveTickets(String name, String surname, FilmScreeningEvent filmScreeningEvent,
 			List<Seat> seats);
-	
+
 	List<Actor> getActors();
-	
+
 	List<Genre> getGenres();
 
 	Member getMemberByLogin(String userLogin);
@@ -128,10 +128,12 @@ public interface CinemaService {
 
 	void deleteMovie(long movieId);
 
-	void editMovie(Movie selectedMovie, String newOriginalMovieName, String newLocalizeMovieName, String newCountry, LocalDateTime newMovieReleaseDate);
+	void editMovie(Movie selectedMovie, String newOriginalMovieName, String newLocalizeMovieName, String newCountry,
+			LocalDateTime newMovieReleaseDate);
 
 	void editMovie(Movie editedMovie);
 
 	long createMovie(String localizedName, String originalName, LocalDateTime releaseDate);
 
+	List<Movie> getMovies();
 }

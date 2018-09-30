@@ -40,7 +40,7 @@ public class Movie extends DatabaseEntity {
 	private int minAge;
 	@Column(name = "timeMinutes")
 	private int timeMinutes;
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = javax.persistence.CascadeType.ALL)
 	@JoinTable(name = "movieActor", joinColumns = @JoinColumn(name = "movieId"), inverseJoinColumns = @JoinColumn(name = "actorId"))
 	private Set<Actor> actors = new HashSet<>();
 	@OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
@@ -153,11 +153,11 @@ public class Movie extends DatabaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if ( this == o )
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if ( o == null || getClass() != o.getClass() )
 			return false;
-		if (!super.equals(o))
+		if ( !super.equals(o) )
 			return false;
 
 		Movie movie = (Movie) o;

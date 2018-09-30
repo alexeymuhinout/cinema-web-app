@@ -24,10 +24,11 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 @UIScope
@@ -87,37 +88,42 @@ public class CinemaHallConstructorViewImpl extends VerticalLayout implements Cin
 		Panel cinemaHallConstructorPanel = getCinemaHallConstructorPanel();
 
 		VerticalLayout componentMenuLayout = new VerticalLayout();
-		Button addRowButton = new Button(VaadinIcons.ALIGN_JUSTIFY);
-		addRowButton.setCaption("Add Row");
-		// addRowButton.setWidth("110px");
-		addRowButton.addClickListener(clickEvent -> addComponent(getAddNewSeatsPopupView()));
-
 		Button saveCinemaHallSeatsButton = new Button("Save cinema hall");
-		saveCinemaHallSeatsButton.addClickListener(clickEvent -> addComponent(saveCinemaHallSeatsButtonClicked()));
-		componentMenuLayout.addComponents(addRowButton, saveCinemaHallSeatsButton);
+		saveCinemaHallSeatsButton
+				.addClickListener(clickEvent -> UI.getCurrent().addWindow(getSaveCinemaHallSeatsConformationWindow()));
+		Button addRowButton = new Button(VaadinIcons.ALIGN_JUSTIFY);
+		addRowButton.setCaption("Add seats");
+		addRowButton.setWidth("160px");
+		addRowButton.addClickListener(clickEvent -> UI.getCurrent().addWindow(getAddNewSeatsWindow()));
+		componentMenuLayout.addComponentsAndExpand(addRowButton, saveCinemaHallSeatsButton);
 		componentMenuPanel.setContent(componentMenuLayout);
 
 		content.addComponents(componentMenuPanel, cinemaHallConstructorPanel);
-
 		tabSheet.addTab(content, "Cinema hall constructor");
 	}
 
-	private PopupView saveCinemaHallSeatsButtonClicked() {
-		FormLayout saveSeatsContent = new FormLayout();
+	private Window getSaveCinemaHallSeatsConformationWindow() {
+		Window saveCinemaHallConformationWindow = new Window();
+		saveCinemaHallConformationWindow.setHeight("100px");
+		saveCinemaHallConformationWindow.setWidth("180px");
+		saveCinemaHallConformationWindow.setModal(true);
+		saveCinemaHallConformationWindow.setResizable(false);
+		saveCinemaHallConformationWindow.setDraggable(false);
 
-		Label label = new Label("Save changes?");
-		saveSeatsContent.addComponent(label);
-		saveSeatsContent.addComponent(new Button("Save", (Button.ClickListener) event -> {
+		Label saveLabel = new Label("Save changes?");
+		saveLabel.setSizeFull();
+		Button saveButton = new Button("Save", (Button.ClickListener) event -> {
 			viewListeners.forEach(listener -> listener.buttonSaveCinemaHallSeatsButtonClicked());
+			saveCinemaHallConformationWindow.close();
 			showNotification("Cinema Hall saved ");
-		}));
-		saveSeatsContent.setSizeUndefined();
-		saveSeatsContent.setMargin(true);
+		});
+		saveButton.addStyleName("friendly");
 
-		PopupView createPopup = new PopupView(null, saveSeatsContent);
-		createPopup.setSizeUndefined();
-		createPopup.setPopupVisible(true);
-		return createPopup;
+		VerticalLayout saveButtonLayout = new VerticalLayout();
+		saveButtonLayout.addComponentsAndExpand(saveLabel, saveButton);
+		saveCinemaHallConformationWindow.setContent(saveButtonLayout);
+
+		return saveCinemaHallConformationWindow;
 	}
 
 	private void showNotification(String message) {
@@ -126,22 +132,26 @@ public class CinemaHallConstructorViewImpl extends VerticalLayout implements Cin
 	}
 
 	private Panel getCinemaHallConstructorPanel() {
-		if (cinemaHallConstructorPanel == null) {
+		if ( cinemaHallConstructorPanel == null ) {
 			cinemaHallConstructorPanel = new Panel();
 		}
 		return cinemaHallConstructorPanel;
 	}
 
 	private Panel getCinemaHallComponentMenuPanel() {
-		if (componentMenuPanel == null) {
+		if ( componentMenuPanel == null ) {
 			componentMenuPanel = new Panel();
 		}
 		return componentMenuPanel;
 	}
 
-	private PopupView getAddNewSeatsPopupView() {
-		FormLayout content = new FormLayout();
+	private Window getAddNewSeatsWindow() {
+		Window addNewSeatsWindow = new Window("Add seats");
+		addNewSeatsWindow.setModal(true);
+		addNewSeatsWindow.setResizable(false);
+		addNewSeatsWindow.setDraggable(false);
 
+		FormLayout content = new FormLayout();
 		TextField numberOfRowsTextField = new TextField("Row number");
 		TextField numberOfSeatsTextField = new TextField("Number of seats");
 		content.addComponent(numberOfRowsTextField);
@@ -152,11 +162,8 @@ public class CinemaHallConstructorViewImpl extends VerticalLayout implements Cin
 		}));
 		content.setSizeUndefined();
 		content.setMargin(true);
-
-		PopupView createPopup = new PopupView(null, content);
-		createPopup.setSizeUndefined();
-		createPopup.setPopupVisible(true);
-		return createPopup;
+		addNewSeatsWindow.setContent(content);
+		return addNewSeatsWindow;
 	}
 
 	@Override
@@ -190,7 +197,7 @@ public class CinemaHallConstructorViewImpl extends VerticalLayout implements Cin
 	}
 
 	private void closeTab() {
-		if (this.tabSheet != null) {
+		if ( this.tabSheet != null ) {
 			this.tabSheet.removeAllComponents();
 		}
 

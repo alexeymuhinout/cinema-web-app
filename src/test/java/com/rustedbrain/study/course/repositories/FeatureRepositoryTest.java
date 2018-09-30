@@ -43,7 +43,7 @@ public class FeatureRepositoryTest {
     public void deleteFeature() throws Exception {
         repository.save(feature);
         repository.delete(feature);
-        Assert.assertEquals(Optional.empty(), repository.findOne(feature.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findById(feature.getId()));
     }
 
     @After

@@ -43,7 +43,7 @@ public class SeatRepositoryTest {
     public void deleteSeat() throws Exception {
         repository.save(seat);
         repository.delete(seat);
-        Assert.assertEquals(Optional.empty(), repository.findOne(seat.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findById(seat.getId()));
     }
 
     @After

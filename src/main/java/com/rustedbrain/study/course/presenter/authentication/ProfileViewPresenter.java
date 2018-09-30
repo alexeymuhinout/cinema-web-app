@@ -1,22 +1,5 @@
 package com.rustedbrain.study.course.presenter.authentication;
 
-import com.rustedbrain.study.course.model.dto.AuthUser;
-import com.rustedbrain.study.course.model.dto.UserRole;
-import com.rustedbrain.study.course.model.persistence.authorization.User;
-import com.rustedbrain.study.course.model.persistence.cinema.City;
-import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
-import com.rustedbrain.study.course.presenter.authentication.util.CinemaHallEditPresenter;
-import com.rustedbrain.study.course.presenter.authentication.util.CityEditPresenter;
-import com.rustedbrain.study.course.presenter.authentication.util.MovieEditPresenter;
-import com.rustedbrain.study.course.service.AuthenticationService;
-import com.rustedbrain.study.course.service.CinemaService;
-import com.rustedbrain.study.course.view.authentication.ProfileView;
-import com.rustedbrain.study.course.view.cinema.CinemaView;
-import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.spring.annotation.UIScope;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +9,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.rustedbrain.study.course.model.dto.AuthUser;
+import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.Movie;
+import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.CinemaHallEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.CityEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.MovieEditPresenter;
+import com.rustedbrain.study.course.service.AuthenticationService;
+import com.rustedbrain.study.course.service.CinemaService;
+import com.rustedbrain.study.course.view.authentication.ProfileView;
+import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
 
 @UIScope
 @SpringComponent
@@ -105,8 +106,9 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 		logger.info("Administration tab successfully added.");
 		User currUser = authenticationService.getAuthenticUser();
 		List<City> cities = cinemaService.getCities();
+		List<Movie> movies = cinemaService.getMovies();
 
-		view.addAdministrationTab(currUser, cities);
+		view.addAdministrationTab(currUser, cities, movies);
 	}
 
 	private void addProfileEditTab(UserRole role) {
@@ -260,7 +262,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	@Override
 	public void reload() {
 		view.reload();
-		
+
 	}
 
 	@Override

@@ -1,5 +1,16 @@
 package com.rustedbrain.study.course.view.cinema;
 
+import java.io.File;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
@@ -16,14 +27,22 @@ import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Embedded;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.PopupView;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.File;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @UIScope
 @SpringView(name = VaadinUI.CINEMA_VIEW)
@@ -52,21 +71,21 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
 	}
 
 	private Panel getFilmScreeningsPanel() {
-		if (filmScreeningsPanel == null) {
+		if ( filmScreeningsPanel == null ) {
 			filmScreeningsPanel = new Panel();
 		}
 		return filmScreeningsPanel;
 	}
 
 	private Panel getCinemaPanel() {
-		if (cinemaPanel == null) {
+		if ( cinemaPanel == null ) {
 			cinemaPanel = new Panel();
 		}
 		return cinemaPanel;
 	}
 
 	private Panel getMenuViewPanel() {
-		if (menuPanel == null) {
+		if ( menuPanel == null ) {
 			menuPanel = new Panel();
 		}
 		return menuPanel;
@@ -149,7 +168,7 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
 	}
 
 	private void closeUserBlockWindow() {
-		if (this.trailerWindow != null) {
+		if ( this.trailerWindow != null ) {
 			this.trailerWindow.close();
 		}
 	}
@@ -189,9 +208,9 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
 
 	@Override
 	public void setSelectedDay(LocalDate day) {
-		Optional<Button> optionalButton = dateButtons.stream()
-				.filter(button -> button.getCaption().equals(day.toString())).findAny();
-		if (optionalButton.isPresent()) {
+		Optional<Button> optionalButton =
+				dateButtons.stream().filter(button -> button.getCaption().equals(day.toString())).findAny();
+		if ( optionalButton.isPresent() ) {
 			dateButtons.forEach(button -> button.removeStyleName(ValoTheme.BUTTON_FRIENDLY));
 			optionalButton.get().setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		}

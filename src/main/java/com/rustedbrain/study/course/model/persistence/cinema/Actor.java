@@ -2,6 +2,7 @@ package com.rustedbrain.study.course.model.persistence.cinema;
 
 import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -13,15 +14,12 @@ import java.util.Set;
 @Table(name = "actor")
 public class Actor extends DatabaseEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5602366074810575732L;
 	@Column(name = "name", length = 64)
 	private String name;
 	@Column(name = "surname", length = 64)
 	private String surname;
-	@ManyToMany(mappedBy = "actors")
+	@ManyToMany(mappedBy = "actors", cascade = {CascadeType.ALL})
 	private Set<Movie> movies = new HashSet<>();
 
 	public Set<Movie> getMovies() {

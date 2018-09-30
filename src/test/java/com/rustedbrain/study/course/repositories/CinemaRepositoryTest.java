@@ -47,7 +47,7 @@ public class CinemaRepositoryTest {
     public void deleteCinema() throws Exception {
         repository.save(cinema);
         repository.delete(cinema);
-        Assert.assertEquals(Optional.empty(), repository.findOne(cinema.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findById(cinema.getId()));
     }
 
     @Test

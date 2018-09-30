@@ -278,12 +278,12 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public void deleteCinema(Long id) {
-		cinemaRepository.delete(id);
+		cinemaRepository.deleteById(id);
 	}
 
 	@Override
 	public void deleteCity(Long id) {
-		cityRepository.delete(id);
+		cityRepository.deleteById(id);
 	}
 
 	@Override
@@ -305,7 +305,7 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public List<Seat> getSeats(List<Long> seatIds) {
-		return seatRepository.findAll(seatIds);
+		return seatRepository.findAllById(seatIds);
 	}
 
 	@Override
@@ -384,7 +384,7 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public List<TicketInfo> getTicketsInfo(List<Long> ticketIds) {
-		return ticketRepository.findAll(ticketIds).stream().map(TicketInfo::new).collect(Collectors.toList());
+		return ticketRepository.findAllById(ticketIds).stream().map(TicketInfo::new).collect(Collectors.toList());
 	}
 
 	@Override
@@ -413,7 +413,7 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public Optional<Movie> getMovie(long id) {
-		return Optional.ofNullable(movieRepository.findOne(id));
+		return movieRepository.findById(id);
 	}
 
 	@Override
@@ -426,7 +426,7 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public void deleteComment(long id) {
-		commentRepository.delete(id);
+		commentRepository.deleteById(id);
 	}
 
 	@Override
@@ -481,7 +481,7 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public void deleteCinemaHall(long id) {
-		cinemaHallRepository.delete(id);
+		cinemaHallRepository.deleteById(id);
 	}
 
 	private CommentReputation createMinusCommentReputation(long commentId, User user) {
@@ -521,13 +521,13 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public Optional<CinemaHall> getCinemaHall(long id) {
-		return Optional.ofNullable(cinemaHallRepository.findOne(id));
+		return cinemaHallRepository.findById(id);
 	}
 
 	@Override
 	public void saveCinemaHallSeatsFromXML(long cinemaHallId, Map<Integer, List<Integer>> cinemaHallSeatCoordinateMap) {
 		CinemaHall cinemaHall = cinemaHallRepository.getOne(cinemaHallId);
-		rowRepository.delete(cinemaHall.getRows());
+		rowRepository.deleteAll(cinemaHall.getRows());
 		cinemaHall.setRows(mapSeatCoordinateMapToRowsSet(cinemaHall, cinemaHallSeatCoordinateMap));
 		cinemaHallRepository.save(cinemaHall);
 		logger.log(Level.INFO, cinemaHallRepository.getOne(cinemaHallId).getRows().toString());
@@ -559,7 +559,7 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public void deleteMovie(long movieId) {
-		movieRepository.delete(movieId);
+		movieRepository.deleteById(movieId);
 	}
 
 	@Override
@@ -572,8 +572,20 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public void editMovie(Movie editedMovie) {
-		// TODO Auto-generated method stub
-
+		Movie movie = movieRepository.getOne(editedMovie.getId());
+		movie.setActors(editedMovie.getActors());
+		movie.setGenres(editedMovie.getGenres());
+		movie.setCountry(editedMovie.getCountry());
+		movie.setDescription(editedMovie.getDescription());
+		movie.setLocalizedName(editedMovie.getLocalizedName());
+		movie.setMinAge(editedMovie.getMinAge());
+		movie.setOriginalName(editedMovie.getOriginalName());
+		movie.setPosterPath(editedMovie.getPosterPath());
+		movie.setProducer(editedMovie.getProducer());
+		movie.setReleaseDate(editedMovie.getReleaseDate());
+		movie.setTimeMinutes(editedMovie.getTimeMinutes());
+		movie.setTrailerURL(editedMovie.getTrailerURL());
+		movieRepository.save(movie);
 	}
 
 	@Override
@@ -588,4 +600,10 @@ public class CinemaServiceImpl implements CinemaService {
 		movieRepository.save(movie);
 		return movie.getId();
 	}
+
+	@Override
+	public List<Movie> getMovies() {
+		return movieRepository.findAll();
+	}
+
 }

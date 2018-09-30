@@ -1,9 +1,7 @@
 package com.rustedbrain.study.course.presenter.authentication.util;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.util.PageNavigator;
@@ -25,7 +23,8 @@ public class MovieEditPresenter {
 
 	public void buttonSaveMovieClicked(Movie selectedMovie, String newOriginalMovieName, String newLocalizeMovieName,
 			String newCountry, LocalDateTime newMovieReleaseDate) {
-		cinemaService.editMovie(selectedMovie, newOriginalMovieName, newLocalizeMovieName, newCountry, newMovieReleaseDate);
+		cinemaService.editMovie(selectedMovie, newOriginalMovieName, newLocalizeMovieName, newCountry,
+				newMovieReleaseDate);
 
 	}
 

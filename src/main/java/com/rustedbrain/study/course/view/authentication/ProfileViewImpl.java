@@ -1,25 +1,49 @@
 package com.rustedbrain.study.course.view.authentication;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
-import com.rustedbrain.study.course.view.authentication.layout.*;
+import com.rustedbrain.study.course.view.authentication.layout.AdminProfileEditTab;
+import com.rustedbrain.study.course.view.authentication.layout.AdminProfileInfoLayout;
+import com.rustedbrain.study.course.view.authentication.layout.AdministartionMoviePanel;
+import com.rustedbrain.study.course.view.authentication.layout.AdministrationCinemaHallPanel;
+import com.rustedbrain.study.course.view.authentication.layout.AdministrationCinemaPanel;
+import com.rustedbrain.study.course.view.authentication.layout.AdministrationCityPanel;
+import com.rustedbrain.study.course.view.authentication.layout.AdministrationStatisticPanel;
+import com.rustedbrain.study.course.view.authentication.layout.ProfileEditTab;
+import com.rustedbrain.study.course.view.authentication.layout.ProfileInfoLayout;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewBeforeLeaveEvent;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
+import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.DateTimeField;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.PopupView;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @UIScope
 @SpringView(name = VaadinUI.PROFILE_VIEW)
@@ -97,7 +121,7 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 
 	@Override
 	public void addProfileInfoTab(User user) {
-		if (profileInfoTab != null) {
+		if ( profileInfoTab != null ) {
 			Component oldProfileInfoLayout = this.profileInfoTab;
 			this.profileInfoTab = new ProfileInfoLayout(listeners, user);
 			tabSheet.replaceComponent(oldProfileInfoLayout, profileInfoTab);
@@ -109,7 +133,7 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 
 	@Override
 	public void addProfileAdminEditTab(User user, List<User> users, List<City> cities) {
-		if (profileEditTab != null) {
+		if ( profileEditTab != null ) {
 			Component oldProfileEditLayout = this.profileEditTab;
 			this.profileEditTab = new AdminProfileEditTab(listeners, user, users, cities);
 			tabSheet.replaceComponent(oldProfileEditLayout, profileEditTab);
@@ -121,14 +145,14 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 
 	@Override
 	public void closeUserBlockWindow() {
-		if (this.userBlockWindow != null) {
+		if ( this.userBlockWindow != null ) {
 			this.userBlockWindow.close();
 		}
 	}
 
 	@Override
 	public void addAdminProfileInfoTab(User authenticUser, List<User> users) {
-		if (profileInfoTab != null) {
+		if ( profileInfoTab != null ) {
 			Component oldProfileInfoLayout = this.profileInfoTab;
 			this.profileInfoTab = new AdminProfileInfoLayout(listeners, authenticUser, users);
 			tabSheet.replaceComponent(oldProfileInfoLayout, profileInfoTab);
@@ -158,8 +182,8 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 		DateTimeField blockDateTimeField = new DateTimeField("Block date", LocalDateTime.now());
 		TextArea blockDescrTextField = new TextArea("Reason of blocking");
 		blockDescrTextField.setSizeFull();
-		Button buttonBlock = new Button("Block",
-				(Button.ClickListener) event -> listeners.forEach(viewListener -> viewListener
+		Button buttonBlock =
+				new Button("Block", (Button.ClickListener) event -> listeners.forEach(viewListener -> viewListener
 						.buttonBlockSubmitClicked(id, blockDateTimeField.getValue(), blockDescrTextField.getValue())));
 		userBlockWindow.setContent(new VerticalLayout(warnLabel, blockDateTimeField, blockDescrTextField, buttonBlock));
 
@@ -167,25 +191,25 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 	}
 
 	@Override
-	public void addAdministrationTab(User currUser, List<City> cities) {
-		if (adminLayout != null) {
+	public void addAdministrationTab(User currUser, List<City> cities, List<Movie> movies) {
+		if ( adminLayout != null ) {
 			TabSheet oldAdminLayout = this.adminLayout;
-			this.adminLayout = createAdminTab(cities);
+			this.adminLayout = createAdminTab(cities, movies);
 			tabSheet.replaceComponent(oldAdminLayout, this.adminLayout);
 		} else {
-			this.adminLayout = createAdminTab(cities);
+			this.adminLayout = createAdminTab(cities, movies);
 			tabSheet.addTab(adminLayout, "Administration");
 		}
 	}
 
-	private TabSheet createAdminTab(List<City> cities) {
+	private TabSheet createAdminTab(List<City> cities, List<Movie> movies) {
 		TabSheet tabSheet = new TabSheet();
 		administrationCityPanel = new AdministrationCityPanel(listeners, cities);
 		administrationCinemaPanel = new AdministrationCinemaPanel(listeners, cities);
 		administrationCinemaHallPanel = new AdministrationCinemaHallPanel(listeners, cities);
 		List<Cinema> cinemas = new ArrayList<>();
 		cities.forEach(city -> cinemas.addAll(city.getCinemas()));
-		administrationMoviePanel = new AdministartionMoviePanel(listeners, cinemas);
+		administrationMoviePanel = new AdministartionMoviePanel(listeners, movies);
 		tabSheet.addTab(administrationCityPanel, "City");
 		tabSheet.addTab(administrationCinemaPanel, "Cinema");
 		tabSheet.addTab(administrationCinemaHallPanel, "Cinema Hall");
@@ -195,7 +219,7 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 
 	@Override
 	public void addStatisticsTab() {
-		if (statisticsLayout != null) {
+		if ( statisticsLayout != null ) {
 			TabSheet oldStatisticsLayout = this.statisticsLayout;
 			this.statisticsLayout = createStatisticsTab();
 			tabSheet.replaceComponent(oldStatisticsLayout, this.statisticsLayout);
@@ -225,7 +249,7 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 
 	@Override
 	public void addProfileEditTab(User currUser, List<City> cities) {
-		if (profileEditTab != null) {
+		if ( profileEditTab != null ) {
 			Component oldProfileEditLayout = this.profileEditTab;
 			this.profileEditTab = new ProfileEditTab(listeners, currUser, cities);
 			tabSheet.replaceComponent(oldProfileEditLayout, profileEditTab);

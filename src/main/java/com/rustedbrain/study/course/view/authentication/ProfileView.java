@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.view.authentication;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.CityEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.MovieEditPresenter;
@@ -25,7 +26,7 @@ public interface ProfileView extends ApplicationView {
 
 	void showUserBlockWindow(long id, String login, UserRole userRole);
 
-	void addAdministrationTab(User currUser, List<City> cities);
+	void addAdministrationTab(User currUser, List<City> cities, List<Movie> movies);
 
 	void addStatisticsTab();
 

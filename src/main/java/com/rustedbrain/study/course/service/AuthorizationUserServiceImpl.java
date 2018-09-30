@@ -211,44 +211,44 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 
 	@Override
 	public Optional<AuthUser> getAuthUserById(long id) {
-		Optional<Member> member = Optional.ofNullable(memberRepository.findOne(id));
+		Optional<Member> member = memberRepository.findById(id);
 		if (member.isPresent()) {
 			return Optional.of(new AuthUser(member.get().getLogin(), UserRole.MEMBER));
 		}
-		Optional<Administrator> optionalAdministrator = Optional.ofNullable(administratorRepository.findOne(id));
+		Optional<Administrator> optionalAdministrator = administratorRepository.findById(id);
 		if (optionalAdministrator.isPresent()) {
 			return Optional.of(new AuthUser(optionalAdministrator.get().getLogin(), UserRole.ADMINISTRATOR));
 		}
-		Optional<Manager> optionalManager = Optional.ofNullable(managerRepository.findOne(id));
+		Optional<Manager> optionalManager = managerRepository.findById(id);
 		if (optionalManager.isPresent()) {
 			return Optional.of(new AuthUser(optionalManager.get().getLogin(), UserRole.MANAGER));
 		}
-		Optional<Moderator> optionalModerator = Optional.ofNullable(moderatorRepository.findOne(id));
+		Optional<Moderator> optionalModerator = moderatorRepository.findById(id);
 		if (optionalModerator.isPresent()) {
 			return Optional.of(new AuthUser(optionalModerator.get().getLogin(), UserRole.MODERATOR));
 		}
-		Optional<Paymaster> paymaster = Optional.ofNullable(paymasterRepository.findOne(id));
+		Optional<Paymaster> paymaster = paymasterRepository.findById(id);
 		return paymaster.map(paymaster1 -> new AuthUser(paymaster1.getLogin(), UserRole.PAYMASTER));
 	}
 
 	private User getUser(long id) {
-		Optional<Member> member = Optional.ofNullable(memberRepository.findOne(id));
+		Optional<Member> member = memberRepository.findById(id);
 		if (member.isPresent()) {
 			return member.get();
 		}
-		Optional<Administrator> optionalAdministrator = Optional.ofNullable(administratorRepository.findOne(id));
+		Optional<Administrator> optionalAdministrator = administratorRepository.findById(id);
 		if (optionalAdministrator.isPresent()) {
 			return optionalAdministrator.get();
 		}
-		Optional<Manager> optionalManager = Optional.ofNullable(managerRepository.findOne(id));
+		Optional<Manager> optionalManager = managerRepository.findById(id);
 		if (optionalManager.isPresent()) {
 			return optionalManager.get();
 		}
-		Optional<Moderator> optionalModerator = Optional.ofNullable(moderatorRepository.findOne(id));
+		Optional<Moderator> optionalModerator = moderatorRepository.findById(id);
 		if (optionalModerator.isPresent()) {
 			return optionalModerator.get();
 		}
-		Optional<Paymaster> paymaster = Optional.ofNullable(paymasterRepository.findOne(id));
+		Optional<Paymaster> paymaster = paymasterRepository.findById(id);
 		return paymaster.orElse(null);
 	}
 }

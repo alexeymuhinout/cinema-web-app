@@ -31,5 +31,4 @@ public interface MovieAdvancedEditView extends View {
 	void reload();
 
 	void setMovieInformation(Movie movie, List<Actor> actors, List<Genre> genres);
-
 }

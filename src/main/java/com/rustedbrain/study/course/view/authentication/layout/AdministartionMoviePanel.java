@@ -3,16 +3,11 @@ package com.rustedbrain.study.course.view.authentication.layout;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.util.StringUtils;
 
-import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
-import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.view.authentication.ProfileView;
 import com.vaadin.data.Binder;
@@ -37,14 +32,15 @@ public class AdministartionMoviePanel extends Panel {
 	protected VerticalLayout layout = new VerticalLayout();
 	private List<ProfileView.ViewListener> listeners;
 	private List<Movie> movies = new ArrayList<>();
-	private List<Cinema> cinemas = new ArrayList<>();
 	private Grid<Movie> grid = new Grid<>();
 
-	public AdministartionMoviePanel(List<ProfileView.ViewListener> listeners, List<Cinema> cinemas) {
+	public AdministartionMoviePanel(List<ProfileView.ViewListener> listeners, List<Movie> movies) {
 		this.listeners = listeners;
-		this.cinemas = cinemas;
-		this.cinemas.forEach(
-				cinema -> cinema.getFilmScreenings().forEach(filmScreening -> movies.add(filmScreening.getMovie())));
+		this.movies = movies;
+		/*
+		 * this.cinemas.forEach(
+		 * cinema -> cinema.getFilmScreenings().forEach(filmScreening -> movies.add(filmScreening.getMovie())));
+		 */
 		this.layout.addComponent(new Panel(showMovieSelectionPanel(movies)));
 		setContent(this.layout);
 	}

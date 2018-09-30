@@ -39,7 +39,7 @@ public class CityRepositoryTest {
     public void deleteCity() throws Exception {
         repository.save(city);
         repository.delete(city);
-        Assert.assertEquals(Optional.empty(), repository.findOne(city.getId()));
+        Assert.assertEquals(Optional.empty(), repository.findById(city.getId()));
     }
 
     @After
