@@ -2,8 +2,10 @@ package com.rustedbrain.study.course.service;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -136,4 +138,14 @@ public interface CinemaService {
 	long createMovie(String localizedName, String originalName, LocalDateTime releaseDate);
 
 	List<Movie> getMovies();
+
+	void editFilmScreening(long id, Movie movie, Cinema cinema, Date startDate, Date endDate);
+
+	void deleteFilmScreening(long id);
+
+	void deleteFilmScreeningEvent(long id);
+
+	void createFilmScreening(Movie movie, Cinema cinema, java.sql.Date startDate, java.sql.Date endDate);
+
+	void createFilmScreeningEvent(FilmScreening filmScreening, CinemaHall cinemaHall, java.sql.Date date, Time time);
 }

@@ -1,13 +1,20 @@
 package com.rustedbrain.study.course.model.persistence.cinema;
 
-import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
-import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
+import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
 
 @Entity
 @Table(name = "filmScreeningEvent")
@@ -29,6 +36,15 @@ public class FilmScreeningEvent extends DatabaseEntity {
 	private Time time;
 	@ManyToOne
 	private CinemaHall cinemaHall;
+
+	public FilmScreeningEvent(CinemaHall cinemaHall, Date date, Time time) {
+		this.cinemaHall = cinemaHall;
+		this.date = date;
+		this.time = time;
+	}
+
+	public FilmScreeningEvent() {
+	}
 
 	public Date getDate() {
 		return date;
@@ -72,16 +88,16 @@ public class FilmScreeningEvent extends DatabaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if ( this == o )
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if ( o == null || getClass() != o.getClass() )
 			return false;
-		if (!super.equals(o))
+		if ( !super.equals(o) )
 			return false;
 
 		FilmScreeningEvent that = (FilmScreeningEvent) o;
 
-		if (!date.equals(that.date))
+		if ( !date.equals(that.date) )
 			return false;
 		return time.equals(that.time);
 	}

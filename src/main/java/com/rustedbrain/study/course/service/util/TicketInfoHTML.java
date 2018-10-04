@@ -1,14 +1,19 @@
 package com.rustedbrain.study.course.service.util;
 
-import com.rustedbrain.study.course.model.dto.TicketInfo;
-import freemarker.template.*;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import com.rustedbrain.study.course.model.dto.TicketInfo;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.Version;
 
 public class TicketInfoHTML {
 
@@ -40,6 +45,8 @@ public class TicketInfoHTML {
 		Template template = configuration.getTemplate(TICKET_TEMPLATE);
 
 		template.process(new HashMap<String, Object>() {
+			private static final long serialVersionUID = 7447190999597091867L;
+
 			{
 				put("tickets", tickets);
 			}

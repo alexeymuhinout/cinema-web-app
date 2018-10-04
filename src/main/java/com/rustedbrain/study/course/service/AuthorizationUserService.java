@@ -1,12 +1,12 @@
 package com.rustedbrain.study.course.service;
 
+import java.util.Optional;
+
 import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserInfo;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.Administrator;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
-
-import java.util.Optional;
 
 public interface AuthorizationUserService {
 

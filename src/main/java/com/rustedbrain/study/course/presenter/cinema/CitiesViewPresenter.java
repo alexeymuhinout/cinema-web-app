@@ -1,26 +1,21 @@
 package com.rustedbrain.study.course.presenter.cinema;
 
+import java.io.Serializable;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.cinema.CitiesView;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-
-import java.io.Serializable;
-import java.util.logging.Logger;
 
 @UIScope
 @SpringComponent
 public class CitiesViewPresenter implements CitiesView.CitiesViewListener, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6863586710948885079L;
-
-	private static final Logger logger = Logger.getLogger(CitiesViewPresenter.class.getName());
 
 	private static final int START_CINEMAS_PAGE = 1;
 	private static final int CINEMAS_PER_PAGE = 10;

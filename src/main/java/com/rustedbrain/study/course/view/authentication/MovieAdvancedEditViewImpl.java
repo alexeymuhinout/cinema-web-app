@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -409,7 +408,7 @@ public class MovieAdvancedEditViewImpl extends VerticalLayout implements MovieAd
 		trailerURLTextField.addValueChangeListener(listener -> {
 			e.setSource(new ExternalResource(listener.getValue()));
 		});
-		
+
 		horizontalLayout.addComponents(trailerURLTextField, showTrailerButton);
 		horizontalLayout.setExpandRatio(trailerURLTextField, 1);
 		horizontalLayout.setExpandRatio(showTrailerButton, 0);

@@ -1,5 +1,20 @@
 package com.rustedbrain.study.course.service;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.http.Cookie;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserInfo;
 import com.rustedbrain.study.course.model.dto.UserRole;
@@ -7,15 +22,6 @@ import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.servlet.http.Cookie;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -51,7 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	public UserRole getUserRole() {
-		if (isAuthenticated()) {
+		if ( isAuthenticated() ) {
 			return UserRole.valueOf(VaadinSession.getCurrent().getAttribute(SESSION_USER_ROLE).toString());
 		} else {
 			return UserRole.NOT_AUTHORIZED;
@@ -64,11 +70,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Override
 	public User getAuthenticUser() {
-		if (!isAuthenticated()) {
+		if ( !isAuthenticated() ) {
 			throw new IllegalStateException("Cannot retrieve not authenticated user.");
 		}
 		Optional<User> optionalUser = Optional.ofNullable(authorizationUserService.getUser(getUserLogin()));
-		if (!optionalUser.isPresent()) {
+		if ( !optionalUser.isPresent() ) {
 			throw new IllegalStateException("User with specified login/mail not found.");
 		} else {
 			return optionalUser.get();
@@ -89,7 +95,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		switch (authorizedUserRole) {
 		case ADMINISTRATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
-			if (optionalAuthUser.isPresent()) {
+			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
 						.changeUserName(id, name);
 			} else {
@@ -111,7 +117,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		switch (role) {
 		case ADMINISTRATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
-			if (optionalAuthUser.isPresent()) {
+			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
 						.changeUserLogin(id, login);
 			} else {
@@ -133,7 +139,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		switch (role) {
 		case ADMINISTRATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
-			if (optionalAuthUser.isPresent()) {
+			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
 						.changeUserMail(id, mail);
 			} else {
@@ -155,7 +161,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		switch (role) {
 		case ADMINISTRATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
-			if (optionalAuthUser.isPresent()) {
+			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
 						.changeUserSurname(id, surname);
 			} else {
@@ -177,7 +183,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		switch (role) {
 		case ADMINISTRATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
-			if (optionalAuthUser.isPresent()) {
+			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
 						.changeUserCity(id, cityId);
 			} else {
@@ -199,7 +205,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		switch (role) {
 		case ADMINISTRATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
-			if (optionalAuthUser.isPresent()) {
+			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
 						.changeUserBirthday(id, Date.from(birthday.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 			} else {
@@ -222,7 +228,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		switch (userRole) {
 		case ADMINISTRATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
-			if (optionalAuthUser.isPresent()) {
+			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
 						.changeUserBlockUntilDateAndDescription(id,
 								Date.from(blockedUntilDate.atZone(ZoneId.systemDefault()).toInstant()),
@@ -244,7 +250,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		switch (userRole) {
 		case ADMINISTRATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
-			if (optionalAuthUser.isPresent()) {
+			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
 						.changeUserBlockUntilDateAndDescription(id, Date.from(Instant.now()), "");
 			} else {
@@ -277,7 +283,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	public void logOut() {
 		Optional<Cookie> cookie = getRememberMeCookie();
-		if (cookie.isPresent()) {
+		if ( cookie.isPresent() ) {
 			String id = cookie.get().getValue();
 			authorizationUserService.removeRememberedUser(id);
 			deleteRememberMeCookie();
@@ -290,11 +296,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private boolean loginRememberedUser() {
 		Optional<Cookie> rememberMeCookie = getRememberMeCookie();
 
-		if (rememberMeCookie.isPresent()) {
+		if ( rememberMeCookie.isPresent() ) {
 			String id = rememberMeCookie.get().getValue();
 			AuthUser authUser = authorizationUserService.getRememberedUser(id);
 
-			if (authUser != null) {
+			if ( authUser != null ) {
 				VaadinSession.getCurrent().setAttribute(SESSION_USERNAME, authUser.getLogin());
 				VaadinSession.getCurrent().setAttribute(SESSION_USER_ROLE, authUser.getUserRole().name());
 				return true;
@@ -322,11 +328,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public boolean login(String loginOrMail, String password, boolean rememberMe) {
 		Optional<AuthUser> optionalUser = authorizationUserService.getIdentifiedAuthUser(loginOrMail, password);
-		if (optionalUser.isPresent()) {
+		if ( optionalUser.isPresent() ) {
 			AuthUser user = optionalUser.get();
 			VaadinSession.getCurrent().setAttribute(SESSION_USERNAME, user.getLogin());
 			VaadinSession.getCurrent().setAttribute(SESSION_USER_ROLE, user.getUserRole().name());
-			if (rememberMe) {
+			if ( rememberMe ) {
 				rememberUser(user.getLogin(), user.getUserRole());
 			}
 			return true;

@@ -1,15 +1,25 @@
 package com.rustedbrain.study.course.view.authentication.layout;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.util.StringUtils;
+
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.view.authentication.ProfileView;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ValueChangeMode;
-import com.vaadin.ui.*;
-import org.springframework.util.StringUtils;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.PopupView;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 
 public class AdministrationCityPanel extends Panel {
 
@@ -28,12 +38,21 @@ public class AdministrationCityPanel extends Panel {
 
 	private Layout showCitySelectionPanel(List<City> cities) {
 		VerticalLayout mainLayout = new VerticalLayout();
+		HorizontalLayout gridFormLayout = getGridSaveDeleteFormLayout(cities);
+		HorizontalLayout filterLayout = getFilterLayout();
 
-		grid.setItems(cities);
-		grid.addColumn(City::getName).setCaption("Name");
-		grid.setSelectionMode(Grid.SelectionMode.SINGLE);
-		grid.setSizeFull();
+		Button addCityButton = new Button("Add new city");
+		addCityButton.addClickListener(clickEvent -> {
+			grid.deselectAll();
+			filterLayout.addComponent(addNewCityButtonClick());
+		});
 
+		HorizontalLayout toolbar = new HorizontalLayout(filterLayout, addCityButton);
+		mainLayout.addComponents(toolbar, gridFormLayout);
+		return mainLayout;
+	}
+
+	private HorizontalLayout getFilterLayout() {
 		TextField filterTextField = new TextField();
 		filterTextField.setPlaceholder("Filter by name...");
 		filterTextField.setValueChangeMode(ValueChangeMode.EAGER);
@@ -45,19 +64,18 @@ public class AdministrationCityPanel extends Panel {
 
 		HorizontalLayout filterLayout = new HorizontalLayout(filterTextField, clearFilterTextButton);
 		filterLayout.setSpacing(false);
+		return filterLayout;
+	}
 
-		Button addCityButton = new Button("Add new city");
-		addCityButton.addClickListener(clickEvent -> {
-			grid.deselectAll();
-			filterLayout.addComponent(addNewCityButtonClick());
-		});
-
-		HorizontalLayout toolbar = new HorizontalLayout(filterLayout, addCityButton);
-
+	private HorizontalLayout getGridSaveDeleteFormLayout(List<City> cities) {
+		grid.setItems(cities);
+		grid.addColumn(City::getName).setCaption("Name");
+		grid.setSelectionMode(Grid.SelectionMode.SINGLE);
+		grid.setSizeFull();
 		SaveDeleteForm saveDeleteForm = new SaveDeleteForm();
 
 		grid.addSelectionListener(selectionEvent -> {
-			if (grid.getSelectionModel().getFirstSelectedItem().isPresent()) {
+			if ( grid.getSelectionModel().getFirstSelectedItem().isPresent() ) {
 				saveDeleteForm.setSelectedCity(selectionEvent.getFirstSelectedItem().get());
 				saveDeleteForm.setVisible(true);
 			} else {
@@ -69,10 +87,7 @@ public class AdministrationCityPanel extends Panel {
 		HorizontalLayout gridFormLayout = new HorizontalLayout(grid, saveDeleteForm);
 		gridFormLayout.setSizeFull();
 		gridFormLayout.setExpandRatio(grid, 1);
-
-		mainLayout.addComponents(toolbar, gridFormLayout);
-
-		return mainLayout;
+		return gridFormLayout;
 	}
 
 	private PopupView addNewCityButtonClick() {
@@ -99,11 +114,11 @@ public class AdministrationCityPanel extends Panel {
 	}
 
 	private void getFilteredByNameCities(String filterText) {
-		if (StringUtils.isEmpty(filterText)) {
+		if ( StringUtils.isEmpty(filterText) ) {
 			grid.setItems(cities);
 		} else {
-			List<City> filteredCities = cities.stream().filter(city -> city.getName().contains(filterText))
-					.collect(Collectors.toList());
+			List<City> filteredCities =
+					cities.stream().filter(city -> city.getName().contains(filterText)).collect(Collectors.toList());
 			grid.setItems(filteredCities);
 		}
 	}

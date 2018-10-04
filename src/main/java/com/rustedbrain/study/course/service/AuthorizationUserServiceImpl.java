@@ -1,14 +1,5 @@
 package com.rustedbrain.study.course.service;
 
-import com.rustedbrain.study.course.model.dto.AuthUser;
-import com.rustedbrain.study.course.model.dto.UserInfo;
-import com.rustedbrain.study.course.model.dto.UserRole;
-import com.rustedbrain.study.course.model.persistence.authorization.*;
-import com.rustedbrain.study.course.service.repository.*;
-import com.rustedbrain.study.course.service.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.math.BigInteger;
 import java.security.AccessControlException;
 import java.security.SecureRandom;
@@ -16,6 +7,25 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.rustedbrain.study.course.model.dto.AuthUser;
+import com.rustedbrain.study.course.model.dto.UserInfo;
+import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.Administrator;
+import com.rustedbrain.study.course.model.persistence.authorization.Manager;
+import com.rustedbrain.study.course.model.persistence.authorization.Member;
+import com.rustedbrain.study.course.model.persistence.authorization.Moderator;
+import com.rustedbrain.study.course.model.persistence.authorization.Paymaster;
+import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.service.repository.AdministratorRepository;
+import com.rustedbrain.study.course.service.repository.ManagerRepository;
+import com.rustedbrain.study.course.service.repository.MemberRepository;
+import com.rustedbrain.study.course.service.repository.ModeratorRepository;
+import com.rustedbrain.study.course.service.repository.PaymasterRepository;
+import com.rustedbrain.study.course.service.util.Validator;
 
 @Service
 public class AuthorizationUserServiceImpl implements AuthorizationUserService {
@@ -29,7 +39,7 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 	private SecureRandom random = new SecureRandom();
 	private Map<String, AuthUser> rememberedUsers = new HashMap<>();
 
-	public UserPropertiesAccessor getUserPropertiesAccessor(UserRole role) {
+	public UserPropertiesAccessor<?> getUserPropertiesAccessor(UserRole role) {
 		switch (role) {
 		case MODERATOR:
 			return new UserPropertiesAccessorImpl<>(moderatorRepository);
@@ -51,23 +61,23 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 	@Override
 	public User getUser(String login) {
 		User user = memberRepository.findByLogin(login);
-		if (user != null) {
+		if ( user != null ) {
 			return user;
 		}
 		user = administratorRepository.findByLogin(login);
-		if (user != null) {
+		if ( user != null ) {
 			return user;
 		}
 		user = paymasterRepository.findByLogin(login);
-		if (user != null) {
+		if ( user != null ) {
 			return user;
 		}
 		user = moderatorRepository.findByLogin(login);
-		if (user != null) {
+		if ( user != null ) {
 			return user;
 		}
 		user = managerRepository.findByLogin(login);
-		if (user != null) {
+		if ( user != null ) {
 			return user;
 		}
 		return null;
@@ -106,7 +116,7 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 	@Override
 	public Optional<AuthUser> getIdentifiedAuthUser(String login, String password) {
 		for (Validator validator : Validator.values()) {
-			if (validator.isValid(login)) {
+			if ( validator.isValid(login) ) {
 				switch (validator) {
 				case MAIL_VALIDATOR: {
 					return getAuthUserByMail(login, password);
@@ -129,23 +139,23 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 
 	private Optional<AuthUser> getAuthUserByLogin(String login, String password) {
 		Member member = memberRepository.findByLogin(login);
-		if (isNotNullPasswordIdentified(member, password)) {
+		if ( isNotNullPasswordIdentified(member, password) ) {
 			return Optional.of(new AuthUser(member.getLogin(), UserRole.MEMBER));
 		}
 		Administrator optionalAdministrator = administratorRepository.findByLogin(login);
-		if (isNotNullPasswordIdentified(optionalAdministrator, password)) {
+		if ( isNotNullPasswordIdentified(optionalAdministrator, password) ) {
 			return Optional.of(new AuthUser(optionalAdministrator.getLogin(), UserRole.ADMINISTRATOR));
 		}
 		Manager optionalManager = managerRepository.findByLogin(login);
-		if (isNotNullPasswordIdentified(optionalManager, password)) {
+		if ( isNotNullPasswordIdentified(optionalManager, password) ) {
 			return Optional.of(new AuthUser(optionalManager.getLogin(), UserRole.MANAGER));
 		}
 		Moderator optionalModerator = moderatorRepository.findByLogin(login);
-		if (isNotNullPasswordIdentified(optionalModerator, password)) {
+		if ( isNotNullPasswordIdentified(optionalModerator, password) ) {
 			return Optional.of(new AuthUser(optionalModerator.getLogin(), UserRole.MODERATOR));
 		}
 		Paymaster paymaster = paymasterRepository.findByLogin(login);
-		if (isNotNullPasswordIdentified(paymaster, password)) {
+		if ( isNotNullPasswordIdentified(paymaster, password) ) {
 			return Optional.of(new AuthUser(paymaster.getLogin(), UserRole.PAYMASTER));
 		}
 		return Optional.empty();
@@ -153,7 +163,7 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 
 	private boolean isNotNullPasswordIdentified(User user, String password) {
 		boolean identified = user != null && user.getPassword().equals(password);
-		if (identified && user.getBlockPeriod() != null && user.getBlockPeriod().after(new Date())) {
+		if ( identified && user.getBlockPeriod() != null && user.getBlockPeriod().after(new Date()) ) {
 			throw new AccessControlException("User is blocked and cannot use service until \"" + user.getBlockPeriod()
 					+ "\", reason \"" + user.getBlockDescription() + "\"");
 		} else {
@@ -163,23 +173,23 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 
 	private Optional<AuthUser> getAuthUserByMail(String mail, String password) {
 		Member member = memberRepository.findByEmail(mail);
-		if (isNotNullPasswordIdentified(member, password)) {
+		if ( isNotNullPasswordIdentified(member, password) ) {
 			return Optional.of(new AuthUser(member.getLogin(), UserRole.MEMBER));
 		}
 		Administrator optionalAdministrator = administratorRepository.findByEmail(mail);
-		if (isNotNullPasswordIdentified(optionalAdministrator, password)) {
+		if ( isNotNullPasswordIdentified(optionalAdministrator, password) ) {
 			return Optional.of(new AuthUser(optionalAdministrator.getLogin(), UserRole.ADMINISTRATOR));
 		}
 		Manager optionalManager = managerRepository.findByEmail(mail);
-		if (isNotNullPasswordIdentified(optionalManager, password)) {
+		if ( isNotNullPasswordIdentified(optionalManager, password) ) {
 			return Optional.of(new AuthUser(optionalManager.getLogin(), UserRole.MANAGER));
 		}
 		Moderator optionalModerator = moderatorRepository.findByEmail(mail);
-		if (isNotNullPasswordIdentified(optionalModerator, password)) {
+		if ( isNotNullPasswordIdentified(optionalModerator, password) ) {
 			return Optional.of(new AuthUser(optionalModerator.getLogin(), UserRole.MODERATOR));
 		}
 		Paymaster paymaster = paymasterRepository.findByEmail(mail);
-		if (isNotNullPasswordIdentified(paymaster, password)) {
+		if ( isNotNullPasswordIdentified(paymaster, password) ) {
 			return Optional.of(new AuthUser(paymaster.getLogin(), UserRole.PAYMASTER));
 		}
 		return Optional.empty();
@@ -201,9 +211,9 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 
 	@Override
 	public Optional<Administrator> getAdministrator(String userLogin) {
-		Optional<Administrator> optionalAdministrator = Optional
-				.ofNullable(administratorRepository.findByLogin(userLogin));
-		if (!optionalAdministrator.isPresent()) {
+		Optional<Administrator> optionalAdministrator =
+				Optional.ofNullable(administratorRepository.findByLogin(userLogin));
+		if ( !optionalAdministrator.isPresent() ) {
 			optionalAdministrator = Optional.ofNullable(administratorRepository.findByEmail(userLogin));
 		}
 		return optionalAdministrator;
@@ -212,43 +222,22 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 	@Override
 	public Optional<AuthUser> getAuthUserById(long id) {
 		Optional<Member> member = memberRepository.findById(id);
-		if (member.isPresent()) {
+		if ( member.isPresent() ) {
 			return Optional.of(new AuthUser(member.get().getLogin(), UserRole.MEMBER));
 		}
 		Optional<Administrator> optionalAdministrator = administratorRepository.findById(id);
-		if (optionalAdministrator.isPresent()) {
+		if ( optionalAdministrator.isPresent() ) {
 			return Optional.of(new AuthUser(optionalAdministrator.get().getLogin(), UserRole.ADMINISTRATOR));
 		}
 		Optional<Manager> optionalManager = managerRepository.findById(id);
-		if (optionalManager.isPresent()) {
+		if ( optionalManager.isPresent() ) {
 			return Optional.of(new AuthUser(optionalManager.get().getLogin(), UserRole.MANAGER));
 		}
 		Optional<Moderator> optionalModerator = moderatorRepository.findById(id);
-		if (optionalModerator.isPresent()) {
+		if ( optionalModerator.isPresent() ) {
 			return Optional.of(new AuthUser(optionalModerator.get().getLogin(), UserRole.MODERATOR));
 		}
 		Optional<Paymaster> paymaster = paymasterRepository.findById(id);
 		return paymaster.map(paymaster1 -> new AuthUser(paymaster1.getLogin(), UserRole.PAYMASTER));
-	}
-
-	private User getUser(long id) {
-		Optional<Member> member = memberRepository.findById(id);
-		if (member.isPresent()) {
-			return member.get();
-		}
-		Optional<Administrator> optionalAdministrator = administratorRepository.findById(id);
-		if (optionalAdministrator.isPresent()) {
-			return optionalAdministrator.get();
-		}
-		Optional<Manager> optionalManager = managerRepository.findById(id);
-		if (optionalManager.isPresent()) {
-			return optionalManager.get();
-		}
-		Optional<Moderator> optionalModerator = moderatorRepository.findById(id);
-		if (optionalModerator.isPresent()) {
-			return optionalModerator.get();
-		}
-		Optional<Paymaster> paymaster = paymasterRepository.findById(id);
-		return paymaster.orElse(null);
 	}
 }

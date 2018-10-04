@@ -21,7 +21,7 @@ public interface UserPropertiesAccessor<T extends User> {
 
 	void changeUserLogin(long id, String login);
 
-	List findAll();
+	List<?> findAll();
 
 	void changeUserBlockUntilDateAndDescription(long id, Date blockDate, String description);
 }

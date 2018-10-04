@@ -3,13 +3,16 @@ package com.rustedbrain.study.course.view.authentication;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.CityEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.FilmScreeningEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.MovieEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaHallEditPresenter;
 import com.rustedbrain.study.course.view.ApplicationView;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,9 +31,9 @@ public interface ProfileView extends ApplicationView {
 
 	void addAdministrationTab(User currUser, List<City> cities, List<Movie> movies);
 
-	void addStatisticsTab();
+	void addStatisticsTab(List<City> cities);
 
-	TabSheet createStatisticsTab();
+	Panel createStatisticsTab(List<City> cities);
 
 	void setAdminEditUserSelected(User currentUser);
 
@@ -85,5 +88,13 @@ public interface ProfileView extends ApplicationView {
 		void reload();
 
 		MovieEditPresenter getMovieEditPresenter();
+
+		FilmScreeningEditPresenter getFilmScreeningEditPresenter();
+
+		void buttonFilmScreeningEventsClicked(FilmScreening selectedFilmScreening);
 	}
+
+	void showFilmScreeningEventsWindow(FilmScreening selectedFilmScreening);
+
+	void closeFilmScreeningEventsWindow();
 }

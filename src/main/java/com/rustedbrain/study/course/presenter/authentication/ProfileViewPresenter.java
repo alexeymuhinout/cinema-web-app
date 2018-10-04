@@ -16,10 +16,12 @@ import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaHallEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.CityEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.FilmScreeningEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.MovieEditPresenter;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.service.CinemaService;
@@ -45,6 +47,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	private CinemaEditPresenter cinemaEditPresenter;
 	private CinemaHallEditPresenter cinemaHallEditPresenter;
 	private MovieEditPresenter movieEditPresenter;
+	private FilmScreeningEditPresenter filmScreeningEditPresenter;
 
 	@Autowired
 	public ProfileViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
@@ -54,6 +57,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 		cinemaEditPresenter = new CinemaEditPresenter(cinemaService);
 		cinemaHallEditPresenter = new CinemaHallEditPresenter(cinemaService);
 		movieEditPresenter = new MovieEditPresenter(cinemaService);
+		filmScreeningEditPresenter = new FilmScreeningEditPresenter(cinemaService);
 	}
 
 	@Override
@@ -99,7 +103,8 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 
 	private void addStatisticsTab(UserRole role) {
 		logger.info("Statistics tab successfully added.");
-		view.addStatisticsTab();
+		List<City> cities = cinemaService.getCities();
+		view.addStatisticsTab(cities);
 	}
 
 	private void addAdministrationTab(UserRole role) {
@@ -268,5 +273,15 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	@Override
 	public MovieEditPresenter getMovieEditPresenter() {
 		return movieEditPresenter;
+	}
+
+	@Override
+	public FilmScreeningEditPresenter getFilmScreeningEditPresenter() {
+		return filmScreeningEditPresenter;
+	}
+
+	@Override
+	public void buttonFilmScreeningEventsClicked(FilmScreening selectedFilmScreening) {
+		view.showFilmScreeningEventsWindow(selectedFilmScreening);
 	}
 }

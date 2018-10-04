@@ -6,7 +6,7 @@ import com.rustedbrain.study.course.service.repository.UserRepository;
 import java.util.Date;
 import java.util.List;
 
-public class UserPropertiesAccessorImpl<T extends User> implements UserPropertiesAccessor {
+public class UserPropertiesAccessorImpl<T extends User> implements UserPropertiesAccessor<T> {
 
 	private UserRepository<T> repository;
 

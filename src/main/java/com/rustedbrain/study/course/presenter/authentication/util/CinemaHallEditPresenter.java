@@ -1,12 +1,11 @@
 package com.rustedbrain.study.course.presenter.authentication.util;
 
+import java.util.Optional;
+
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.service.CinemaService;
 import com.rustedbrain.study.course.view.util.PageNavigator;
-import com.vaadin.ui.TextField;
-
-import java.util.Optional;
 
 public class CinemaHallEditPresenter {
 

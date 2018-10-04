@@ -1,18 +1,30 @@
 package com.rustedbrain.study.course.view.authentication.layout;
 
-import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
-import com.rustedbrain.study.course.model.persistence.cinema.City;
-import com.rustedbrain.study.course.view.authentication.ProfileView;
-import com.vaadin.icons.VaadinIcons;
-import com.vaadin.shared.ui.ValueChangeMode;
-import com.vaadin.ui.*;
-import org.springframework.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.util.StringUtils;
+
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.view.authentication.ProfileView;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.ValueChangeMode;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.PopupView;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 
 public class AdministrationCinemaPanel extends Panel {
 	/**
@@ -35,14 +47,7 @@ public class AdministrationCinemaPanel extends Panel {
 
 	private Layout showCinemaSelectionPanel(Set<Cinema> cinemas) {
 		VerticalLayout mainLayout = new VerticalLayout();
-
-		grid.setItems(cinemas);
-		grid.addColumn(Cinema::getName).setCaption("Name");
-		grid.addColumn(cinema -> cinema.getCity().getName()).setCaption("City");
-		grid.addColumn(Cinema::getLocation).setCaption("Location");
-		grid.setSelectionMode(Grid.SelectionMode.SINGLE);
-		grid.setSizeFull();
-
+		HorizontalLayout gridFormLayout = getGridSaveDeleteFormLayout(cinemas);
 		HorizontalLayout filterLayout = getFilterLayout();
 
 		Button addNewCinemaButton = new Button("Add new cinema");
@@ -52,7 +57,17 @@ public class AdministrationCinemaPanel extends Panel {
 		});
 
 		HorizontalLayout toolbar = new HorizontalLayout(filterLayout, addNewCinemaButton);
+		mainLayout.addComponents(toolbar, gridFormLayout);
+		return mainLayout;
+	}
 
+	private HorizontalLayout getGridSaveDeleteFormLayout(Set<Cinema> cinemas) {
+		grid.setItems(cinemas);
+		grid.addColumn(Cinema::getName).setCaption("Name");
+		grid.addColumn(cinema -> cinema.getCity().getName()).setCaption("City");
+		grid.addColumn(Cinema::getLocation).setCaption("Location");
+		grid.setSelectionMode(Grid.SelectionMode.SINGLE);
+		grid.setSizeFull();
 		SaveDeleteForm saveDeleteForm = new SaveDeleteForm();
 
 		grid.addSelectionListener(selectionEvent -> {
@@ -68,10 +83,7 @@ public class AdministrationCinemaPanel extends Panel {
 		HorizontalLayout gridFormLayout = new HorizontalLayout(grid, saveDeleteForm);
 		gridFormLayout.setSizeFull();
 		gridFormLayout.setExpandRatio(grid, 1);
-
-		mainLayout.addComponents(toolbar, gridFormLayout);
-
-		return mainLayout;
+		return gridFormLayout;
 	}
 
 	private HorizontalLayout getFilterLayout() {
@@ -111,8 +123,7 @@ public class AdministrationCinemaPanel extends Panel {
 					cinemaViewListener.getCinemaEditPresenter().buttonAddNewCinemaClicked(
 							cinemaCityComboBox.getSelectedItem().get(), cinemaNameTextField.getValue(),
 							cinemaLocationTextField.getValue());
-					Notification.show("Cinema create", "Cinema name: " + cinemaNameTextField.getValue(),
-							Notification.Type.HUMANIZED_MESSAGE);
+					cinemaViewListener.reload();
 				} else {
 					Notification.show("Please select City", "", Notification.Type.ERROR_MESSAGE);
 				}

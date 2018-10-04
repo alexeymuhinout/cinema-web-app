@@ -1,5 +1,15 @@
 package com.rustedbrain.study.course.presenter.cinema;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+
 import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.Member;
@@ -12,15 +22,6 @@ import com.rustedbrain.study.course.view.util.PageNavigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @UIScope
 @SpringComponent
@@ -34,7 +35,6 @@ public class TicketBuyingViewPresenter implements TicketsBuyingView.TicketBuyVie
 	public static final String SEATS_ID_PARAM_KEY = "seats_id";
 	public static final String PARAM_SEPARATOR = ", ";
 	private static final Logger logger = Logger.getLogger(TicketBuyingViewPresenter.class.getName());
-	private static final int DEFAULT_REDIRECT_TIMEOUT = 5;
 	private final CinemaService cinemaService;
 	private final AuthenticationService authenticationService;
 	private TicketsBuyingView view;
@@ -56,7 +56,7 @@ public class TicketBuyingViewPresenter implements TicketsBuyingView.TicketBuyVie
 				.map(String::trim).mapToLong(Long::parseLong).boxed().collect(Collectors.toList());
 		this.filmScreeningEvent = cinemaService.getFilmScreeningEvent(eventId);
 		this.seats = cinemaService.getSeats(seatIds);
-		if (authenticationService.isAuthenticated() && UserRole.MEMBER.equals(authenticationService.getUserRole())) {
+		if ( authenticationService.isAuthenticated() && UserRole.MEMBER.equals(authenticationService.getUserRole()) ) {
 			Member member = cinemaService.getMemberByLogin(authenticationService.getUserLogin());
 			this.view.showFilmScreeningEvent(filmScreeningEvent, seats, member.getName(), member.getSurname(),
 					member.getEmail());
@@ -72,13 +72,13 @@ public class TicketBuyingViewPresenter implements TicketsBuyingView.TicketBuyVie
 
 	@Override
 	public void buttonReserveClicked(String name, String surname, String value) {
-		if (name == null || name.isEmpty()) {
+		if ( name == null || name.isEmpty() ) {
 			view.showError("Please specify your name");
-		} else if (surname == null || surname.isEmpty()) {
+		} else if ( surname == null || surname.isEmpty() ) {
 			view.showError("Please specify your surname");
 		} else {
 			try {
-				if (authenticationService.isAuthenticated()) {
+				if ( authenticationService.isAuthenticated() ) {
 					List<TicketInfo> tickets = cinemaService.reserveTickets(name, surname,
 							authenticationService.getUserLogin(), filmScreeningEvent, seats);
 					logger.info("TicketInfo's successfully reserved: " + tickets);
@@ -101,5 +101,6 @@ public class TicketBuyingViewPresenter implements TicketsBuyingView.TicketBuyVie
 	@Override
 	public void buttonBuyClicked(String name, String surname, String value) {
 		view.showError("Can not buy tickets. This feature is not realized yet.");
+		// TODO create buying ticket
 	}
 }

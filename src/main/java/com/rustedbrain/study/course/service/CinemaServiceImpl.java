@@ -2,6 +2,7 @@ package com.rustedbrain.study.course.service;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.sql.Time;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -170,7 +171,7 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public Page<City> getCitiesPage(int page, int pageSize) {
-		return cityRepository.findAll(new PageRequest(page, pageSize));
+		return cityRepository.findAll(PageRequest.of(page, pageSize));
 	}
 
 	@Override
@@ -180,7 +181,7 @@ public class CinemaServiceImpl implements CinemaService {
 
 	@Override
 	public Page<Cinema> getCinemasPage(int page, int pageSize, Sort sort) {
-		return cinemaRepository.findAll(new PageRequest(page, pageSize, sort));
+		return cinemaRepository.findAll(PageRequest.of(page, pageSize, sort));
 	}
 
 	@Override
@@ -567,7 +568,6 @@ public class CinemaServiceImpl implements CinemaService {
 			String newCountry, LocalDateTime newMovieReleaseDate) {
 		movieRepository.editMovie(selectedMovie.getId(), newOriginalMovieName, newLocalizeMovieName, newCountry,
 				Date.from(newMovieReleaseDate.atZone(ZoneId.systemDefault()).toInstant()));
-
 	}
 
 	@Override
@@ -606,4 +606,46 @@ public class CinemaServiceImpl implements CinemaService {
 		return movieRepository.findAll();
 	}
 
+	@Override
+	public void createFilmScreening(Movie movie, Cinema cinema, java.sql.Date startDate, java.sql.Date endDate) {
+		FilmScreening filmScreening = new FilmScreening();
+		filmScreening.setAvailableToBuy(true);
+		filmScreening.setRegistrationDate(new Date());
+		filmScreening.setLastAccessDate(new Date());
+		filmScreening.setCinema(cinema);
+		filmScreening.setMovie(movie);
+		filmScreening.setStartDate(startDate);
+		filmScreening.setEndDate(endDate);
+		filmScreening.setCinema(cinema);
+		filmScreeningRepository.save(filmScreening);
+	}
+
+	@Override
+	public void editFilmScreening(long id, Movie movie, Cinema cinema, Date startDate, Date endDate) {
+		filmScreeningRepository.editFilmScreening(id, movie, cinema, new java.sql.Date(startDate.getTime()),
+				new java.sql.Date(endDate.getTime()));
+	}
+
+	@Override
+	public void deleteFilmScreening(long id) {
+		filmScreeningRepository.deleteById(id);
+	}
+
+	@Override
+	public void deleteFilmScreeningEvent(long id) {
+		filmScreeningEventRepository.deleteById(id);
+	}
+
+	@Override
+	public void createFilmScreeningEvent(FilmScreening filmScreening, CinemaHall cinemaHall, java.sql.Date date,
+			Time time) {
+		FilmScreeningEvent filmScreeningEvent = new FilmScreeningEvent();
+		filmScreeningEvent.setRegistrationDate(new Date());
+		filmScreeningEvent.setLastAccessDate(new Date());
+		filmScreeningEvent.setFilmScreening(filmScreening);
+		filmScreeningEvent.setTime(time);
+		filmScreeningEvent.setCinemaHall(cinemaHall);
+		filmScreeningEvent.setDate(date);
+		filmScreeningEventRepository.save(filmScreeningEvent);
+	}
 }

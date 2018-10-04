@@ -39,7 +39,6 @@ public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView
 	 * 
 	 */
 	private static final long serialVersionUID = -3307581243415244434L;
-	private static final String SELECT_SEAT_FOR_BUYING_TICKET_WARNING = "Please select seat's";
 	private final AuthenticationService authenticationService;
 
 	private List<CinemaHallView.CinemaHallViewListener> cinemaHallViewListeners = new ArrayList<>();

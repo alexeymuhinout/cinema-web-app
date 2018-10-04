@@ -23,13 +23,11 @@ public class ProfileInfoViewPresenter implements ProfileInfoView.Listener, Seria
 	 */
 	private static final long serialVersionUID = -5683347947742290547L;
 	private ProfileInfoView view;
-	private CinemaService cinemaService;
 	private AuthenticationService authenticationService;
 	private UserInfo userInfo;
 
 	@Autowired
 	public ProfileInfoViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
-		this.cinemaService = cinemaService;
 		this.authenticationService = authenticationService;
 	}
 
@@ -41,11 +39,11 @@ public class ProfileInfoViewPresenter implements ProfileInfoView.Listener, Seria
 	@Override
 	public void entered(ViewChangeListener.ViewChangeEvent event) {
 		Optional<String> optionalId = Optional.ofNullable(event.getParameters());
-		if (optionalId.isPresent()) {
+		if ( optionalId.isPresent() ) {
 			Optional<UserInfo> optionalUserInfo = authenticationService.getUserInfo(Long.parseLong(optionalId.get()));
-			if (optionalUserInfo.isPresent()) {
+			if ( optionalUserInfo.isPresent() ) {
 				this.userInfo = optionalUserInfo.get();
-				if (authenticationService.isAuthenticated()) {
+				if ( authenticationService.isAuthenticated() ) {
 					this.view.showUserInfo(userInfo, (UserRole.MODERATOR.equals(authenticationService.getUserRole())
 							|| UserRole.ADMINISTRATOR.equals(authenticationService.getUserRole())));
 				} else {

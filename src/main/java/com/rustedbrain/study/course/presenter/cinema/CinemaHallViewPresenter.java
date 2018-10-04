@@ -1,5 +1,13 @@
 package com.rustedbrain.study.course.presenter.cinema;
 
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
 import com.rustedbrain.study.course.model.persistence.cinema.Seat;
 import com.rustedbrain.study.course.service.AuthenticationService;
@@ -9,13 +17,6 @@ import com.rustedbrain.study.course.view.util.PageNavigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.logging.Logger;
 
 @UIScope
 @SpringComponent
@@ -27,7 +28,6 @@ public class CinemaHallViewPresenter implements CinemaHallView.CinemaHallViewLis
 	private static final long serialVersionUID = 3731734121259034867L;
 	private static final Logger logger = Logger.getLogger(CinemaHallViewPresenter.class.getName());
 	private final CinemaService cinemaService;
-	private final AuthenticationService authenticationService;
 	private CinemaHallView view;
 	private FilmScreeningEvent filmScreeningEvent;
 	private Set<Seat> selectedSeats;
@@ -35,12 +35,11 @@ public class CinemaHallViewPresenter implements CinemaHallView.CinemaHallViewLis
 	@Autowired
 	public CinemaHallViewPresenter(CinemaService cinemaService, AuthenticationService authenticationService) {
 		this.cinemaService = cinemaService;
-		this.authenticationService = authenticationService;
 	}
 
 	@Override
 	public void fireSeatSelected(Seat seat) {
-		if (selectedSeats.contains(seat)) {
+		if ( selectedSeats.contains(seat) ) {
 			this.selectedSeats.remove(seat);
 			this.view.unsetSelectedSeat(seat);
 			this.view.displaySelectedSeats(selectedSeats);
@@ -59,7 +58,7 @@ public class CinemaHallViewPresenter implements CinemaHallView.CinemaHallViewLis
 	@Override
 	public void entered(ViewChangeListener.ViewChangeEvent event) {
 		Optional<String> optionalId = Optional.ofNullable(event.getParameters());
-		if (optionalId.isPresent()) {
+		if ( optionalId.isPresent() ) {
 			this.selectedSeats = new HashSet<>();
 			this.filmScreeningEvent = cinemaService.getFilmScreeningEvent(Long.parseLong(optionalId.get()));
 			this.view.fillFilmScreeningEventPanel(this.filmScreeningEvent);
@@ -71,7 +70,7 @@ public class CinemaHallViewPresenter implements CinemaHallView.CinemaHallViewLis
 
 	@Override
 	public void buttonBuyTicketClicked() {
-		if (selectedSeats.isEmpty()) {
+		if ( selectedSeats.isEmpty() ) {
 			view.showWarning("Please select at least one seat to buy");
 		} else {
 			new PageNavigator().navigateToTicketBuyingView(filmScreeningEvent.getId(),

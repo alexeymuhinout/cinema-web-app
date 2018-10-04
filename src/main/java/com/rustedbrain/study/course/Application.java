@@ -3,6 +3,7 @@ package com.rustedbrain.study.course;
 import java.io.IOException;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -140,15 +141,15 @@ public class Application {
 
 			Set<Actor> hellBoyActorSet = getActorSet("Ron Perlman", "Selma Blair", "Jeffrey Tambor", "Karel Roden",
 					"Rupert Evans", "John Hurt");
-			//actorRepository.saveAll(hellBoyActorSet);
+			// actorRepository.saveAll(hellBoyActorSet);
 
 			Set<Actor> theGreatGatsbyActorSet = getActorSet("Leonardo DiCaprio", "Tobey Maguire", "Carey Mulligan",
 					"Joel Edgerton", "Isla Fisher", "Jason Clarke", "Amitabh Bachchan");
-			//actorRepository.saveAll(theGreatGatsbyActorSet);
+			// actorRepository.saveAll(theGreatGatsbyActorSet);
 
 			Set<Actor> theTerminatorActorSet =
 					getActorSet("Arnold Schwarzenegger", "Michael Biehn", "Linda Hamilton", "Paul Winfield");
-			//actorRepository.saveAll(theTerminatorActorSet);
+			// actorRepository.saveAll(theTerminatorActorSet);
 
 			Set<Genre> genreSet = getGenreSet("adventure", "comedy", "drama", "horror", "historical");
 			genreRepository.saveAll(genreSet);
@@ -184,12 +185,12 @@ public class Application {
 					movieRepository.getOne(movie3.getId()));
 
 			filmScreening.setFilmScreeningEvents(createFilmScreeningEvents(filmScreening,
-					(CinemaHall) cinemaHalls2.toArray()[0], new Time(14, 30, 00), new Time(16, 30, 00),
-					new Time(18, 30, 00), new Time(20, 30, 00), new Time(22, 30, 00)));
+					(CinemaHall) cinemaHalls2.toArray()[0], LocalTime.of(14, 30, 00), LocalTime.of(16, 30, 00),
+					LocalTime.of(18, 30, 00), LocalTime.of(20, 30, 00), LocalTime.of(22, 30, 00)));
 			filmScreening2.setFilmScreeningEvents(createFilmScreeningEvents(filmScreening2,
-					(CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00)));
+					(CinemaHall) cinemaHalls2.toArray()[1], LocalTime.of(17, 30, 00)));
 			filmScreening2.setFilmScreeningEvents(createFilmScreeningEvents(filmScreening2,
-					(CinemaHall) cinemaHalls2.toArray()[1], new Time(17, 30, 00)));
+					(CinemaHall) cinemaHalls2.toArray()[1], LocalTime.of(17, 30, 00)));
 
 			filmScreeningRepository.save(filmScreening);
 			filmScreeningRepository.save(filmScreening2);
@@ -233,10 +234,10 @@ public class Application {
 	}
 
 	private List<FilmScreeningEvent> createFilmScreeningEvents(FilmScreening filmScreening, CinemaHall cinemaHall,
-			Time... times) {
+			LocalTime... times) {
 		List<FilmScreeningEvent> filmScreeningEvents = new ArrayList<>();
 
-		for (Time time : times) {
+		for (LocalTime time : times) {
 			final int days_increment = 1;
 			LocalDate currDate =
 					LocalDate.from(filmScreening.getStartDate().toInstant().atZone(ZoneId.systemDefault()));
@@ -246,7 +247,7 @@ public class Application {
 				filmScreeningEvent.setRegistrationDate(new Date());
 				filmScreeningEvent.setLastAccessDate(new Date());
 				filmScreeningEvent.setFilmScreening(filmScreening);
-				filmScreeningEvent.setTime(time);
+				filmScreeningEvent.setTime(Time.valueOf(time));
 				filmScreeningEvent.setCinemaHall(cinemaHall);
 				filmScreeningEvent.setDate(java.sql.Date.valueOf(currDate));
 				filmScreeningEvents.add(filmScreeningEvent);

@@ -1,16 +1,12 @@
 package com.rustedbrain.study.course.view.components;
 
+import java.util.List;
+
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.vaadin.ui.ComboBox;
 
-import java.util.Collection;
-import java.util.List;
-
 public class CityComboBox extends ComboBox<City> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7917315707347051791L;
 
 	public CityComboBox(List<City> cities) {
@@ -45,13 +41,5 @@ public class CityComboBox extends ComboBox<City> {
 
 	public CityComboBox() {
 		super();
-	}
-
-	private CityComboBox(String caption) {
-		super(caption);
-	}
-
-	private CityComboBox(String caption, Collection<City> options) {
-		super(caption, options);
 	}
 }

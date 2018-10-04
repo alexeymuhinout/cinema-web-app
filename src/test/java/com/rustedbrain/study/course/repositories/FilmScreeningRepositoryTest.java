@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -20,36 +22,36 @@ import java.util.concurrent.TimeUnit;
 @SpringBootTest
 public class FilmScreeningRepositoryTest {
 
-    @Autowired
-    private FilmScreeningRepository repository;
+	@Autowired
+	private FilmScreeningRepository repository;
 
-    private FilmScreening filmScreening;
+	private FilmScreening filmScreening;
 
-    @Before
-    public void setUp() throws Exception {
-        Date date = Date.from(Instant.now());
+	@Before
+	public void setUp() throws Exception {
+		Date date = Date.from(Instant.now());
 
-        filmScreening = new FilmScreening();
-        filmScreening.setStartDate(new Date());
-        filmScreening.setEndDate(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(14)));
-        filmScreening.setRegistrationDate(date);
-        filmScreening.setLastAccessDate(date);
-    }
+		filmScreening = new FilmScreening();
+		filmScreening.setStartDate(java.sql.Date.valueOf(LocalDate.now(ZoneId.systemDefault())));
+		filmScreening.setEndDate(new java.sql.Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(14)));
+		filmScreening.setRegistrationDate(date);
+		filmScreening.setLastAccessDate(date);
+	}
 
-    @Test
-    public void saveFeature() throws Exception {
-        Assert.assertNotNull(repository.save(filmScreening));
-    }
+	@Test
+	public void saveFeature() throws Exception {
+		Assert.assertNotNull(repository.save(filmScreening));
+	}
 
-    @Test
-    public void deleteFeature() throws Exception {
-        repository.save(filmScreening);
-        repository.delete(filmScreening);
-        Assert.assertEquals(Optional.empty(), repository.findById(filmScreening.getId()));
-    }
+	@Test
+	public void deleteFeature() throws Exception {
+		repository.save(filmScreening);
+		repository.delete(filmScreening);
+		Assert.assertEquals(Optional.empty(), repository.findById(filmScreening.getId()));
+	}
 
-    @After
-    public void tearDown() throws Exception {
-        repository.deleteAllInBatch();
-    }
+	@After
+	public void tearDown() throws Exception {
+		repository.deleteAllInBatch();
+	}
 }

@@ -2,6 +2,7 @@ package com.rustedbrain.study.course.view.cinema;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -103,7 +104,8 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
 
 			Movie movie = filmScreening.getMovie();
 			Label movieNameLabel = new Label(movie.getLocalizedName() + "<br />" + "(" + movie.getOriginalName() + ", "
-					+ movie.getReleaseDate().getYear() + ")", ContentMode.HTML);
+					+ movie.getReleaseDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear() + ")",
+					ContentMode.HTML);
 
 			verticalLayout.addComponent(movieNameLabel);
 			verticalLayout.addComponent(createPosterImage(movie.getPosterPath()));
@@ -124,7 +126,8 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
 					.sorted(Comparator.comparing(FilmScreeningEvent::getTime)).collect(Collectors.toList());
 			for (FilmScreeningEvent filmScreeningEvent : filmScreeningEvents) {
 				Button buttonFilmViewTime = new Button(
-						filmScreeningEvent.getTime().getHours() + ":" + filmScreeningEvent.getTime().getMinutes(),
+						filmScreeningEvent.getTime().toLocalTime().getHour() + ":"
+								+ filmScreeningEvent.getTime().toLocalTime().getMinute(),
 						(Button.ClickListener) event -> listeners
 								.forEach(listener -> listener.buttonFilmViewTimeClicked(filmScreeningEvent.getId())));
 				buttonFilmViewTime.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
@@ -246,6 +249,8 @@ public class CinemaViewImpl extends VerticalLayout implements CinemaView {
 			renamePopup.setSizeUndefined();
 			cinemaNameLayout.addComponents(deletePopup, renamePopup);
 		}
+			break;
+		default:
 			break;
 		}
 

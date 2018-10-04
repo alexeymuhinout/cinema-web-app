@@ -37,10 +37,6 @@ public class AdministartionMoviePanel extends Panel {
 	public AdministartionMoviePanel(List<ProfileView.ViewListener> listeners, List<Movie> movies) {
 		this.listeners = listeners;
 		this.movies = movies;
-		/*
-		 * this.cinemas.forEach(
-		 * cinema -> cinema.getFilmScreenings().forEach(filmScreening -> movies.add(filmScreening.getMovie())));
-		 */
 		this.layout.addComponent(new Panel(showMovieSelectionPanel(movies)));
 		setContent(this.layout);
 	}
@@ -160,9 +156,6 @@ public class AdministartionMoviePanel extends Panel {
 		private Button deleteButton;
 		private Button advancedСhangesButton;
 
-		/**
-		 * 
-		 */
 		private SaveDeleteForm() {
 			Binder<Movie> movieBinder = new Binder<Movie>();
 			movieBinder.setBean(selectedMovie);
@@ -214,8 +207,11 @@ public class AdministartionMoviePanel extends Panel {
 		}
 
 		private void deleteMovie(Movie selectedMovie) {
-			// TODO Auto-generated method stub
-
+			listeners.forEach(listener -> listener.getMovieEditPresenter()
+					.buttonDeleteMovieClicked(selectedMovie.getId()));
+			this.setVisible(false);
+			movies.remove(selectedMovie);
+			grid.setItems(movies);
 		}
 
 		private void editMovie(Movie selectedMovie, String movieOriginalName, String movieLocalizeName,

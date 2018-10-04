@@ -1,15 +1,12 @@
 package com.rustedbrain.study.course.service.repository;
 
-import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
-import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
-import com.rustedbrain.study.course.model.persistence.cinema.Row;
-
-import java.util.Set;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
+import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 
 public interface CinemaHallRepository extends JpaRepository<CinemaHall, Long> {
 

@@ -3,7 +3,8 @@ package com.rustedbrain.study.course.model.persistence.cinema;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
 
 import static org.junit.Assert.*;
 
@@ -32,7 +33,7 @@ public class FilmScreeningTest {
         movie.setId(6);
         movie.setOriginalName(originalName);
         movie.setLocalizedName("LocalizedNameOne");
-        movie.setReleaseDate(new Date(2017, 3, 3));
+        movie.setReleaseDate(Date.valueOf(LocalDate.of(2017, 3, 3)));
         return movie;
     }
 
