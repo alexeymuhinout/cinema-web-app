@@ -9,9 +9,6 @@ import java.util.List;
 
 public class AdminProfileInfoLayout extends ProfileInfoLayout {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 543181990936044274L;
 	private final List<User> users;
 

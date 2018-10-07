@@ -85,6 +85,26 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 
 	@Override
 	public Optional<UserInfo> getUserInfo(long userId) {
+		Optional<Member> member = memberRepository.findById(userId);
+		if ( member.isPresent() ) {
+			return Optional.of(new UserInfo(member.get(), UserRole.MEMBER));
+		}
+		Optional<Administrator> optionalAdministrator = administratorRepository.findById(userId);
+		if ( optionalAdministrator.isPresent() ) {
+			return Optional.of(new UserInfo(optionalAdministrator.get(), UserRole.ADMINISTRATOR));
+		}
+		Optional<Manager> optionalManager = managerRepository.findById(userId);
+		if ( optionalManager.isPresent() ) {
+			return Optional.of(new UserInfo(optionalManager.get(), UserRole.MANAGER));
+		}
+		Optional<Moderator> optionalModerator = moderatorRepository.findById(userId);
+		if ( optionalModerator.isPresent() ) {
+			return Optional.of(new UserInfo(optionalModerator.get(), UserRole.MODERATOR));
+		}
+		Optional<Paymaster> paymaster = paymasterRepository.findById(userId);
+		if ( paymaster.isPresent() ) {
+			return Optional.of(new UserInfo(paymaster.get(), UserRole.PAYMASTER));
+		}
 		return Optional.empty();
 	}
 

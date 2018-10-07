@@ -3,6 +3,8 @@ package com.rustedbrain.study.course.model.dto;
 import java.sql.Time;
 import java.util.Date;
 
+import com.rustedbrain.study.course.model.persistence.cinema.Ticket;
+
 public class TicketInfo {
 
 	private long id;
@@ -15,7 +17,7 @@ public class TicketInfo {
 	private double price;
 	private boolean reserved;
 
-	public TicketInfo(com.rustedbrain.study.course.model.persistence.cinema.Ticket ticket) {
+	public TicketInfo(Ticket ticket) {
 		this(ticket.getId(), ticket.getEvent().getFilmScreening().getMovie().getLocalizedName(),
 				ticket.getEvent().getDate(), ticket.getEvent().getTime(), ticket.getEvent().getCinemaHall().getName(),
 				ticket.getSeat().getRow().getNumber(), ticket.getSeat().getNumber(), ticket.getSeat().getPrice(),

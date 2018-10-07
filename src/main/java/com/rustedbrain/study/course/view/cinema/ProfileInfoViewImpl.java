@@ -1,26 +1,31 @@
 package com.rustedbrain.study.course.view.cinema;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.rustedbrain.study.course.model.dto.UserInfo;
+import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
+import com.rustedbrain.study.course.view.authentication.layout.UserInfoLayout;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.VerticalLayout;
 
 @UIScope
 @SpringView(name = VaadinUI.PROFILE_INFO_VIEW)
 public class ProfileInfoViewImpl extends VerticalLayout implements ProfileInfoView {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4963542571831756477L;
 	private List<ProfileInfoView.Listener> listeners = new ArrayList<>();
 	private Panel userInfoPanel;
@@ -32,7 +37,7 @@ public class ProfileInfoViewImpl extends VerticalLayout implements ProfileInfoVi
 	}
 
 	private Panel getUserInfoPanel() {
-		if (userInfoPanel == null) {
+		if ( userInfoPanel == null ) {
 			userInfoPanel = new Panel();
 		}
 		return userInfoPanel;
@@ -51,8 +56,8 @@ public class ProfileInfoViewImpl extends VerticalLayout implements ProfileInfoVi
 	}
 
 	@Override
-	public void showUserInfo(UserInfo userInfo, boolean ableToEdit) {
-
+	public void showUserInfo(UserInfo userInfo, boolean ableToEdit, List<City> cities) {
+		getUserInfoPanel().setContent(new UserInfoLayout(listeners, userInfo, ableToEdit, cities));
 	}
 
 	@Override

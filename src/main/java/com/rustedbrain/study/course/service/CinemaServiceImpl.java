@@ -648,4 +648,10 @@ public class CinemaServiceImpl implements CinemaService {
 		filmScreeningEvent.setDate(date);
 		filmScreeningEventRepository.save(filmScreeningEvent);
 	}
+
+	@Override
+	public void editComment(long commentId) {
+		// TODO Auto-generated method stub
+		
+	}
 }

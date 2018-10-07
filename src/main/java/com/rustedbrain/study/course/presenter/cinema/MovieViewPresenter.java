@@ -1,5 +1,6 @@
 package com.rustedbrain.study.course.presenter.cinema;
 
+import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.Comment;
@@ -15,6 +16,7 @@ import com.vaadin.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @UIScope
@@ -84,7 +86,7 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 
 	@Override
 	public void buttonEditeCommentClicked(long commentId) {
-
+		cinemaService.editComment(commentId);
 	}
 
 	@Override
@@ -94,13 +96,13 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 			Optional<CommentReputation> commentReputationOptional = comment.getCommentReputations().stream()
 					.filter(commentReputation -> commentReputation.getUser().equals(user)).findAny();
 			if (!commentReputationOptional.isPresent()) {
-				cinemaService.addMinusCommentReputation(comment.getId(), user);
+				cinemaService.addPlusCommentReputation(comment.getId(), user);
 				view.reload();
 			} else if (!commentReputationOptional.get().isPlus()) {
 				cinemaService.invertCommentReputation(commentReputationOptional.get());
 				view.reload();
 			} else {
-				view.showError("Cannot addListener reputation to comment twice");
+				view.showError("Cannot add reputation to comment twice");
 			}
 		} catch (Exception ex) {
 			view.showError(ex.getMessage());
@@ -114,7 +116,7 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 			Optional<CommentReputation> commentReputationOptional = comment.getCommentReputations().stream()
 					.filter(commentReputation -> commentReputation.getUser().equals(user)).findAny();
 			if (!commentReputationOptional.isPresent()) {
-				cinemaService.addPlusCommentReputation(comment.getId(), user);
+				cinemaService.addMinusCommentReputation(comment.getId(), user);
 				view.reload();
 			} else if (commentReputationOptional.get().isPlus()) {
 				cinemaService.invertCommentReputation(commentReputationOptional.get());
@@ -129,11 +131,26 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 
 	@Override
 	public void buttonBlockAndDeleteClicked(long commentId, long userId) {
-
+		Optional<AuthUser> user = authenticationService.getAuthUserById(userId);
+		user.ifPresent(authUser -> {
+			view.showUserBlockWindow(userId, authUser.getLogin(), authUser.getUserRole());
+			buttonDeleteCommentClicked(commentId);
+		});
 	}
 
 	@Override
 	public void buttonBlockClicked(long userId) {
+		Optional<AuthUser> user = authenticationService.getAuthUserById(userId);
+		user.ifPresent(authUser -> {
+			view.showUserBlockWindow(userId, authUser.getLogin(), authUser.getUserRole());
+		});
+	}
 
+	@Override
+	public void buttonBlockSubmitClicked(long userId, LocalDateTime blockDateTime, String blockDescription) {
+		authenticationService.changeUserBlockUntilDate(userId, blockDateTime, blockDescription,
+				authenticationService.getUserRole());
+		view.closeUserBlockWindow();
+		view.showWarning("User successfully blocked until " + blockDateTime);	
 	}
 }

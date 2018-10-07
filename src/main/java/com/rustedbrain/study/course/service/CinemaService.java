@@ -148,4 +148,6 @@ public interface CinemaService {
 	void createFilmScreening(Movie movie, Cinema cinema, java.sql.Date startDate, java.sql.Date endDate);
 
 	void createFilmScreeningEvent(FilmScreening filmScreening, CinemaHall cinemaHall, java.sql.Date date, Time time);
+
+	void editComment(long commentId);
 }

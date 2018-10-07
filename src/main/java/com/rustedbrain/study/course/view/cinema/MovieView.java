@@ -1,9 +1,13 @@
 package com.rustedbrain.study.course.view.cinema;
 
+import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.cinema.Comment;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.view.ApplicationView;
 import com.vaadin.navigator.ViewChangeListener;
+
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 public interface MovieView extends ApplicationView {
@@ -34,5 +38,11 @@ public interface MovieView extends ApplicationView {
 		void buttonBlockAndDeleteClicked(long commentId, long userId);
 
 		void buttonBlockClicked(long userId);
+
+		void buttonBlockSubmitClicked(long userId, LocalDateTime blockDateTime, String blockDescription);
 	}
+
+	void showUserBlockWindow(long userId, String login, UserRole userRole);
+
+	void closeUserBlockWindow();
 }

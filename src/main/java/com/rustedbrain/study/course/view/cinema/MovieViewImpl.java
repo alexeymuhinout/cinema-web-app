@@ -1,5 +1,6 @@
 package com.rustedbrain.study.course.view.cinema;
 
+import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.cinema.Comment;
 import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
@@ -15,6 +16,7 @@ import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,14 +28,12 @@ import java.util.stream.Collectors;
 @SpringView(name = VaadinUI.MOVIE_VIEW)
 public class MovieViewImpl extends VerticalLayout implements MovieView {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5307694571348535300L;
 	public static final String MOVIE_ATTRIBUTE = "movie";
 	private List<MovieView.Listener> listeners = new ArrayList<>();
 	private Panel moviePanel;
 	private Panel commentsPanel;
+	private Window userBlockWindow;
 
 	@Autowired
 	public MovieViewImpl(AuthenticationService authenticationService) {
@@ -43,14 +43,14 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 	}
 
 	private Panel getMoviePanel() {
-		if (moviePanel == null) {
+		if ( moviePanel == null ) {
 			moviePanel = new Panel();
 		}
 		return moviePanel;
 	}
 
 	private Panel getCommentsPanel() {
-		if (commentsPanel == null) {
+		if ( commentsPanel == null ) {
 			commentsPanel = new Panel();
 		}
 		return commentsPanel;
@@ -70,19 +70,19 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 	private Component getMovieCommentsLayout(Set<Comment> commentsSet, boolean authorized, String login, boolean admin,
 			boolean moderator) {
 		VerticalLayout layout = new VerticalLayout();
+		List<Panel> commentsPanels =
+				commentsSet.stream().sorted(Comparator.comparing(Comment::getRegistrationDate))
+						.map(comment -> createCommentPanel(comment,
+								(authorized && comment.getUser().getLogin().equals(login)), admin, moderator))
+						.collect(Collectors.toList());
 
-		List<Panel> commentsPanels = commentsSet.stream().sorted(Comparator.comparing(Comment::getRegistrationDate))
-				.map(comment -> createCommentPanel(comment, (authorized && comment.getUser().getLogin().equals(login)),
-						admin, moderator))
-				.collect(Collectors.toList());
-
-		if (commentsPanels.isEmpty()) {
+		if ( commentsPanels.isEmpty() ) {
 			layout.addComponent(new Label("No comments yet created..."));
 		} else {
 			commentsPanels.forEach(layout::addComponent);
 		}
 
-		if (authorized) {
+		if ( authorized ) {
 			TextArea textArea = new TextArea();
 			textArea.setSizeFull();
 			Button buttonCreateMessage = new Button("Create message", (Button.ClickListener) event -> listeners
@@ -120,13 +120,13 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 				(Button.ClickListener) event -> listeners.forEach(listener -> listener.buttonMinusClicked(comment))));
 		layout.addComponent(reputationLayout);
 
-		if (creator || admin || moderator) {
+		if ( creator || admin || moderator ) {
 			layout.addComponentsAndExpand(new Button("Delete", (Button.ClickListener) event -> listeners
 					.forEach(listener -> listener.buttonDeleteCommentClicked(comment.getId()))));
 			layout.addComponentsAndExpand(new Button("Edit", (Button.ClickListener) event -> listeners
 					.forEach(listener -> listener.buttonEditeCommentClicked(comment.getId()))));
 		}
-		if (admin || moderator) {
+		if ( admin || moderator ) {
 			layout.addComponentsAndExpand(new Button("Block", (Button.ClickListener) event -> listeners
 					.forEach(listener -> listener.buttonBlockClicked(comment.getUser().getId()))));
 			layout.addComponentsAndExpand(new Button("Block And Delete",
@@ -165,8 +165,8 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 		Label countryLabel = new Label("Country: " + movie.getCountry());
 		countryLabel.setSizeFull();
 		infoLayout.addComponent(countryLabel);
-		Label releaseDateLabel = new Label(
-				"Year: " + movie.getReleaseDate().toInstant().atZone(ZoneId.systemDefault()).getYear());
+		Label releaseDateLabel =
+				new Label("Year: " + movie.getReleaseDate().toInstant().atZone(ZoneId.systemDefault()).getYear());
 		releaseDateLabel.setSizeFull();
 		infoLayout.addComponent(releaseDateLabel);
 		Label descriptionLabel = new Label(movie.getDescription());
@@ -198,5 +198,34 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 	@Override
 	public void reload() {
 		Page.getCurrent().reload();
+	}
+
+	@Override
+	public void showUserBlockWindow(long userId, String login, UserRole userRole) {
+		closeUserBlockWindow();
+		userBlockWindow = new Window("Block User");
+		userBlockWindow.addCloseListener((Window.CloseListener) e -> userBlockWindow = null);
+		userBlockWindow.setSizeUndefined();
+		userBlockWindow.setModal(true);
+		userBlockWindow.setResizable(false);
+		userBlockWindow.setDraggable(false);
+
+		Label warnLabel = new Label("If you want to block user \"" + login + "\", please specify date and description");
+		DateTimeField blockDateTimeField = new DateTimeField("Block date", LocalDateTime.now());
+		TextArea blockDescrTextField = new TextArea("Reason of blocking");
+		blockDescrTextField.setSizeFull();
+		Button buttonBlock =
+				new Button("Block", (Button.ClickListener) event -> listeners.forEach(viewListener -> viewListener
+						.buttonBlockSubmitClicked(userId, blockDateTimeField.getValue(), blockDescrTextField.getValue())));
+		userBlockWindow.setContent(new VerticalLayout(warnLabel, blockDateTimeField, blockDescrTextField, buttonBlock));
+
+		UI.getCurrent().addWindow(userBlockWindow);
+	}
+	
+	@Override
+	public void closeUserBlockWindow() {
+		if ( this.userBlockWindow != null ) {
+			this.userBlockWindow.close();
+		}
 	}
 }

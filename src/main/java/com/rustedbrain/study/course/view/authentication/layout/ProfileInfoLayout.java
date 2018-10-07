@@ -1,18 +1,15 @@
 package com.rustedbrain.study.course.view.authentication.layout;
 
+import java.util.List;
+
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.view.authentication.ProfileView;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
-import java.util.List;
-
 public class ProfileInfoLayout extends Panel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4517194847633579500L;
 	protected List<ProfileView.ViewListener> listeners;
 	protected User user;

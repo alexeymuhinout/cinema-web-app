@@ -10,11 +10,8 @@ import java.util.List;
 
 public class ProfileEditTab extends Panel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 902659509025444578L;
-	protected List<City> cities;
+	private List<City> cities;
 	protected VerticalLayout layout;
 	User currUser;
 	List<ProfileView.ViewListener> listeners;

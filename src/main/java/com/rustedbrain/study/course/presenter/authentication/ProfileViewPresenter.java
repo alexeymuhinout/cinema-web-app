@@ -34,9 +34,6 @@ import com.vaadin.spring.annotation.UIScope;
 @SpringComponent
 public class ProfileViewPresenter implements Serializable, ProfileView.ViewListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5933356439072774517L;
 	private static final Logger logger = Logger.getLogger(ProfileViewPresenter.class.getName());
 	private final CinemaService cinemaService;

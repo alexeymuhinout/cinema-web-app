@@ -1,14 +1,15 @@
 package com.rustedbrain.study.course.model.dto;
 
-import com.rustedbrain.study.course.model.persistence.authorization.User;
-
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+import com.rustedbrain.study.course.model.persistence.authorization.User;
+
 public class UserInfo {
 
 	private final boolean banned;
+	private final User user;
 	private final String city;
 	private final String login;
 	private final String name;
@@ -20,19 +21,25 @@ public class UserInfo {
 	private UserRole role;
 
 	public UserInfo(User user, UserRole role) {
+		this.user = user;
 		this.id = user.getId();
 		this.login = user.getLogin();
 		this.name = user.getName();
 		this.surname = user.getSurname();
-		this.birthday = user.getBirthday().toInstant().atZone(ZoneId.systemDefault())
-				.format(DateTimeFormatter.ISO_LOCAL_DATE);
-		this.registrationDate = user.getRegistrationDate().toInstant().atZone(ZoneId.systemDefault())
-				.format(DateTimeFormatter.ISO_LOCAL_DATE);
-		this.lastAccessDate = user.getLastAccessDate().toInstant().atZone(ZoneId.systemDefault())
-				.format(DateTimeFormatter.ISO_LOCAL_DATE);
-		this.city = user.getCity().getName();
-		this.banned = user.getBlockPeriod().after(new Date());
+		this.birthday = user.getBirthday() != null
+				? user.getBirthday().toInstant().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE)
+				: "N/A";
+		this.registrationDate = user.getRegistrationDate() != null ? user.getRegistrationDate().toInstant()
+				.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE) : "N/A";
+		this.lastAccessDate = user.getLastAccessDate() != null ? user.getLastAccessDate().toInstant()
+				.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE) : "N/A";
+		this.city = user.getCity() != null ? user.getCity().getName() : "N/A";
+		this.banned = user.getBlockPeriod() != null ? user.getBlockPeriod().after(new Date()) : false;
 		this.role = role;
+	}
+
+	public User getUser() {
+		return this.user;
 	}
 
 	public boolean isBanned() {
