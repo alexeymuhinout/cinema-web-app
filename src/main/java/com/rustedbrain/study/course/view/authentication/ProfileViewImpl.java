@@ -24,7 +24,6 @@ import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
 import com.rustedbrain.study.course.view.authentication.layout.AdminProfileEditTab;
-import com.rustedbrain.study.course.view.authentication.layout.AdminProfileInfoLayout;
 import com.rustedbrain.study.course.view.authentication.layout.AdministartionMoviePanel;
 import com.rustedbrain.study.course.view.authentication.layout.AdministrationCinemaHallPanel;
 import com.rustedbrain.study.course.view.authentication.layout.AdministrationCinemaPanel;
@@ -32,7 +31,6 @@ import com.rustedbrain.study.course.view.authentication.layout.AdministrationCit
 import com.rustedbrain.study.course.view.authentication.layout.AdministrationFilmScreeningPanel;
 import com.rustedbrain.study.course.view.authentication.layout.AdministrationStatisticPanel;
 import com.rustedbrain.study.course.view.authentication.layout.ProfileEditTab;
-import com.rustedbrain.study.course.view.authentication.layout.ProfileInfoLayout;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewBeforeLeaveEvent;
 import com.vaadin.navigator.ViewChangeListener;
@@ -68,7 +66,6 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 	private List<ProfileView.ViewListener> listeners = new ArrayList<>();
 
 	private TabSheet tabSheet;
-	private ProfileInfoLayout profileInfoTab;
 	private ProfileEditTab profileEditTab;
 	private TabSheet adminLayout;
 	private Panel statisticsLayout;
@@ -118,18 +115,6 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 	}
 
 	@Override
-	public void addProfileInfoTab(User user) {
-		if ( profileInfoTab != null ) {
-			Component oldProfileInfoLayout = this.profileInfoTab;
-			this.profileInfoTab = new ProfileInfoLayout(listeners, user);
-			tabSheet.replaceComponent(oldProfileInfoLayout, profileInfoTab);
-		} else {
-			this.profileInfoTab = new ProfileInfoLayout(listeners, user);
-			tabSheet.addTab(profileInfoTab, "Info");
-		}
-	}
-
-	@Override
 	public void addProfileAdminEditTab(User user, List<User> users, List<City> cities) {
 		if ( profileEditTab != null ) {
 			Component oldProfileEditLayout = this.profileEditTab;
@@ -152,18 +137,6 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 	public void closeFilmScreeningEventsWindow() {
 		if ( this.filmScreeningEventsWindow != null ) {
 			this.filmScreeningEventsWindow.close();
-		}
-	}
-
-	@Override
-	public void addAdminProfileInfoTab(User authenticUser, List<User> users) {
-		if ( profileInfoTab != null ) {
-			Component oldProfileInfoLayout = this.profileInfoTab;
-			this.profileInfoTab = new AdminProfileInfoLayout(listeners, authenticUser, users);
-			tabSheet.replaceComponent(oldProfileInfoLayout, profileInfoTab);
-		} else {
-			this.profileInfoTab = new AdminProfileInfoLayout(listeners, authenticUser, users);
-			tabSheet.addTab(profileInfoTab, "Info");
 		}
 	}
 
@@ -237,18 +210,13 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 	}
 
 	@Override
-	public Panel createStatisticsTab(List<City> cities) { 
-		return new AdministrationStatisticPanel(listeners,cities);
+	public Panel createStatisticsTab(List<City> cities) {
+		return new AdministrationStatisticPanel(listeners, cities);
 	}
 
 	@Override
 	public void setAdminEditUserSelected(User currUser) {
 		profileEditTab.setSelectedUser(currUser);
-	}
-
-	@Override
-	public void setAdminInfoUserSelected(User selectedUser) {
-		profileInfoTab.setSelectedUser(selectedUser);
 	}
 
 	@Override
@@ -295,7 +263,8 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 
 		Button addFilmScreeningEvent = new Button("Add");
 		addFilmScreeningEvent.addClickListener(e -> {
-			verticalLayout.addComponent(addNewFilmScreeningEventButtonClick(selectedFilmScreening,grid, filmScreeningEvents));
+			verticalLayout.addComponent(
+					addNewFilmScreeningEventButtonClick(selectedFilmScreening, grid, filmScreeningEvents));
 		});
 
 		verticalLayout.addComponents(grid, addFilmScreeningEvent);
@@ -306,7 +275,7 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 	private PopupView addNewFilmScreeningEventButtonClick(FilmScreening filmScreening, Grid<FilmScreeningEvent> grid,
 			List<FilmScreeningEvent> filmScreeningEvents) {
 		VerticalLayout createPopupContent = new VerticalLayout();
-		
+
 		Set<CinemaHall> cinemaHalls = filmScreening.getCinema().getCinemaHalls();
 		ComboBox<CinemaHall> cinemaHallComboBox = new ComboBox<>("Cinema hall");
 		cinemaHallComboBox.setEmptySelectionAllowed(false);
@@ -325,8 +294,10 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 							filmScreeningEventDateTimeField.getValue().atZone(ZoneId.systemDefault()).toLocalDate();
 					LocalTime timeEvent =
 							filmScreeningEventDateTimeField.getValue().atZone(ZoneId.systemDefault()).toLocalTime();
-					ZonedDateTime zdtEnd = ZonedDateTime.ofInstant(filmScreening.getEndDate().toInstant(), ZoneId.systemDefault());
-					ZonedDateTime zdtStart = ZonedDateTime.ofInstant(filmScreening.getStartDate().toInstant(), ZoneId.systemDefault());
+					ZonedDateTime zdtEnd =
+							ZonedDateTime.ofInstant(filmScreening.getEndDate().toInstant(), ZoneId.systemDefault());
+					ZonedDateTime zdtStart =
+							ZonedDateTime.ofInstant(filmScreening.getStartDate().toInstant(), ZoneId.systemDefault());
 					if ( filmScreeningEventDateTimeField.getValue().isBefore(zdtEnd.toLocalDateTime())
 							&& filmScreeningEventDateTimeField.getValue().isAfter(zdtStart.toLocalDateTime()) ) {
 						listener.getFilmScreeningEditPresenter().buttonAddNewFilmScreeningEventClicked(filmScreening,
@@ -350,4 +321,5 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 		popup.setPopupVisible(true);
 		return popup;
 	}
+
 }

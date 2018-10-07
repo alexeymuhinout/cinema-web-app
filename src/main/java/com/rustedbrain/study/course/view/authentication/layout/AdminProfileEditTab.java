@@ -10,9 +10,6 @@ import java.util.List;
 
 public class AdminProfileEditTab extends ProfileEditTab {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3842108913206602034L;
 	private List<User> users;
 

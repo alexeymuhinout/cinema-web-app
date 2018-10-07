@@ -17,9 +17,6 @@ import java.util.Set;
 @Table(name = "user")
 public class User extends DatabaseEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5038832294900133878L;
 	@Column(name = "login", length = 64, nullable = false, unique = true)
 	protected String login;

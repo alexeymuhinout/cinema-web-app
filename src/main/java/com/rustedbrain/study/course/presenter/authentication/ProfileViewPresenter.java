@@ -63,7 +63,6 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 		switch (role) {
 		case ADMINISTRATOR: {
 			addMessagesTab(role);
-			addProfileInfoTab(role);
 			addProfileEditTab(role);
 			addAdministrationTab(role);
 			addStatisticsTab(role);
@@ -71,26 +70,19 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 			break;
 		case PAYMASTER:
 			addMessagesTab(role);
-			addProfileInfoTab(role);
 			addProfileEditTab(role);
-			addAdministrationTab(role);
 			break;
 		case MANAGER:
 			addMessagesTab(role);
-			addProfileInfoTab(role);
 			addProfileEditTab(role);
-			addAdministrationTab(role);
 			break;
 		case MEMBER:
 			addMessagesTab(role);
-			addProfileInfoTab(role);
 			addProfileEditTab(role);
 			break;
 		case MODERATOR:
 			addMessagesTab(role);
-			addProfileInfoTab(role);
 			addProfileEditTab(role);
-			addAdministrationTab(role);
 			break;
 		case NOT_AUTHORIZED:
 			view.showError("User not authorized.");
@@ -99,7 +91,6 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	}
 
 	private void addStatisticsTab(UserRole role) {
-		logger.info("Statistics tab successfully added.");
 		List<City> cities = cinemaService.getCities();
 		view.addStatisticsTab(cities);
 	}
@@ -135,24 +126,6 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 		}
 		}
 		logger.info("Profile edit tab successfully added.");
-	}
-
-	private void addProfileInfoTab(UserRole role) {
-		switch (role) {
-		case ADMINISTRATOR: {
-			List<User> users = authenticationService.getUsersByRoles(Arrays.stream(UserRole.values())
-					.filter(rolePredicate -> !rolePredicate.equals(UserRole.NOT_AUTHORIZED))
-					.collect(Collectors.toList()));
-			view.addAdminProfileInfoTab(authenticationService.getAuthenticUser(), users);
-			logger.info("Profile info tab successfully added.");
-		}
-			break;
-		default: {
-			view.addProfileInfoTab(authenticationService.getAuthenticUser());
-			logger.info("Profile info tab successfully added.");
-		}
-			break;
-		}
 	}
 
 	private void addMessagesTab(UserRole role) {
@@ -205,11 +178,6 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	}
 
 	@Override
-	public void comboBoxInfoUserSelected(User selectedUser) {
-		view.setAdminInfoUserSelected(selectedUser);
-	}
-
-	@Override
 	public void buttonUnblockClicked(long id) {
 		authenticationService.unblockUser(id, authenticationService.getUserRole());
 		view.reload();
@@ -229,13 +197,6 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 		String myLogin = authenticationService.getUserLogin();
 		Optional<User> userOptional = users.stream().filter(user -> user.getLogin().equals(myLogin)).findAny();
 		userOptional.ifPresent(user -> view.setAdminEditUserSelected(user));
-	}
-
-	@Override
-	public void buttonInfoShowMeClicked(List<User> users) {
-		String myLogin = authenticationService.getUserLogin();
-		Optional<User> userOptional = users.stream().filter(user -> user.getLogin().equals(myLogin)).findAny();
-		userOptional.ifPresent(user -> view.setAdminInfoUserSelected(user));
 	}
 
 	@Override

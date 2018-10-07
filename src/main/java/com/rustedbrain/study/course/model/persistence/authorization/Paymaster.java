@@ -10,9 +10,6 @@ import java.util.Set;
 @Table(name = "paymaster")
 public class Paymaster extends User {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6870052176268087499L;
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cinemaId")

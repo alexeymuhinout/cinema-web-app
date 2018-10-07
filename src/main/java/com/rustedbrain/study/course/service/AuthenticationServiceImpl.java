@@ -126,6 +126,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 			break;
 		default: {
+			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+			if ( optionalAuthUser.isPresent() ) {
+				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
+						.changeUserLogin(id, login);
+			} else {
+				throw new IllegalArgumentException("User with specified id not found.");
+			}
 			// TODO: 4/8/18 Add logic to check last renaming request and prevent to change
 			// data too often
 			// TODO: 4/8/18 Add logic to create request in database about renaming for admin

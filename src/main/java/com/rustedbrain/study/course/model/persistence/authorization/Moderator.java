@@ -7,9 +7,6 @@ import javax.persistence.Table;
 @Table(name = "moderator")
 public class Moderator extends User {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 741920217200783406L;
 
 	public Moderator() {

@@ -1,31 +1,29 @@
 package com.rustedbrain.study.course.view.authentication;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
+import com.rustedbrain.study.course.presenter.authentication.util.CinemaHallEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.CityEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.FilmScreeningEditPresenter;
 import com.rustedbrain.study.course.presenter.authentication.util.MovieEditPresenter;
-import com.rustedbrain.study.course.presenter.authentication.util.CinemaHallEditPresenter;
 import com.rustedbrain.study.course.view.ApplicationView;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 public interface ProfileView extends ApplicationView {
 
 	@Autowired
 	void addListener(ViewListener listener);
-
-	void addProfileInfoTab(User user);
 
 	void showUserBlockWindow(long id, String login, UserRole userRole);
 
@@ -42,10 +40,6 @@ public interface ProfileView extends ApplicationView {
 	void addProfileAdminEditTab(User currUser, List<User> users, List<City> cities);
 
 	void closeUserBlockWindow();
-
-	void addAdminProfileInfoTab(User authenticUser, List<User> users);
-
-	void setAdminInfoUserSelected(User selectedUser);
 
 	interface ViewListener {
 
@@ -74,10 +68,6 @@ public interface ProfileView extends ApplicationView {
 		void buttonEditShowMeClicked(List<User> users);
 
 		void buttonBlockSubmitClicked(long id, LocalDateTime blockDateTime, String blockDescription);
-
-		void comboBoxInfoUserSelected(User selectedUser);
-
-		void buttonInfoShowMeClicked(List<User> users);
 
 		CityEditPresenter getCityEditPresenter();
 

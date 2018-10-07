@@ -11,9 +11,6 @@ import java.util.Set;
 @Table(name = "manager")
 public class Manager extends User {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3736287536412145893L;
 	@OneToMany(mappedBy = "manager")
 	private Set<Cinema> cinemas;
