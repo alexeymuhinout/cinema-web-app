@@ -7,9 +7,6 @@ import java.util.Date;
 @MappedSuperclass
 public class DatabaseEntity implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7773652274376011976L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,9 +46,9 @@ public class DatabaseEntity implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if ( this == o )
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if ( o == null || getClass() != o.getClass() )
 			return false;
 
 		DatabaseEntity that = (DatabaseEntity) o;

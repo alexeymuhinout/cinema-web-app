@@ -13,9 +13,6 @@ import java.util.Set;
 @Table(name = "movie")
 public class Movie extends DatabaseEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 9179493669036384025L;
 	@Column(name = "localizedName", length = 128, nullable = false)
 	private String localizedName;

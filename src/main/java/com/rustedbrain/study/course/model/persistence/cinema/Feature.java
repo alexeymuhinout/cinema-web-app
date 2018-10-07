@@ -9,17 +9,25 @@ import java.util.Set;
 @Table(name = "feature")
 public class Feature extends DatabaseEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -913536847436205300L;
-	@Column(name = "name", length = 32, nullable = false, unique = true)
+	@Column(name = "name", length = 32, nullable = false)
 	private String name;
-	@Column(name = "featureDescription", length = 256, unique = true)
+	@Column(name = "featureDescription", length = 256)
 	private String featureDescription;
-	@ManyToMany
-	@JoinTable(name = "cinemaFeature", joinColumns = @JoinColumn(name = "feature_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "cinema_id", referencedColumnName = "id"))
+	@ManyToMany(mappedBy = "features")
 	private Set<Cinema> cinemas;
+
+	public Feature(String name) {
+		this.name = name;
+	}
+
+	public Feature() {
+	}
+
+	public Feature(String name, String featureDescription) {
+		this(name);
+		this.featureDescription = featureDescription;
+	}
 
 	public Set<Cinema> getCinemas() {
 		return cinemas;
@@ -47,11 +55,11 @@ public class Feature extends DatabaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if ( this == o )
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if ( o == null || getClass() != o.getClass() )
 			return false;
-		if (!super.equals(o))
+		if ( !super.equals(o) )
 			return false;
 
 		Feature that = (Feature) o;

@@ -13,14 +13,18 @@ import java.util.Set;
 @Table(name = "genre")
 public class Genre extends DatabaseEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3579725893493586217L;
 	@Column(name = "name", length = 64, nullable = false)
 	private String name;
 	@ManyToMany(mappedBy = "genres")
 	private Set<Movie> movies = new HashSet<>();
+
+	public Genre(String name) {
+		this.name = name;
+	}
+
+	public Genre() {
+	}
 
 	public Set<Movie> getMovies() {
 		return movies;
@@ -40,11 +44,11 @@ public class Genre extends DatabaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if ( this == o )
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if ( o == null || getClass() != o.getClass() )
 			return false;
-		if (!super.equals(o))
+		if ( !super.equals(o) )
 			return false;
 
 		Genre genre = (Genre) o;

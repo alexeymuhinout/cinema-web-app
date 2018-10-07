@@ -33,9 +33,6 @@ import com.vaadin.ui.VerticalLayout;
 
 public class AdminFilmScreeningPanel extends Panel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6730582989061302558L;
 
 	protected VerticalLayout layout = new VerticalLayout();
@@ -219,9 +216,9 @@ public class AdminFilmScreeningPanel extends Panel {
 			deleteButton.addStyleName("danger");
 			setSizeUndefined();
 
-			HorizontalLayout saveDeletebuttons = new HorizontalLayout(saveButton, deleteButton);
+			HorizontalLayout saveDeleteButtons = new HorizontalLayout(saveButton, deleteButton);
 			addComponents(movieComboBox, cityComboBox, cinemaComboBox, filmScreeningStartDateTextField,
-					filmScreeningEndDateTextField, filmScreeningEventsButton, saveDeletebuttons);
+					filmScreeningEndDateTextField, filmScreeningEventsButton, saveDeleteButtons);
 
 			deleteButton.addClickListener(clickEvent -> {
 				this.deleteFilmScreening(this.selectedFilmScreening);
@@ -243,36 +240,6 @@ public class AdminFilmScreeningPanel extends Panel {
 
 		private void editFilmScreeningEventsButtonClicked(FilmScreening selectedFilmScreening) {
 			listeners.forEach(listener -> listener.buttonFilmScreeningEventsClicked(selectedFilmScreening));
-			/*
-			 * List<FilmScreeningEvent> filmScreeningEvents = selectedFilmScreening.getFilmScreeningEvents();
-			 * VerticalLayout mainlayout = new VerticalLayout();
-			 * Grid<FilmScreeningEvent> grid = new Grid<>();
-			 * grid.setItems(filmScreeningEvents);
-			 * grid.addColumn(FilmScreeningEvent::getDate).setCaption("Date");
-			 * grid.addColumn(FilmScreeningEvent::getTime).setCaption("Time");
-			 * grid.addColumn(filmScreeningEvent -> filmScreeningEvent.getCinemaHall().getName())
-			 * .setCaption("Cinema hall");
-			 * grid.addColumn(person -> "Delete", new ButtonRenderer<FilmScreeningEvent>(clickEvent -> {
-			 * listeners.forEach(listener -> listener.getFilmScreeningEditPresenter()
-			 * .buttonDeleteFilmScreeningEventClicked(clickEvent.getItem().getId()));
-			 * this.setVisible(false);
-			 * filmScreeningEvents.remove(clickEvent.getItem());
-			 * grid.setItems(filmScreeningEvents);
-			 * }));
-			 * grid.setSelectionMode(Grid.SelectionMode.SINGLE);
-			 * grid.setSizeFull();
-			 * 
-			 * mainlayout.addComponent(new Panel(grid));
-			 * 
-			 * Window window = new Window();
-			 * window.setContent(mainlayout);
-			 * this.addComponent(window);
-			 * 
-			 * PopupView popupView = new PopupView(null, mainlayout);
-			 * popupView.setSizeFull();
-			 * popupView.setPopupVisible(true);
-			 * this.addComponent(popupView);
-			 */
 		}
 
 		private void editFilmScreening(FilmScreening selectedFilmScreening, Movie movie, Cinema cinema,

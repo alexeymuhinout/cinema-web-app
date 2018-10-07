@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserInfo;
 import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
@@ -350,5 +351,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Autowired
 	public void setAuthorizationUserService(AuthorizationUserService authorizationUserService) {
 		this.authorizationUserService = authorizationUserService;
+	}
+
+	@Override
+	public List<Manager> getManagers() {
+		return authorizationUserService.getManagers();
 	}
 }

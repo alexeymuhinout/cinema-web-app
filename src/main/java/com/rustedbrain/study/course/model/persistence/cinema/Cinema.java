@@ -12,16 +12,14 @@ import java.util.Set;
 @Table(name = "cinema")
 public class Cinema extends DatabaseEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5328622101331544154L;
 	@Column(name = "name", length = 128, nullable = false)
 	private String name;
 	@OneToMany(mappedBy = "cinema")
 	@Cascade({ org.hibernate.annotations.CascadeType.DELETE })
 	private Set<FilmScreening> filmScreenings = new HashSet<>();
-	@ManyToMany(mappedBy = "cinemas")
+	@ManyToMany
+	@JoinTable(name = "cinemaFeature", joinColumns = @JoinColumn(name = "cinemaId"), inverseJoinColumns = @JoinColumn(name = "featureId"))
 	private Set<Feature> features = new HashSet<>();
 	@OneToMany(mappedBy = "cinema")
 	@Cascade({ org.hibernate.annotations.CascadeType.DELETE })
@@ -41,10 +39,11 @@ public class Cinema extends DatabaseEntity {
 		this.city = city;
 	}
 
-	public Cinema(City city, String name, String location) {
+	public Cinema(City city, String name, String location, Manager manager) {
 		this.city = city;
 		this.name = name;
 		this.location = location;
+		this.manager = manager;
 	}
 
 	public String getLocation() {
@@ -65,11 +64,11 @@ public class Cinema extends DatabaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if ( this == o )
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if ( o == null || getClass() != o.getClass() )
 			return false;
-		if (!super.equals(o))
+		if ( !super.equals(o) )
 			return false;
 
 		Cinema cinema = (Cinema) o;

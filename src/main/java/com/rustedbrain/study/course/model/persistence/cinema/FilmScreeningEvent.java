@@ -19,10 +19,6 @@ import com.rustedbrain.study.course.model.persistence.DatabaseEntity;
 @Entity
 @Table(name = "filmScreeningEvent")
 public class FilmScreeningEvent extends DatabaseEntity {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4544491762916448238L;
 	@ManyToOne
 	@JoinColumn(name = "filmScreeningId")

@@ -35,6 +35,7 @@ import com.rustedbrain.study.course.model.persistence.cinema.Actor;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.Feature;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
 import com.rustedbrain.study.course.model.persistence.cinema.Genre;
@@ -46,6 +47,7 @@ import com.rustedbrain.study.course.service.repository.AdministratorRepository;
 import com.rustedbrain.study.course.service.repository.CinemaHallRepository;
 import com.rustedbrain.study.course.service.repository.CinemaRepository;
 import com.rustedbrain.study.course.service.repository.CityRepository;
+import com.rustedbrain.study.course.service.repository.FeatureRepository;
 import com.rustedbrain.study.course.service.repository.FilmScreeningEventRepository;
 import com.rustedbrain.study.course.service.repository.FilmScreeningRepository;
 import com.rustedbrain.study.course.service.repository.GenreRepository;
@@ -74,7 +76,7 @@ public class Application {
 			GenreRepository genreRepository, ActorRepository actorRepository,
 			FilmScreeningRepository filmScreeningRepository, CinemaRepository cinemaRepository,
 			CityRepository cityRepository, AdministratorRepository administratorRepository,
-			MemberRepository memberRepository, MovieRepository movieRepository) {
+			MemberRepository memberRepository, MovieRepository movieRepository, FeatureRepository featureRepository) {
 		return (args) -> {
 			// save a couple of customers
 			administratorRepository
@@ -92,8 +94,13 @@ public class Application {
 					.save(new Moderator("BloodarModerator", "bloodarkness1996", "bloodarmoderator@gmail.com"));
 			moderatorRepository.save(new Moderator("EleonoraModerator", "eliakipa1996", "eliakipamoderator@gmail.com"));
 
-			managerRepository.save(new Manager("BloodarManager", "bloodarkness1996", "bloodarmanager@gmail.com"));
+			Manager manager1 = new Manager("BloodarManager", "bloodarkness1996", "bloodarmanager@gmail.com");
+			managerRepository.save(manager1);
 			managerRepository.save(new Manager("EleonoraManager", "eliakipa1996", "eliakipamanager@gmail.com"));
+
+			Set<Feature> features =
+					getFeatureSet("IMAX", "Accessible for disabled people", "M cafe", "TWINS", "Original voice");
+			featureRepository.saveAll(features);
 
 			City city1 = new City("New York");
 			City city2 = new City("New Jersey");
@@ -114,6 +121,8 @@ public class Application {
 			cinema5.setLocation("550 Penn St NE");
 			Cinema cinema6 = new Cinema("AMC Mazza Gallerie", city3);
 			cinema6.setLocation("5300 Wisconsin Ave NW");
+			cinema6.setManager(manager1);
+			cinema6.setFeatures(features);
 
 			cinemaRepository.save(cinema1);
 			cinemaRepository.save(cinema2);
@@ -307,6 +316,18 @@ public class Application {
 			genreSet.add(newGenre);
 		}
 		return genreSet;
+	}
+
+	private Set<Feature> getFeatureSet(String... features) {
+		Set<Feature> featureSet = new HashSet<>(features.length);
+		for (String feature : features) {
+			Feature newFeature = new Feature();
+			newFeature.setRegistrationDate(new Date());
+			newFeature.setLastAccessDate(new Date());
+			newFeature.setName(feature);
+			featureSet.add(newFeature);
+		}
+		return featureSet;
 	}
 
 	private Set<Actor> getActorSet(String... nameSurnames) {

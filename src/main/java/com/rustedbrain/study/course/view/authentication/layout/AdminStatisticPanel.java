@@ -17,11 +17,9 @@ public class AdminStatisticPanel extends Panel {
 
 	private static final long serialVersionUID = 9212178943806358923L;
 	protected VerticalLayout layout = new VerticalLayout();
-	private List<ProfileView.ViewListener> listeners;
 	private List<City> cities;
 
 	public AdminStatisticPanel(List<ProfileView.ViewListener> listeners, List<City> cities) {
-		this.listeners = listeners;
 		this.cities = cities;
 		this.layout.addComponent(new Panel(showStatisticPanel()));
 		setContent(this.layout);

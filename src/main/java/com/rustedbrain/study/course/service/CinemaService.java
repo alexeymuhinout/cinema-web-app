@@ -19,6 +19,7 @@ import org.xml.sax.SAXException;
 
 import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.exception.ResourceException;
+import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.Member;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.Actor;
@@ -26,6 +27,7 @@ import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
+import com.rustedbrain.study.course.model.persistence.cinema.Feature;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
 import com.rustedbrain.study.course.model.persistence.cinema.Genre;
@@ -46,7 +48,7 @@ public interface CinemaService {
 
 	void deleteCity(String city);
 
-	void createCinema(City city, String name, String street);
+	void createCinema(City city, String name, String street, Manager manager);
 
 	Cinema getCinema(Long cinemaId);
 
@@ -110,7 +112,8 @@ public interface CinemaService {
 
 	void createCity(String newCityName);
 
-	void editCinema(Cinema selectedCinema, String newCinemaName, City newCity, String newCinemaLocation);
+	void editCinema(Cinema selectedCinema, String newCinemaName, City newCity, String newCinemaLocation,
+			Manager newCinemaManager);
 
 	void editCinemaHall(CinemaHall selectedCinemaHall, String newCinemaHallName, Cinema newCinema);
 
@@ -150,4 +153,20 @@ public interface CinemaService {
 	void createFilmScreeningEvent(FilmScreening filmScreening, CinemaHall cinemaHall, java.sql.Date date, Time time);
 
 	void editComment(long commentId);
+
+	void createFeature(String name, String description);
+
+	void editCinemaFeatures(Cinema selectedCinema, Set<Feature> features);
+
+	List<Feature> getFeatures();
+
+	void createGenre(String name);
+
+	void createActor(String name, String surname);
+
+	void editFeature(long id, String name, String description);
+
+	void editActor(long id, String name, String surname);
+
+	void editGenre(long id, String name);
 }

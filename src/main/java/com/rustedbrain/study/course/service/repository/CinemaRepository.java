@@ -1,5 +1,6 @@
 package com.rustedbrain.study.course.service.repository;
 
+import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,6 +25,6 @@ public interface CinemaRepository extends JpaRepository<Cinema, Long> {
 
 	@Transactional
 	@Modifying
-	@Query("update Cinema cinema set cinema.name = ?2, cinema.city = ?3, cinema.location = ?4  where cinema.id = ?1")
-	void editCinema(long id, String newCinemaName, City newCinemaCity, String newCinemaLocation);
+	@Query("update Cinema cinema set cinema.name = ?2, cinema.city = ?3, cinema.location = ?4, cinema.manager = ?5  where cinema.id = ?1")
+	void editCinema(long id, String newCinemaName, City newCinemaCity, String newCinemaLocation, Manager manager);
 }

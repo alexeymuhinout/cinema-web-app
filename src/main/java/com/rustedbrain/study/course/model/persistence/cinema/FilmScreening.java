@@ -12,9 +12,6 @@ import java.util.List;
 @Table(name = "filmScreening")
 public class FilmScreening extends DatabaseEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4155594195767991639L;
 	@ManyToOne
 	private Cinema cinema;

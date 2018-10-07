@@ -5,6 +5,7 @@ import java.security.AccessControlException;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -259,5 +260,10 @@ public class AuthorizationUserServiceImpl implements AuthorizationUserService {
 		}
 		Optional<Paymaster> paymaster = paymasterRepository.findById(id);
 		return paymaster.map(paymaster1 -> new AuthUser(paymaster1.getLogin(), UserRole.PAYMASTER));
+	}
+
+	@Override
+	public List<Manager> getManagers() {
+		return managerRepository.findAll();
 	}
 }

@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -14,8 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.Feature;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
@@ -96,12 +101,12 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	}
 
 	private void addAdministrationTab(UserRole role) {
-		logger.info("Administration tab successfully added.");
 		User currUser = authenticationService.getAuthenticUser();
+		List<Manager> managers = authenticationService.getManagers();
 		List<City> cities = cinemaService.getCities();
 		List<Movie> movies = cinemaService.getMovies();
-
-		view.addAdministrationTab(currUser, cities, movies);
+		List<Feature> features = cinemaService.getFeatures();
+		view.addAdministrationTab(currUser, cities, movies, managers, new HashSet<>(features));
 	}
 
 	private void addProfileEditTab(UserRole role) {
@@ -146,6 +151,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	@Override
 	public void buttonChangeLoginClicked(long id, String login) {
 		authenticationService.changeUserLogin(id, login, authenticationService.getUserRole());
+		authenticationService.logOut();
 	}
 
 	@Override
@@ -241,5 +247,10 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	@Override
 	public void buttonFilmScreeningEventsClicked(FilmScreening selectedFilmScreening) {
 		view.showFilmScreeningEventsWindow(selectedFilmScreening);
+	}
+
+	@Override
+	public void buttonFeaturesClicked(Cinema selectedCinema, Set<Feature> features) {
+		view.showFeaturesWindow(selectedCinema, features);
 	}
 }

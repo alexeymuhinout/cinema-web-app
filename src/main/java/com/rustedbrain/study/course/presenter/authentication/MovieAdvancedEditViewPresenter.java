@@ -80,4 +80,24 @@ public class MovieAdvancedEditViewPresenter implements MovieAdvancedEditView.Vie
 		new PageNavigator().navigateToProfileView();
 	}
 
+	@Override
+	public void buttonAddNewGenreClicked(String name) {
+		cinemaService.createGenre(name);
+	}
+
+	@Override
+	public void buttonAddNewActorClicked(String name, String surname) {
+		cinemaService.createActor(name, surname);
+	}
+
+	@Override
+	public void buttonEditActorClicked(long id, String name, String surname) {
+		cinemaService.editActor(id, name, surname);
+	}
+
+	@Override
+	public void buttonEditGenreClicked(long id, String name) {
+		cinemaService.editGenre(id, name);
+	}
+
 }

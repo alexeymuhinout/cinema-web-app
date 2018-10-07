@@ -34,6 +34,7 @@ import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 import com.rustedbrain.study.course.model.dto.TicketInfo;
 import com.rustedbrain.study.course.model.exception.ResourceException;
+import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.Member;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.Actor;
@@ -42,6 +43,7 @@ import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
 import com.rustedbrain.study.course.model.persistence.cinema.Comment;
 import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
+import com.rustedbrain.study.course.model.persistence.cinema.Feature;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
 import com.rustedbrain.study.course.model.persistence.cinema.Genre;
@@ -55,6 +57,7 @@ import com.rustedbrain.study.course.service.repository.CinemaRepository;
 import com.rustedbrain.study.course.service.repository.CityRepository;
 import com.rustedbrain.study.course.service.repository.CommentRepository;
 import com.rustedbrain.study.course.service.repository.CommentReputationRepository;
+import com.rustedbrain.study.course.service.repository.FeatureRepository;
 import com.rustedbrain.study.course.service.repository.FilmScreeningEventRepository;
 import com.rustedbrain.study.course.service.repository.FilmScreeningRepository;
 import com.rustedbrain.study.course.service.repository.GenreRepository;
@@ -88,6 +91,7 @@ public class CinemaServiceImpl implements CinemaService {
 	private CommentReputationRepository commentReputationRepository;
 	private ActorRepository actorRepository;
 	private GenreRepository genreRepository;
+	private FeatureRepository featureRepository;
 
 	@Autowired
 	public void setCommentReputationRepository(CommentReputationRepository commentReputationRepository) {
@@ -162,6 +166,11 @@ public class CinemaServiceImpl implements CinemaService {
 	@Autowired
 	public void setGenreRepository(GenreRepository genreRepository) {
 		this.genreRepository = genreRepository;
+	}
+
+	@Autowired
+	public void setFeatureRepository(FeatureRepository featureRepository) {
+		this.featureRepository = featureRepository;
 	}
 
 	@Override
@@ -460,18 +469,19 @@ public class CinemaServiceImpl implements CinemaService {
 	}
 
 	@Override
-	public void editCinema(Cinema selectedCinema, String newCinemaName, City newCity, String newCinemaLocation) {
-		cinemaRepository.editCinema(selectedCinema.getId(), newCinemaName, newCity, newCinemaLocation);
+	public void editCinema(Cinema selectedCinema, String newCinemaName, City newCity, String newCinemaLocation,
+			Manager manager) {
+		cinemaRepository.editCinema(selectedCinema.getId(), newCinemaName, newCity, newCinemaLocation, manager);
 	}
 
 	@Override
-	public void createCinema(City city, String name, String street) {
+	public void createCinema(City city, String name, String street, Manager manager) {
 		if ( name == null || name.isEmpty() ) {
 			throw new IllegalArgumentException("Cinema name cannot be empty");
 		} else if ( street == null || street.isEmpty() ) {
 			throw new IllegalArgumentException("Cinema street cannot be empty");
 		} else {
-			cinemaRepository.save(new Cinema(city, name, street));
+			cinemaRepository.save(new Cinema(city, name, street, manager));
 		}
 	}
 
@@ -652,6 +662,65 @@ public class CinemaServiceImpl implements CinemaService {
 	@Override
 	public void editComment(long commentId) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void createFeature(String name, String description) {
+		Feature feature = new Feature(name, description);
+		feature.setLastAccessDate(new Date());
+		feature.setRegistrationDate(new Date());
+		featureRepository.save(feature);
+	}
+
+	@Override
+	public void editCinemaFeatures(Cinema selectedCinema, Set<Feature> features) {
+		Cinema cinema = cinemaRepository.getOne(selectedCinema.getId());
+		cinema.setFeatures(features);
+		cinemaRepository.save(cinema);
+	}
+
+	@Override
+	public List<Feature> getFeatures() {
+		return featureRepository.findAll();
+	}
+
+	@Override
+	public void createGenre(String name) {
+		Genre genre = new Genre(name);
+		genre.setLastAccessDate(new Date());
+		genre.setRegistrationDate(new Date());
+		genreRepository.save(genre);
+	}
+
+	@Override
+	public void createActor(String name, String surname) {
+		Actor actor = new Actor(name, surname);
+		actor.setLastAccessDate(new Date());
+		actor.setRegistrationDate(new Date());
+		actorRepository.save(actor);
+	}
+
+	@Override
+	public void editFeature(long id, String name, String description) {
+		Feature feature = featureRepository.getOne(id);
+		feature.setName(name);
+		feature.setFeatureDescription(description);
+		featureRepository.save(feature);
+	}
+
+	@Override
+	public void editGenre(long id, String name) {
+		Genre genre = genreRepository.getOne(id);
+		genre.setName(name);
+		genreRepository.save(genre);
+	}
+
+	@Override
+	public void editActor(long id, String name, String surname) {
+		Actor actor = actorRepository.getOne(id);
+		actor.setName(name);
+		actor.setSurname(surname);
+		actorRepository.save(actor);
 	}
 }

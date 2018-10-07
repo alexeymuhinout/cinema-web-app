@@ -22,6 +22,14 @@ public interface MovieAdvancedEditView extends View {
 		void entered(ViewChangeEvent event);
 
 		void buttonSaveMovieButtonClicked(Movie editedMovie);
+
+		void buttonAddNewGenreClicked(String name);
+
+		void buttonAddNewActorClicked(String name, String surname);
+
+		void buttonEditActorClicked(long id, String name, String surname);
+
+		void buttonEditGenreClicked(long id, String name);
 	}
 
 	void showWarning(String message);

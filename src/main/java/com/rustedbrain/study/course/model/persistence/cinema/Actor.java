@@ -19,8 +19,16 @@ public class Actor extends DatabaseEntity {
 	private String name;
 	@Column(name = "surname", length = 64)
 	private String surname;
-	@ManyToMany(mappedBy = "actors", cascade = {CascadeType.ALL})
+	@ManyToMany(mappedBy = "actors", cascade = { CascadeType.ALL })
 	private Set<Movie> movies = new HashSet<>();
+
+	public Actor(String name, String surname) {
+		this.name = name;
+		this.surname = surname;
+	}
+
+	public Actor() {
+	}
 
 	public Set<Movie> getMovies() {
 		return movies;
@@ -48,11 +56,11 @@ public class Actor extends DatabaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if ( this == o )
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if ( o == null || getClass() != o.getClass() )
 			return false;
-		if (!super.equals(o))
+		if ( !super.equals(o) )
 			return false;
 
 		Actor actor = (Actor) o;

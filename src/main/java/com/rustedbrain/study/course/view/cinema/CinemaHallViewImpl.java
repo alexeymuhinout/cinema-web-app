@@ -35,9 +35,6 @@ import com.vaadin.ui.themes.ValoTheme;
 @SpringView(name = VaadinUI.CINEMA_HALL_VIEW)
 public class CinemaHallViewImpl extends VerticalLayout implements CinemaHallView {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3307581243415244434L;
 	private final AuthenticationService authenticationService;
 

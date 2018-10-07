@@ -8,8 +8,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.util.StringUtils;
 
+import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.Feature;
 import com.rustedbrain.study.course.view.authentication.ProfileView;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ValueChangeMode;
@@ -32,12 +34,17 @@ public class AdminCinemaPanel extends Panel {
 	protected VerticalLayout layout = new VerticalLayout();
 	private List<ProfileView.ViewListener> listeners;
 	private Set<Cinema> cinemas = new HashSet<>();
+	private Set<Feature> features = new HashSet<>();
+	private List<Manager> managers = new ArrayList<>();
 	private List<City> cities = new ArrayList<>();
 	private Grid<Cinema> grid = new Grid<>();
 
-	public AdminCinemaPanel(List<ProfileView.ViewListener> listeners, List<City> cities) {
+	public AdminCinemaPanel(List<ProfileView.ViewListener> listeners, List<City> cities, List<Manager> managers,
+			Set<Feature> features) {
 		this.listeners = listeners;
 		this.cities = cities;
+		this.managers = managers;
+		this.features = features;
 		this.cities.forEach(city -> cinemas.addAll(city.getCinemas()));
 		this.layout.addComponent(new Panel(showCinemaSelectionPanel(cinemas)));
 		setContent(this.layout);
@@ -105,22 +112,27 @@ public class AdminCinemaPanel extends Panel {
 		TextField cinemaNameTextField = new TextField("Cinema name");
 		TextField cinemaLocationTextField = new TextField("Location");
 		ComboBox<City> cinemaCityComboBox = new ComboBox<>("City");
+		ComboBox<Manager> managerComboBox = new ComboBox<>("Manager");
 
 		cinemaCityComboBox.setEmptySelectionAllowed(false);
 		cinemaCityComboBox.setItems(cities);
 		cinemaCityComboBox.setItemCaptionGenerator(City::getName);
 		cinemaCityComboBox.setSelectedItem(cities.get(0));
 
-		createPopupContent.addComponent(cinemaNameTextField);
-		createPopupContent.addComponent(cinemaCityComboBox);
-		createPopupContent.addComponent(cinemaLocationTextField);
+		managerComboBox.setEmptySelectionAllowed(false);
+		managerComboBox.setItems(managers);
+		managerComboBox.setItemCaptionGenerator(Manager::getLogin);
+		managerComboBox.setSelectedItem(managers.get(0));
+
+		createPopupContent.addComponents(cinemaNameTextField, cinemaCityComboBox, cinemaLocationTextField,
+				managerComboBox);
 
 		createPopupContent.addComponent(new Button("Create", (Button.ClickListener) event -> {
 			listeners.forEach(cinemaViewListener -> {
 				if ( cinemaCityComboBox.getSelectedItem().isPresent() ) {
 					cinemaViewListener.getCinemaEditPresenter().buttonAddNewCinemaClicked(
 							cinemaCityComboBox.getSelectedItem().get(), cinemaNameTextField.getValue(),
-							cinemaLocationTextField.getValue());
+							cinemaLocationTextField.getValue(), managerComboBox.getValue());
 					cinemaViewListener.reload();
 				} else {
 					Notification.show("Please select City", "", Notification.Type.ERROR_MESSAGE);
@@ -145,29 +157,32 @@ public class AdminCinemaPanel extends Panel {
 	}
 
 	private class SaveDeleteForm extends FormLayout {
-		/**
-		 * 
-		 */
+
 		private static final long serialVersionUID = 1039337242156285553L;
 		private Cinema selectedCinema;
 		private TextField cinemaNameTextField;
 		private ComboBox<City> cinemaCityComboBox;
+		private ComboBox<Manager> cinemaManagerComboBox;
 		private TextField cinemaLocationTextField;
 		private Button saveButton;
 		private Button deleteButton;
+		private Button featuresButton;
 
 		private SaveDeleteForm() {
 			cinemaNameTextField = new TextField("Cinema Name");
 			cinemaCityComboBox = new ComboBox<>("City");
+			cinemaManagerComboBox = new ComboBox<>("Manager");
 			cinemaLocationTextField = new TextField("Location");
 			saveButton = new Button("Save");
 			deleteButton = new Button("Delete");
+			featuresButton = new Button("Features");
 			saveButton.addStyleName("friendly");
 			deleteButton.addStyleName("danger");
 			setSizeUndefined();
 
-			HorizontalLayout buttons = new HorizontalLayout(saveButton, deleteButton);
-			addComponents(cinemaNameTextField, cinemaCityComboBox, cinemaLocationTextField, buttons);
+			HorizontalLayout saveDeleteButtons = new HorizontalLayout(saveButton, deleteButton);
+			addComponents(cinemaNameTextField, cinemaCityComboBox, cinemaLocationTextField, cinemaManagerComboBox,
+					featuresButton, saveDeleteButtons);
 
 			deleteButton.addClickListener(clickEvent -> {
 				this.deleteCinema(this.selectedCinema);
@@ -176,10 +191,19 @@ public class AdminCinemaPanel extends Panel {
 			});
 			saveButton.addClickListener(clickEvent -> {
 				this.editCinema(this.selectedCinema, cinemaNameTextField.getValue(),
-						cinemaCityComboBox.getSelectedItem().get(), cinemaLocationTextField.getValue());
+						cinemaCityComboBox.getSelectedItem().get(), cinemaLocationTextField.getValue(),
+						cinemaManagerComboBox.getSelectedItem().get());
 				Notification.show("Cinema edit", "Cinema name: " + this.selectedCinema.getName(),
 						Notification.Type.HUMANIZED_MESSAGE);
 			});
+
+			featuresButton.addClickListener(clickEvent -> {
+				this.editFeaturesButtonClicked(this.selectedCinema, features);
+			});
+		}
+
+		private void editFeaturesButtonClicked(Cinema selectedCinema, Set<Feature> features) {
+			listeners.forEach(listener -> listener.buttonFeaturesClicked(selectedCinema, features));
 		}
 
 		private void deleteCinema(Cinema selectedCinema) {
@@ -191,13 +215,12 @@ public class AdminCinemaPanel extends Panel {
 		}
 
 		private void editCinema(Cinema selectedCinema, String newCinemaName, City newCinemaCity,
-				String newCinemaLocation) {
+				String newCinemaLocation, Manager newCinemaManager) {
 			listeners.forEach(listener -> {
 				listener.getCinemaEditPresenter().buttonSaveCinemaClicked(selectedCinema, newCinemaName, newCinemaCity,
-						newCinemaLocation);
+						newCinemaLocation, newCinemaManager);
 				listener.reload();
 			});
-
 		}
 
 		void setSelectedCinema(Cinema selectedCinema) {
@@ -209,6 +232,11 @@ public class AdminCinemaPanel extends Panel {
 			cinemaCityComboBox.setItemCaptionGenerator(City::getName);
 			cinemaCityComboBox.setEmptySelectionAllowed(false);
 			cinemaCityComboBox.setSelectedItem(selectedCinema.getCity());
+
+			cinemaManagerComboBox.setItems(managers);
+			cinemaManagerComboBox.setItemCaptionGenerator(Manager::getLogin);
+			cinemaManagerComboBox.setEmptySelectionAllowed(false);
+			cinemaManagerComboBox.setSelectedItem(selectedCinema.getManager());
 		}
 	}
 }

@@ -25,9 +25,6 @@ import java.util.logging.Logger;
 @SpringComponent
 public class MainViewPresenter implements MainView.MainViewListener, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6234491830993571755L;
 
 	private static final Logger logger = Logger.getLogger(MainViewPresenter.class.getName());
@@ -93,12 +90,12 @@ public class MainViewPresenter implements MainView.MainViewListener, Serializabl
 
 			Optional<City> optionalCity = cinemaService.getCityByInetAddress(address);
 
-			if (optionalCity.isPresent()) {
+			if ( optionalCity.isPresent() ) {
 				City city = optionalCity.get();
 				Optional<Cinema> optionalCinema = cinemaService.getNearestCinema(address, city);
-				if (optionalCinema.isPresent()) {
-					List<FilmScreening> filmScreenings = cinemaService
-							.getTodayCinemaFilmScreenings(optionalCinema.get());
+				if ( optionalCinema.isPresent() ) {
+					List<FilmScreening> filmScreenings =
+							cinemaService.getTodayCinemaFilmScreenings(optionalCinema.get());
 					mainView.fillFilmScreeningsPanel(filmScreenings);
 				} else {
 					new PageNavigator().navigateToCityCinemasView(city.getId());

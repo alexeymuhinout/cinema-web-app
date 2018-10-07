@@ -14,22 +14,24 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.CinemaHall;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.Feature;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreeningEvent;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.service.AuthenticationService;
 import com.rustedbrain.study.course.view.VaadinUI;
+import com.rustedbrain.study.course.view.authentication.layout.AdminCinemaHallPanel;
+import com.rustedbrain.study.course.view.authentication.layout.AdminCinemaPanel;
+import com.rustedbrain.study.course.view.authentication.layout.AdminCityPanel;
+import com.rustedbrain.study.course.view.authentication.layout.AdminFilmScreeningPanel;
+import com.rustedbrain.study.course.view.authentication.layout.AdminMoviePanel;
 import com.rustedbrain.study.course.view.authentication.layout.AdminProfileEditTab;
-import com.rustedbrain.study.course.view.authentication.layout.AdministartionMoviePanel;
-import com.rustedbrain.study.course.view.authentication.layout.AdministrationCinemaHallPanel;
-import com.rustedbrain.study.course.view.authentication.layout.AdministrationCinemaPanel;
-import com.rustedbrain.study.course.view.authentication.layout.AdministrationCityPanel;
-import com.rustedbrain.study.course.view.authentication.layout.AdministrationFilmScreeningPanel;
-import com.rustedbrain.study.course.view.authentication.layout.AdministrationStatisticPanel;
+import com.rustedbrain.study.course.view.authentication.layout.AdminStatisticPanel;
 import com.rustedbrain.study.course.view.authentication.layout.ProfileEditTab;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewBeforeLeaveEvent;
@@ -48,6 +50,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -58,9 +61,6 @@ import com.vaadin.ui.themes.ValoTheme;
 @SpringView(name = VaadinUI.PROFILE_VIEW)
 public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1036618039435390691L;
 
 	private List<ProfileView.ViewListener> listeners = new ArrayList<>();
@@ -71,12 +71,12 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 	private Panel statisticsLayout;
 	private Window userBlockWindow;
 	private Window filmScreeningEventsWindow;
-	private AdministrationCityPanel administrationCityPanel;
-	private AdministrationCinemaPanel administrationCinemaPanel;
-	private AdministrationCinemaHallPanel administrationCinemaHallPanel;
-	private AdministartionMoviePanel administrationMoviePanel;
-
-	private AdministrationFilmScreeningPanel administrationFilmScreeningPanel;
+	private Window featuresWindow;
+	private AdminCityPanel administrationCityPanel;
+	private AdminCinemaPanel administrationCinemaPanel;
+	private AdminCinemaHallPanel administrationCinemaHallPanel;
+	private AdminMoviePanel administrationMoviePanel;
+	private AdminFilmScreeningPanel administrationFilmScreeningPanel;
 
 	@Autowired
 	public ProfileViewImpl(AuthenticationService authenticationService) {
@@ -169,26 +169,28 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 	}
 
 	@Override
-	public void addAdministrationTab(User currUser, List<City> cities, List<Movie> movies) {
+	public void addAdministrationTab(User currUser, List<City> cities, List<Movie> movies, List<Manager> managers,
+			Set<Feature> features) {
 		if ( adminLayout != null ) {
 			TabSheet oldAdminLayout = this.adminLayout;
-			this.adminLayout = createAdminTab(cities, movies);
+			this.adminLayout = createAdminTab(cities, movies, managers, features);
 			tabSheet.replaceComponent(oldAdminLayout, this.adminLayout);
 		} else {
-			this.adminLayout = createAdminTab(cities, movies);
+			this.adminLayout = createAdminTab(cities, movies, managers, features);
 			tabSheet.addTab(adminLayout, "Administration");
 		}
 	}
 
-	private TabSheet createAdminTab(List<City> cities, List<Movie> movies) {
+	private TabSheet createAdminTab(List<City> cities, List<Movie> movies, List<Manager> managers,
+			Set<Feature> features) {
 		TabSheet tabSheet = new TabSheet();
-		administrationCityPanel = new AdministrationCityPanel(listeners, cities);
-		administrationCinemaPanel = new AdministrationCinemaPanel(listeners, cities);
-		administrationCinemaHallPanel = new AdministrationCinemaHallPanel(listeners, cities);
+		administrationCityPanel = new AdminCityPanel(listeners, cities);
+		administrationCinemaPanel = new AdminCinemaPanel(listeners, cities, managers, features);
+		administrationCinemaHallPanel = new AdminCinemaHallPanel(listeners, cities);
 		List<Cinema> cinemas = new ArrayList<>();
 		cities.forEach(city -> cinemas.addAll(city.getCinemas()));
-		administrationMoviePanel = new AdministartionMoviePanel(listeners, movies);
-		administrationFilmScreeningPanel = new AdministrationFilmScreeningPanel(listeners, cities, movies);
+		administrationMoviePanel = new AdminMoviePanel(listeners, movies);
+		administrationFilmScreeningPanel = new AdminFilmScreeningPanel(listeners, cities, movies);
 		tabSheet.addTab(administrationCityPanel, "City");
 		tabSheet.addTab(administrationCinemaPanel, "Cinema");
 		tabSheet.addTab(administrationCinemaHallPanel, "Cinema Hall");
@@ -211,7 +213,7 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 
 	@Override
 	public Panel createStatisticsTab(List<City> cities) {
-		return new AdministrationStatisticPanel(listeners, cities);
+		return new AdminStatisticPanel(listeners, cities);
 	}
 
 	@Override
@@ -307,11 +309,10 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 								Date.valueOf(dateEvent), Time.valueOf(timeEvent)));
 						grid.setItems(filmScreeningEvents);
 					} else {
-						Notification.show("Date and time must be after start date of film screening", "",
-								Notification.Type.ERROR_MESSAGE);
+						showError("Date and time must be after start date of film screening");
 					}
 				} else {
-					Notification.show("Please select cinema hall", "", Notification.Type.ERROR_MESSAGE);
+					showError("Please select cinema hall");
 				}
 			});
 		}));
@@ -320,6 +321,109 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 		popup.setSizeUndefined();
 		popup.setPopupVisible(true);
 		return popup;
+	}
+
+	@Override
+	public void showFeaturesWindow(Cinema selectedCinema, Set<Feature> features) {
+		closeFeaturesWindow();
+		featuresWindow = new Window("Features");
+		featuresWindow.addCloseListener((Window.CloseListener) e -> featuresWindow = null);
+		featuresWindow.setWidth("800px");
+		featuresWindow.setModal(true);
+		featuresWindow.setDraggable(false);
+
+		Grid<Feature> grid = new Grid<>();
+		grid.setItems(features);
+		grid.setSelectionMode(Grid.SelectionMode.MULTI);
+		grid.setSizeFull();
+		selectedCinema.getFeatures().forEach(feature -> grid.select(feature));
+
+		grid.addColumn(Feature::getName).setCaption("Name");
+		grid.addColumn(Feature::getFeatureDescription).setCaption("Description");
+
+		VerticalLayout verticalLayout = new VerticalLayout();
+		grid.addColumn(feature -> "Edit", new ButtonRenderer<Feature>(clickEvent -> {
+			verticalLayout.addComponent(editFeatureButtonClick(grid, features, clickEvent.getItem()));
+		}));
+
+		Button saveButton = new Button("Save", (Button.ClickListener) event -> {
+			listeners.forEach(listener -> listener.getCinemaEditPresenter()
+					.buttonSaveCinemaFeaturesButtonClicked(selectedCinema, grid.getSelectedItems()));
+			selectedCinema.setFeatures(grid.getSelectedItems());
+			closeFeaturesWindow();
+		});
+		saveButton.addStyleName("friendly");
+
+		Button addFeature = new Button("Add new feature");
+		addFeature.addClickListener(e -> {
+			verticalLayout.addComponent(addNewFeatureButtonClick(grid, features));
+			reload();
+		});
+
+		verticalLayout.addComponents(new Panel(new VerticalLayout(grid, addFeature)), saveButton);
+		featuresWindow.setContent(verticalLayout);
+		UI.getCurrent().addWindow(featuresWindow);
+	}
+
+	private PopupView editFeatureButtonClick(Grid<Feature> grid, Set<Feature> features, Feature feature) {
+		VerticalLayout createPopupContent = new VerticalLayout();
+
+		TextField featureNameTextField = new TextField("New name");
+		featureNameTextField.setValue(feature.getName().isEmpty() ? " " : feature.getName());
+		TextArea featureDescriptionTextArea = new TextArea("New description");
+		featureDescriptionTextArea
+				.setValue(feature.getFeatureDescription() == null ? " " : feature.getFeatureDescription());
+		createPopupContent.addComponents(featureNameTextField, featureDescriptionTextArea);
+
+		createPopupContent.addComponent(new Button("Edit", (Button.ClickListener) event -> {
+			listeners.forEach(listener -> {
+				if ( !featureNameTextField.getValue().isEmpty() ) {
+					listener.getCinemaEditPresenter().buttonEditFeatureClicked(feature.getId(),
+							featureNameTextField.getValue(), featureDescriptionTextArea.getValue());
+					reload();
+				} else {
+					showError("Please enter feature name");
+				}
+			});
+		}));
+
+		PopupView popup = new PopupView(null, createPopupContent);
+		popup.setSizeUndefined();
+		popup.setPopupVisible(true);
+		return popup;
+	}
+
+	private PopupView addNewFeatureButtonClick(Grid<Feature> grid, Set<Feature> features) {
+		VerticalLayout createPopupContent = new VerticalLayout();
+
+		TextField featureNameTextField = new TextField("Name");
+		TextArea featureDescriptionTextArea = new TextArea("Description");
+		createPopupContent.addComponents(featureNameTextField, featureDescriptionTextArea);
+
+		createPopupContent.addComponent(new Button("Add", (Button.ClickListener) event -> {
+			listeners.forEach(listener -> {
+				if ( !featureNameTextField.getValue().isEmpty() ) {
+					listener.getCinemaEditPresenter().buttonAddNewFeatureClicked(featureNameTextField.getValue(),
+							featureDescriptionTextArea.getValue());
+					features.add(new Feature(featureNameTextField.getValue(), featureDescriptionTextArea.getValue()));
+					grid.setItems(features);
+				} else {
+					showError("Please enter feature name");
+				}
+			});
+		}));
+
+		PopupView popup = new PopupView(null, createPopupContent);
+		popup.setSizeUndefined();
+		popup.setPopupVisible(true);
+		return popup;
+	}
+
+	@Override
+	public void closeFeaturesWindow() {
+		if ( this.featuresWindow != null ) {
+			this.featuresWindow.close();
+		}
 	}
 
 }

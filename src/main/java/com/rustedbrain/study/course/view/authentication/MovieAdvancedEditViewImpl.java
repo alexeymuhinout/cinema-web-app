@@ -39,6 +39,7 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
@@ -51,6 +52,7 @@ import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 @UIScope
@@ -312,19 +314,78 @@ public class MovieAdvancedEditViewImpl extends VerticalLayout implements MovieAd
 		genresGrid.setSelectionMode(SelectionMode.MULTI);
 		genresGrid.setItems(genres);
 		genresGrid.addColumn(Genre::getName).setCaption("Name");
-		editedMovie.getGenres().forEach(genre -> genresGrid.select(genre));
+		VerticalLayout verticalLayout = new VerticalLayout();
+		genresGrid.addColumn(genre -> "Edit", new ButtonRenderer<Genre>(clickEvent -> {
+			verticalLayout.addComponent(editGenreButtonClick(genresGrid, genres, clickEvent.getItem()));
+		}));
 
+		editedMovie.getGenres().forEach(genre -> genresGrid.select(genre));
 		Button buttonSave = new Button("Save");
 		buttonSave.addClickListener(listener -> {
-			editedMovie.setGenres(genresGrid.getSelectedItems());
 			editedMovie.setGenres(genresGrid.getSelectedItems());
 			List<String> genresName = new ArrayList<>();
 			editedMovie.getGenres().forEach(genre -> genresName.add(genre.getName()));
 			genresTextField.setValue(genresName.toString());
 			genresWindow.close();
 		});
-		genresWindow.setContent(new VerticalLayout(genresGrid, buttonSave));
+		buttonSave.addStyleName("friendly");
+
+		Button addFeature = new Button("Add new genre");
+		addFeature.addClickListener(e -> {
+			verticalLayout.addComponent(addNewGenreButtonClick(genresGrid, genres));
+		});
+
+		verticalLayout.addComponents(new Panel(new VerticalLayout(genresGrid, addFeature)), buttonSave);
+		genresWindow.setContent(verticalLayout);
 		return genresWindow;
+	}
+
+	private PopupView editGenreButtonClick(Grid<Genre> genresGrid, List<Genre> genres, Genre genre) {
+		VerticalLayout createPopupContent = new VerticalLayout();
+		TextField genreNameTextField = new TextField("New name");
+		genreNameTextField.setValue(genre.getName().isEmpty() ? "" : genre.getName());
+		createPopupContent.addComponents(genreNameTextField);
+
+		createPopupContent.addComponent(new Button("Edit", (Button.ClickListener) event -> {
+			viewListeners.forEach(listener -> {
+				if ( !genreNameTextField.getValue().isEmpty() ) {
+					listener.buttonEditGenreClicked(genre.getId(), genreNameTextField.getValue());
+					reload();
+				} else {
+					showError("Please enter genre name");
+				}
+			});
+		}));
+
+		PopupView popup = new PopupView(null, createPopupContent);
+		popup.setSizeUndefined();
+		popup.setPopupVisible(true);
+		return popup;
+	}
+
+	private PopupView addNewGenreButtonClick(Grid<Genre> genresGrid, List<Genre> genres) {
+		VerticalLayout createPopupContent = new VerticalLayout();
+
+		TextField genreNameTextField = new TextField("Name");
+		createPopupContent.addComponents(genreNameTextField);
+
+		createPopupContent.addComponent(new Button("Add", (Button.ClickListener) event -> {
+			viewListeners.forEach(listener -> {
+				if ( !genreNameTextField.getValue().isEmpty() ) {
+					listener.buttonAddNewGenreClicked(genreNameTextField.getValue());
+					genres.add(new Genre(genreNameTextField.getValue()));
+					genresGrid.setItems(genres);
+					reload();
+				} else {
+					showError("Please enter genre name");
+				}
+			});
+		}));
+
+		PopupView popup = new PopupView(null, createPopupContent);
+		popup.setSizeUndefined();
+		popup.setPopupVisible(true);
+		return popup;
 	}
 
 	private VerticalLayout getActorsInfoEditLayout() {
@@ -372,6 +433,11 @@ public class MovieAdvancedEditViewImpl extends VerticalLayout implements MovieAd
 		actorGrid.setItems(actors);
 		actorGrid.addColumn(Actor::getName).setCaption("Name");
 		actorGrid.addColumn(Actor::getSurname).setCaption("Surname");
+		VerticalLayout verticalLayout = new VerticalLayout();
+		actorGrid.addColumn(actor -> "Edit", new ButtonRenderer<Actor>(clickEvent -> {
+			verticalLayout.addComponent(editActorButtonClick(actorGrid, actors, clickEvent.getItem()));
+		}));
+
 		editedMovie.getActors().forEach(actor -> actorGrid.select(actor));
 
 		Button buttonSave = new Button("Save");
@@ -382,9 +448,70 @@ public class MovieAdvancedEditViewImpl extends VerticalLayout implements MovieAd
 			actorsTextField.setValue(actorsName.toString());
 			actorsWindow.close();
 		});
-		actorsWindow.setContent(new VerticalLayout(actorGrid, buttonSave));
+		buttonSave.addStyleName("friendly");
 
+		Button addActor = new Button("Add new actor");
+		addActor.addClickListener(e -> {
+			verticalLayout.addComponent(addNewActorButtonClick(actorGrid, actors));
+		});
+
+		verticalLayout.addComponents(new Panel(new VerticalLayout(actorGrid, addActor)), buttonSave);
+		actorsWindow.setContent(verticalLayout);
 		return actorsWindow;
+	}
+
+	private PopupView editActorButtonClick(Grid<Actor> actorGrid, List<Actor> actors, Actor actor) {
+		VerticalLayout createPopupContent = new VerticalLayout();
+
+		TextField actorNameTextField = new TextField("New name");
+		actorNameTextField.setValue(actor.getName().isEmpty() ? " " : actor.getName());
+		TextField actorSurnameTextField = new TextField("New Surname");
+		actorSurnameTextField.setValue(actor.getSurname().isEmpty() ? " " : actor.getSurname());
+		createPopupContent.addComponents(actorNameTextField, actorSurnameTextField);
+
+		createPopupContent.addComponent(new Button("Edit", (Button.ClickListener) event -> {
+			viewListeners.forEach(listener -> {
+				if ( !actorNameTextField.getValue().isEmpty() ) {
+					listener.buttonEditActorClicked(actor.getId(), actorNameTextField.getValue(),
+							actorSurnameTextField.getValue());
+					reload();
+				} else {
+					showError("Please enter actor name");
+				}
+			});
+		}));
+
+		PopupView popup = new PopupView(null, createPopupContent);
+		popup.setSizeUndefined();
+		popup.setPopupVisible(true);
+		return popup;
+	}
+
+	private PopupView addNewActorButtonClick(Grid<Actor> actorGrid, List<Actor> actors) {
+		VerticalLayout createPopupContent = new VerticalLayout();
+
+		TextField actorNameTextField = new TextField("Name");
+		TextField actorSurnameTextField = new TextField("Surname");
+
+		createPopupContent.addComponents(actorNameTextField, actorSurnameTextField);
+
+		createPopupContent.addComponent(new Button("Add", (Button.ClickListener) event -> {
+			viewListeners.forEach(listener -> {
+				if ( !actorNameTextField.getValue().isEmpty() ) {
+					listener.buttonAddNewActorClicked(actorNameTextField.getValue(), actorSurnameTextField.getValue());
+					actors.add(new Actor(actorNameTextField.getValue(), actorSurnameTextField.getValue()));
+					actorGrid.setItems(actors);
+					reload();
+				} else {
+					showError("Please enter actor name");
+				}
+			});
+		}));
+
+		PopupView popup = new PopupView(null, createPopupContent);
+		popup.setSizeUndefined();
+		popup.setPopupVisible(true);
+		return popup;
 	}
 
 	private VerticalLayout getTrailerURLLayout() {

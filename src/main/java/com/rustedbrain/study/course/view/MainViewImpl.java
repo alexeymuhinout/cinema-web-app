@@ -21,9 +21,6 @@ import java.util.*;
 @SpringView(name = VaadinUI.MAIN_VIEW)
 public class MainViewImpl extends VerticalLayout implements MainView {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2044419449921952251L;
 	private Collection<MainViewListener> mainViewListeners = new ArrayList<>();
 	private Panel menuPanel;

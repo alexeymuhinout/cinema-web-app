@@ -15,9 +15,6 @@ import java.util.Set;
 @Table(name = "city")
 public class City extends DatabaseEntity implements Comparable<City> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -732856358445864096L;
 	@Column(name = "name", length = 64, nullable = false, unique = true)
 	private String name;
@@ -60,9 +57,9 @@ public class City extends DatabaseEntity implements Comparable<City> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if ( this == o )
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if ( o == null || getClass() != o.getClass() )
 			return false;
 
 		City city = (City) o;

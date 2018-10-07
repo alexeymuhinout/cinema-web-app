@@ -3,12 +3,16 @@ package com.rustedbrain.study.course.view.authentication;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
 import com.rustedbrain.study.course.model.persistence.cinema.City;
+import com.rustedbrain.study.course.model.persistence.cinema.Feature;
 import com.rustedbrain.study.course.model.persistence.cinema.FilmScreening;
 import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.presenter.authentication.util.CinemaEditPresenter;
@@ -27,7 +31,8 @@ public interface ProfileView extends ApplicationView {
 
 	void showUserBlockWindow(long id, String login, UserRole userRole);
 
-	void addAdministrationTab(User currUser, List<City> cities, List<Movie> movies);
+	void addAdministrationTab(User currUser, List<City> cities, List<Movie> movies, List<Manager> managers,
+			Set<Feature> features);
 
 	void addStatisticsTab(List<City> cities);
 
@@ -82,9 +87,15 @@ public interface ProfileView extends ApplicationView {
 		FilmScreeningEditPresenter getFilmScreeningEditPresenter();
 
 		void buttonFilmScreeningEventsClicked(FilmScreening selectedFilmScreening);
+
+		void buttonFeaturesClicked(Cinema selectedCinema, Set<Feature> features);
 	}
 
 	void showFilmScreeningEventsWindow(FilmScreening selectedFilmScreening);
 
 	void closeFilmScreeningEventsWindow();
+
+	void closeFeaturesWindow();
+
+	void showFeaturesWindow(Cinema selectedCinema, Set<Feature> features);
 }
