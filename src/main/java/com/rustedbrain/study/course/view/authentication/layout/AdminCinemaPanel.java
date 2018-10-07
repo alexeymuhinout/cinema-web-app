@@ -26,10 +26,8 @@ import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class AdministrationCinemaPanel extends Panel {
-	/**
-	 * 
-	 */
+public class AdminCinemaPanel extends Panel {
+
 	private static final long serialVersionUID = 2082376201001091998L;
 	protected VerticalLayout layout = new VerticalLayout();
 	private List<ProfileView.ViewListener> listeners;
@@ -37,7 +35,7 @@ public class AdministrationCinemaPanel extends Panel {
 	private List<City> cities = new ArrayList<>();
 	private Grid<Cinema> grid = new Grid<>();
 
-	public AdministrationCinemaPanel(List<ProfileView.ViewListener> listeners, List<City> cities) {
+	public AdminCinemaPanel(List<ProfileView.ViewListener> listeners, List<City> cities) {
 		this.listeners = listeners;
 		this.cities = cities;
 		this.cities.forEach(city -> cinemas.addAll(city.getCinemas()));

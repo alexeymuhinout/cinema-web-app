@@ -26,7 +26,7 @@ import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class AdministartionMoviePanel extends Panel {
+public class AdminMoviePanel extends Panel {
 
 	private static final long serialVersionUID = 6960287550997036750L;
 	protected VerticalLayout layout = new VerticalLayout();
@@ -34,7 +34,7 @@ public class AdministartionMoviePanel extends Panel {
 	private List<Movie> movies = new ArrayList<>();
 	private Grid<Movie> grid = new Grid<>();
 
-	public AdministartionMoviePanel(List<ProfileView.ViewListener> listeners, List<Movie> movies) {
+	public AdminMoviePanel(List<ProfileView.ViewListener> listeners, List<Movie> movies) {
 		this.listeners = listeners;
 		this.movies = movies;
 		this.layout.addComponent(new Panel(showMovieSelectionPanel(movies)));

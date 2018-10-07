@@ -21,7 +21,7 @@ import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class AdministrationCityPanel extends Panel {
+public class AdminCityPanel extends Panel {
 
 	private static final long serialVersionUID = 188371442011236419L;
 	protected List<City> cities;
@@ -29,7 +29,7 @@ public class AdministrationCityPanel extends Panel {
 	private List<ProfileView.ViewListener> listeners;
 	private Grid<City> grid = new Grid<>();
 
-	public AdministrationCityPanel(List<ProfileView.ViewListener> listeners, List<City> cities) {
+	public AdminCityPanel(List<ProfileView.ViewListener> listeners, List<City> cities) {
 		this.listeners = listeners;
 		this.cities = cities;
 		this.layout.addComponent(new Panel(showCitySelectionPanel(cities)));

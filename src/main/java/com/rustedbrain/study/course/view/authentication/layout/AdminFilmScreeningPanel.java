@@ -31,7 +31,7 @@ import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class AdministrationFilmScreeningPanel extends Panel {
+public class AdminFilmScreeningPanel extends Panel {
 
 	/**
 	 * 
@@ -46,7 +46,7 @@ public class AdministrationFilmScreeningPanel extends Panel {
 	private Grid<FilmScreening> grid = new Grid<>();
 	private Set<Cinema> cinemas = new HashSet<>();;
 
-	public AdministrationFilmScreeningPanel(List<ViewListener> listeners, List<City> cities, List<Movie> movies) {
+	public AdminFilmScreeningPanel(List<ViewListener> listeners, List<City> cities, List<Movie> movies) {
 		this.listeners = listeners;
 		this.cities = cities;
 		this.movies = movies;
