@@ -20,9 +20,6 @@ import java.util.List;
 @SpringView(name = VaadinUI.CITY_CINEMAS_VIEW)
 public class CityCinemasViewImpl extends VerticalLayout implements CityCinemasView {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7998168209329334788L;
 	private List<CityCinemasViewListener> listeners = new ArrayList<>();
 	private Panel cinemasPanel = new Panel();
@@ -48,12 +45,12 @@ public class CityCinemasViewImpl extends VerticalLayout implements CityCinemasVi
 
 			StringBuilder featuresStringBuilder = new StringBuilder("Features: ");
 			for (Feature feature : cinema.getFeatures()) {
-				featuresStringBuilder.append(feature.getName());
+				featuresStringBuilder.append(feature.getName()).append("; ");
 			}
 			cinemaInfoLayout.addComponent(new Label(featuresStringBuilder.toString()));
 
-			Button navigateButton = new Button("Show Cinema",
-					clickEvent -> new PageNavigator().navigateToCinemaView(cinema.getId()));
+			Button navigateButton =
+					new Button("Show Cinema", clickEvent -> new PageNavigator().navigateToCinemaView(cinema.getId()));
 			navigateButton.setSizeFull();
 			cinemaInfoLayout.addComponent(navigateButton);
 			cinemasAccordion.addTab(cinemaInfoLayout, cinema.getName());

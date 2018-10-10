@@ -3,6 +3,7 @@ package com.rustedbrain.study.course.presenter.authentication;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -66,7 +67,8 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	public void entered(ViewChangeListener.ViewChangeEvent event) {
 		UserRole role = authenticationService.getUserRole();
 		switch (role) {
-		case ADMINISTRATOR: {
+		case ADMINISTRATOR:
+		case MANAGER: {
 			addMessagesTab(role);
 			addProfileEditTab(role);
 			addAdministrationTab(role);
@@ -74,20 +76,16 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 		}
 			break;
 		case PAYMASTER:
+		case MODERATOR: {
 			addMessagesTab(role);
 			addProfileEditTab(role);
+			addStatisticsTab(role);
+		}
 			break;
-		case MANAGER:
+		case MEMBER: {
 			addMessagesTab(role);
 			addProfileEditTab(role);
-			break;
-		case MEMBER:
-			addMessagesTab(role);
-			addProfileEditTab(role);
-			break;
-		case MODERATOR:
-			addMessagesTab(role);
-			addProfileEditTab(role);
+		}
 			break;
 		case NOT_AUTHORIZED:
 			view.showError("User not authorized.");
@@ -106,7 +104,34 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 		List<City> cities = cinemaService.getCities();
 		List<Movie> movies = cinemaService.getMovies();
 		List<Feature> features = cinemaService.getFeatures();
-		view.addAdministrationTab(currUser, cities, movies, managers, new HashSet<>(features));
+		switch (role) {
+		case ADMINISTRATOR: {
+			view.addAdministrationTab(currUser, cities, movies, managers, new HashSet<>(features), true);
+		}
+			break;
+		case MANAGER: {
+			Optional<Manager> optionalManager =
+					managers.stream().filter(userPredicate -> userPredicate.equals(currUser)).findFirst();
+			if ( optionalManager.isPresent() ) {
+				List<Cinema> cinemas = new ArrayList<>();
+				cities.forEach(city -> cinemas.addAll(city.getCinemas()));
+				List<Cinema> managerCinemas = cinemas.stream()
+						.filter(cinemaPredicate -> cinemaPredicate.getManager() != null
+								&& cinemaPredicate.getManager().equals(optionalManager.get()))
+						.collect(Collectors.toList());
+				if ( !managerCinemas.isEmpty() ) {
+					List<City> managerCities = new ArrayList<>();
+					managerCinemas.forEach(cinema -> managerCities.add(cinema.getCity()));
+					view.addAdministrationTab(currUser, managerCities, movies,
+							Collections.singletonList(optionalManager.get()), new HashSet<>(features), false);
+				}
+			}
+		}
+			break;
+		default: {
+			view.showError("You Don't Have Permission to Access ");
+		}
+		}
 	}
 
 	private void addProfileEditTab(UserRole role) {
@@ -123,6 +148,7 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 			break;
 		case MODERATOR: {
 			List<User> users = authenticationService.getUsersByRoles(Collections.singletonList(UserRole.MEMBER));
+			users.add(currUser);
 			view.addProfileAdminEditTab(currUser, users, cities);
 		}
 			break;
@@ -130,7 +156,6 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 			view.addProfileEditTab(currUser, cities);
 		}
 		}
-		logger.info("Profile edit tab successfully added.");
 	}
 
 	private void addMessagesTab(UserRole role) {

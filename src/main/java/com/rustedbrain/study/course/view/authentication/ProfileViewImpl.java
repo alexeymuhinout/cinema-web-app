@@ -170,31 +170,33 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 
 	@Override
 	public void addAdministrationTab(User currUser, List<City> cities, List<Movie> movies, List<Manager> managers,
-			Set<Feature> features) {
+			Set<Feature> features, boolean isAdmin) {
 		if ( adminLayout != null ) {
 			TabSheet oldAdminLayout = this.adminLayout;
-			this.adminLayout = createAdminTab(cities, movies, managers, features);
+			this.adminLayout = createAdminTab(cities, movies, managers, features, isAdmin);
 			tabSheet.replaceComponent(oldAdminLayout, this.adminLayout);
 		} else {
-			this.adminLayout = createAdminTab(cities, movies, managers, features);
+			this.adminLayout = createAdminTab(cities, movies, managers, features, isAdmin);
 			tabSheet.addTab(adminLayout, "Administration");
 		}
 	}
 
 	private TabSheet createAdminTab(List<City> cities, List<Movie> movies, List<Manager> managers,
-			Set<Feature> features) {
+			Set<Feature> features, boolean isAdmin) {
 		TabSheet tabSheet = new TabSheet();
-		administrationCityPanel = new AdminCityPanel(listeners, cities);
-		administrationCinemaPanel = new AdminCinemaPanel(listeners, cities, managers, features);
-		administrationCinemaHallPanel = new AdminCinemaHallPanel(listeners, cities);
-		List<Cinema> cinemas = new ArrayList<>();
-		cities.forEach(city -> cinemas.addAll(city.getCinemas()));
-		administrationMoviePanel = new AdminMoviePanel(listeners, movies);
-		administrationFilmScreeningPanel = new AdminFilmScreeningPanel(listeners, cities, movies);
-		tabSheet.addTab(administrationCityPanel, "City");
+		if ( isAdmin ) {
+			administrationCityPanel = new AdminCityPanel(listeners, cities);
+			tabSheet.addTab(administrationCityPanel, "City");
+		}
+		administrationCinemaPanel = new AdminCinemaPanel(listeners, cities, managers, features, isAdmin);
 		tabSheet.addTab(administrationCinemaPanel, "Cinema");
+		administrationCinemaHallPanel = new AdminCinemaHallPanel(listeners, cities);
 		tabSheet.addTab(administrationCinemaHallPanel, "Cinema Hall");
-		tabSheet.addTab(administrationMoviePanel, "Movie");
+		if ( isAdmin ) {
+			administrationMoviePanel = new AdminMoviePanel(listeners, movies);
+			tabSheet.addTab(administrationMoviePanel, "Movie");
+		}
+		administrationFilmScreeningPanel = new AdminFilmScreeningPanel(listeners, cities, movies);
 		tabSheet.addTab(administrationFilmScreeningPanel, "Film Screening");
 		return tabSheet;
 	}

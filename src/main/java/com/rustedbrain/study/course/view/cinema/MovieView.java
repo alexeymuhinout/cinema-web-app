@@ -37,12 +37,14 @@ public interface MovieView extends ApplicationView {
 
 		void buttonBlockAndDeleteClicked(long commentId, long userId);
 
-		void buttonBlockClicked(long userId);
+		void buttonBlockClicked(long commentId, long userId);
 
 		void buttonBlockSubmitClicked(long userId, LocalDateTime blockDateTime, String blockDescription);
 	}
 
-	void showUserBlockWindow(long userId, String login, UserRole userRole);
+	void showUserBlockWindow(long userId, String login, UserRole userRole, long commentId);
 
 	void closeUserBlockWindow();
+
+	void showUserBlockDeleteWindow(long userId, String login, UserRole userRole, long commentId);
 }

@@ -94,7 +94,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public void changeUserName(long id, String name, UserRole authorizedUserRole) {
 		switch (authorizedUserRole) {
-		case ADMINISTRATOR: {
+		case ADMINISTRATOR:
+		case MODERATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
 			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
@@ -234,7 +235,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public void changeUserBlockUntilDate(long id, LocalDateTime blockedUntilDate, String blockDescription,
 			UserRole userRole) {
 		switch (userRole) {
-		case ADMINISTRATOR: {
+		case ADMINISTRATOR:
+		case MODERATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
 			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
@@ -256,7 +258,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public void unblockUser(long id, UserRole userRole) {
 		switch (userRole) {
-		case ADMINISTRATOR: {
+		case ADMINISTRATOR:
+		case MODERATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
 			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())

@@ -38,4 +38,19 @@ public class Manager extends User {
 	public void setCinemas(Set<Cinema> cinemas) {
 		this.cinemas = cinemas;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o )
+			return true;
+		if ( o == null || getClass() != o.getClass() )
+			return false;
+		if ( !super.equals(o) )
+			return false;
+
+		Manager manager = (Manager) o;
+
+		return login.equals(manager.login);
+	}
+
 }

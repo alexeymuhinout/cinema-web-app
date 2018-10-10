@@ -38,13 +38,15 @@ public class AdminCinemaPanel extends Panel {
 	private List<Manager> managers = new ArrayList<>();
 	private List<City> cities = new ArrayList<>();
 	private Grid<Cinema> grid = new Grid<>();
+	private boolean isAdmin;
 
 	public AdminCinemaPanel(List<ProfileView.ViewListener> listeners, List<City> cities, List<Manager> managers,
-			Set<Feature> features) {
+			Set<Feature> features, boolean isAdmin) {
 		this.listeners = listeners;
 		this.cities = cities;
 		this.managers = managers;
 		this.features = features;
+		this.isAdmin = isAdmin;
 		this.cities.forEach(city -> cinemas.addAll(city.getCinemas()));
 		this.layout.addComponent(new Panel(showCinemaSelectionPanel(cinemas)));
 		setContent(this.layout);
@@ -54,14 +56,16 @@ public class AdminCinemaPanel extends Panel {
 		VerticalLayout mainLayout = new VerticalLayout();
 		HorizontalLayout gridFormLayout = getGridSaveDeleteFormLayout(cinemas);
 		HorizontalLayout filterLayout = getFilterLayout();
-
-		Button addNewCinemaButton = new Button("Add new cinema");
-		addNewCinemaButton.addClickListener(clickEvent -> {
-			grid.deselectAll();
-			filterLayout.addComponent(addNewCinemaButtonClick());
-		});
-
-		HorizontalLayout toolbar = new HorizontalLayout(filterLayout, addNewCinemaButton);
+		HorizontalLayout toolbar = new HorizontalLayout();
+		toolbar.addComponent(filterLayout);
+		if ( isAdmin ) {
+			Button addNewCinemaButton = new Button("Add new cinema");
+			addNewCinemaButton.addClickListener(clickEvent -> {
+				grid.deselectAll();
+				filterLayout.addComponent(addNewCinemaButtonClick());
+			});
+			toolbar.addComponent(addNewCinemaButton);
+		}
 		mainLayout.addComponents(toolbar, gridFormLayout);
 		return mainLayout;
 	}
@@ -71,6 +75,14 @@ public class AdminCinemaPanel extends Panel {
 		grid.addColumn(Cinema::getName).setCaption("Name");
 		grid.addColumn(cinema -> cinema.getCity().getName()).setCaption("City");
 		grid.addColumn(Cinema::getLocation).setCaption("Location");
+		grid.addColumn(cinema -> {
+			StringBuilder featuresStringBuilder = new StringBuilder();
+			for (Feature feature : cinema.getFeatures()) {
+				featuresStringBuilder.append(feature.getName()).append("; ");
+			}
+			return featuresStringBuilder;
+		}).setCaption("Feature");
+
 		grid.setSelectionMode(Grid.SelectionMode.SINGLE);
 		grid.setSizeFull();
 		SaveDeleteForm saveDeleteForm = new SaveDeleteForm();
@@ -135,7 +147,7 @@ public class AdminCinemaPanel extends Panel {
 							cinemaLocationTextField.getValue(), managerComboBox.getValue());
 					cinemaViewListener.reload();
 				} else {
-					Notification.show("Please select City", "", Notification.Type.ERROR_MESSAGE);
+					Notification.show("Please select city", "", Notification.Type.ERROR_MESSAGE);
 				}
 			});
 		}));

@@ -32,7 +32,7 @@ public interface ProfileView extends ApplicationView {
 	void showUserBlockWindow(long id, String login, UserRole userRole);
 
 	void addAdministrationTab(User currUser, List<City> cities, List<Movie> movies, List<Manager> managers,
-			Set<Feature> features);
+			Set<Feature> features, boolean isAdmin);
 
 	void addStatisticsTab(List<City> cities);
 

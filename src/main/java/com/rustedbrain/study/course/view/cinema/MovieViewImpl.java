@@ -1,5 +1,16 @@
 package com.rustedbrain.study.course.view.cinema;
 
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.rustedbrain.study.course.model.dto.UserRole;
 import com.rustedbrain.study.course.model.persistence.cinema.Comment;
 import com.rustedbrain.study.course.model.persistence.cinema.CommentReputation;
@@ -12,17 +23,20 @@ import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.*;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.File;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.DateTimeField;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 @UIScope
 @SpringView(name = VaadinUI.MOVIE_VIEW)
@@ -128,7 +142,7 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 		}
 		if ( admin || moderator ) {
 			layout.addComponentsAndExpand(new Button("Block", (Button.ClickListener) event -> listeners
-					.forEach(listener -> listener.buttonBlockClicked(comment.getUser().getId()))));
+					.forEach(listener -> listener.buttonBlockClicked(comment.getId(), comment.getUser().getId()))));
 			layout.addComponentsAndExpand(new Button("Block And Delete",
 					(Button.ClickListener) event -> listeners.forEach(listener -> listener
 							.buttonBlockAndDeleteClicked(comment.getId(), comment.getUser().getId()))));
@@ -201,8 +215,25 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 	}
 
 	@Override
-	public void showUserBlockWindow(long userId, String login, UserRole userRole) {
+	public void closeUserBlockWindow() {
+		if ( this.userBlockWindow != null ) {
+			this.userBlockWindow.close();
+		}
+	}
+
+	@Override
+	public void showUserBlockWindow(long userId, String login, UserRole userRole, long commentId) {
 		closeUserBlockWindow();
+		UI.getCurrent().addWindow(getUserBlockWindow(userId, login, commentId, false));
+	}
+
+	@Override
+	public void showUserBlockDeleteWindow(long userId, String login, UserRole userRole, long commentId) {
+		closeUserBlockWindow();
+		UI.getCurrent().addWindow(getUserBlockWindow(userId, login, commentId, true));
+	}
+
+	private Window getUserBlockWindow(long userId, String login, long commentId, boolean delete) {
 		userBlockWindow = new Window("Block User");
 		userBlockWindow.addCloseListener((Window.CloseListener) e -> userBlockWindow = null);
 		userBlockWindow.setSizeUndefined();
@@ -214,18 +245,19 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 		DateTimeField blockDateTimeField = new DateTimeField("Block date", LocalDateTime.now());
 		TextArea blockDescrTextField = new TextArea("Reason of blocking");
 		blockDescrTextField.setSizeFull();
-		Button buttonBlock =
-				new Button("Block", (Button.ClickListener) event -> listeners.forEach(viewListener -> viewListener
-						.buttonBlockSubmitClicked(userId, blockDateTimeField.getValue(), blockDescrTextField.getValue())));
-		userBlockWindow.setContent(new VerticalLayout(warnLabel, blockDateTimeField, blockDescrTextField, buttonBlock));
+		Button buttonBlock = new Button("Block");
+		if ( delete ) {
+			buttonBlock.addClickListener(event -> listeners.forEach(viewListener -> {
+				viewListener.buttonBlockSubmitClicked(userId, blockDateTimeField.getValue(),
+						blockDescrTextField.getValue());
+				viewListener.buttonDeleteCommentClicked(commentId);
 
-		UI.getCurrent().addWindow(userBlockWindow);
-	}
-	
-	@Override
-	public void closeUserBlockWindow() {
-		if ( this.userBlockWindow != null ) {
-			this.userBlockWindow.close();
+			}));
+		} else {
+			buttonBlock.addClickListener(event -> listeners.forEach(viewListener -> viewListener
+					.buttonBlockSubmitClicked(userId, blockDateTimeField.getValue(), blockDescrTextField.getValue())));
 		}
+		userBlockWindow.setContent(new VerticalLayout(warnLabel, blockDateTimeField, blockDescrTextField, buttonBlock));
+		return userBlockWindow;
 	}
 }

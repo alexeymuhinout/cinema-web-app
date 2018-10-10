@@ -41,9 +41,9 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 	@Override
 	public void entered(ViewChangeListener.ViewChangeEvent event) {
 		Optional<String> optionalId = Optional.ofNullable(event.getParameters());
-		if (optionalId.isPresent()) {
+		if ( optionalId.isPresent() ) {
 			Optional<Movie> optionalMovie = cinemaService.getMovie(Long.parseLong(optionalId.get()));
-			if (optionalMovie.isPresent()) {
+			if ( optionalMovie.isPresent() ) {
 				this.movie = optionalMovie.get();
 				boolean authenticated = authenticationService.isAuthenticated();
 				String userLogin = authenticated ? authenticationService.getUserLogin() : null;
@@ -70,7 +70,7 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 
 	@Override
 	public void buttonCreateMessageClicked(String textArea) {
-		if (authenticationService.isAuthenticated()) {
+		if ( authenticationService.isAuthenticated() ) {
 			cinemaService.createMessage(movie, authenticationService.getAuthenticUser(), textArea);
 			view.reload();
 		} else {
@@ -95,10 +95,10 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 		try {
 			Optional<CommentReputation> commentReputationOptional = comment.getCommentReputations().stream()
 					.filter(commentReputation -> commentReputation.getUser().equals(user)).findAny();
-			if (!commentReputationOptional.isPresent()) {
+			if ( !commentReputationOptional.isPresent() ) {
 				cinemaService.addPlusCommentReputation(comment.getId(), user);
 				view.reload();
-			} else if (!commentReputationOptional.get().isPlus()) {
+			} else if ( !commentReputationOptional.get().isPlus() ) {
 				cinemaService.invertCommentReputation(commentReputationOptional.get());
 				view.reload();
 			} else {
@@ -115,10 +115,10 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 		try {
 			Optional<CommentReputation> commentReputationOptional = comment.getCommentReputations().stream()
 					.filter(commentReputation -> commentReputation.getUser().equals(user)).findAny();
-			if (!commentReputationOptional.isPresent()) {
+			if ( !commentReputationOptional.isPresent() ) {
 				cinemaService.addMinusCommentReputation(comment.getId(), user);
 				view.reload();
-			} else if (commentReputationOptional.get().isPlus()) {
+			} else if ( commentReputationOptional.get().isPlus() ) {
 				cinemaService.invertCommentReputation(commentReputationOptional.get());
 				view.reload();
 			} else {
@@ -133,16 +133,15 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 	public void buttonBlockAndDeleteClicked(long commentId, long userId) {
 		Optional<AuthUser> user = authenticationService.getAuthUserById(userId);
 		user.ifPresent(authUser -> {
-			view.showUserBlockWindow(userId, authUser.getLogin(), authUser.getUserRole());
-			buttonDeleteCommentClicked(commentId);
+			view.showUserBlockDeleteWindow(userId, authUser.getLogin(), authUser.getUserRole(), commentId);
 		});
 	}
 
 	@Override
-	public void buttonBlockClicked(long userId) {
+	public void buttonBlockClicked(long commentId, long userId) {
 		Optional<AuthUser> user = authenticationService.getAuthUserById(userId);
 		user.ifPresent(authUser -> {
-			view.showUserBlockWindow(userId, authUser.getLogin(), authUser.getUserRole());
+			view.showUserBlockWindow(userId, authUser.getLogin(), authUser.getUserRole(), commentId);
 		});
 	}
 
@@ -151,6 +150,6 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 		authenticationService.changeUserBlockUntilDate(userId, blockDateTime, blockDescription,
 				authenticationService.getUserRole());
 		view.closeUserBlockWindow();
-		view.showWarning("User successfully blocked until " + blockDateTime);	
+		view.showWarning("User successfully blocked until " + blockDateTime);
 	}
 }

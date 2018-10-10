@@ -9,6 +9,7 @@ import com.rustedbrain.study.course.model.persistence.cinema.Movie;
 import com.rustedbrain.study.course.model.persistence.cinema.Ticket;
 import com.rustedbrain.study.course.view.authentication.ProfileView;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -38,6 +39,7 @@ public class AdminStatisticPanel extends Panel {
 		cities.forEach(city -> city.getCinemas()
 				.forEach(cinema -> cinema.getFilmScreenings().forEach(fs -> movies.add(fs.getMovie()))));
 		Grid<Movie> grid = new Grid<>();
+		grid.setSelectionMode(SelectionMode.NONE);
 		grid.setCaptionAsHtml(true);
 		grid.setCaption("<h2>Most discussing movie</h2>");
 		grid.setSizeFull();
@@ -51,6 +53,7 @@ public class AdminStatisticPanel extends Panel {
 		List<Cinema> cinemas = new ArrayList<>();
 		cities.forEach(city -> cinemas.addAll(city.getCinemas()));
 		Grid<Cinema> grid = new Grid<>();
+		grid.setSelectionMode(SelectionMode.NONE);
 		grid.setCaptionAsHtml(true);
 		grid.setCaption("<h2>Most popular cinema</h2>");
 		grid.setSizeFull();
