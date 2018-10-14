@@ -8,6 +8,7 @@ import java.util.Optional;
 import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserInfo;
 import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.ChangeRequest;
 import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 
@@ -50,4 +51,10 @@ public interface AuthenticationService {
 	Optional<UserInfo> getUserInfo(long userId);
 
 	List<Manager> getManagers();
+
+	List<ChangeRequest> getChangeRequests();
+
+	void acceptChangeRequest(long userId, String fieldName, String value, long changeRequestId);
+
+	void declineChangeRequest(long userId, String fieldName, String value, long changeRequestId);
 }

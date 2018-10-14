@@ -152,7 +152,7 @@ public interface CinemaService {
 
 	void createFilmScreeningEvent(FilmScreening filmScreening, CinemaHall cinemaHall, java.sql.Date date, Time time);
 
-	void editComment(long commentId);
+	void editComment(long commentId, String newValue);
 
 	void createFeature(String name, String description);
 

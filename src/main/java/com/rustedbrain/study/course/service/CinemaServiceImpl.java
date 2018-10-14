@@ -660,9 +660,8 @@ public class CinemaServiceImpl implements CinemaService {
 	}
 
 	@Override
-	public void editComment(long commentId) {
-		// TODO Auto-generated method stub
-
+	public void editComment(long commentId, String newValue) {
+		commentRepository.editComment(commentId, newValue);
 	}
 
 	@Override

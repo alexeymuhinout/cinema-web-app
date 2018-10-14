@@ -29,7 +29,7 @@ public interface MovieView extends ApplicationView {
 
 		void buttonDeleteCommentClicked(long id);
 
-		void buttonEditeCommentClicked(long commentId);
+		void buttonEditCommentClicked(long commentId, String newValue);
 
 		void buttonPlusClicked(Comment comment);
 

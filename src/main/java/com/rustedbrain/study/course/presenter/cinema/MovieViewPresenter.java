@@ -85,8 +85,8 @@ public class MovieViewPresenter implements MovieView.Listener, Serializable {
 	}
 
 	@Override
-	public void buttonEditeCommentClicked(long commentId) {
-		cinemaService.editComment(commentId);
+	public void buttonEditCommentClicked(long commentId, String newValue) {
+		cinemaService.editComment(commentId, newValue);
 	}
 
 	@Override

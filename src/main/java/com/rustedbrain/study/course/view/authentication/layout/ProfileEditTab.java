@@ -39,8 +39,8 @@ public class ProfileEditTab extends Panel {
 						listener -> listener.buttonChangeNameClicked(currUser.getId(), nameTextField.getValue())),
 				"name", currUser.getName(), layout));
 
-		TextField newValueTextField = new TextField("New surname",
-				currUser.getSurname() != null ? currUser.getSurname() : "N/A");
+		TextField newValueTextField =
+				new TextField("New surname", currUser.getSurname() != null ? currUser.getSurname() : "N/A");
 		currUserLayout.addComponent(getPopupLayout(newValueTextField,
 				(Button.ClickListener) event -> listeners.forEach(listener -> listener
 						.buttonChangeSurnameClicked(currUser.getId(), newValueTextField.getValue())),

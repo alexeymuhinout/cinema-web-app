@@ -14,6 +14,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.ChangeRequest;
 import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
@@ -29,9 +30,11 @@ import com.rustedbrain.study.course.view.authentication.layout.AdminCinemaHallPa
 import com.rustedbrain.study.course.view.authentication.layout.AdminCinemaPanel;
 import com.rustedbrain.study.course.view.authentication.layout.AdminCityPanel;
 import com.rustedbrain.study.course.view.authentication.layout.AdminFilmScreeningPanel;
+import com.rustedbrain.study.course.view.authentication.layout.AdminMessageTab;
 import com.rustedbrain.study.course.view.authentication.layout.AdminMoviePanel;
 import com.rustedbrain.study.course.view.authentication.layout.AdminProfileEditTab;
 import com.rustedbrain.study.course.view.authentication.layout.AdminStatisticPanel;
+import com.rustedbrain.study.course.view.authentication.layout.MessageTab;
 import com.rustedbrain.study.course.view.authentication.layout.ProfileEditTab;
 import com.rustedbrain.study.course.view.components.MenuComponent;
 import com.vaadin.navigator.ViewBeforeLeaveEvent;
@@ -67,6 +70,8 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 
 	private TabSheet tabSheet;
 	private ProfileEditTab profileEditTab;
+	private MessageTab messageTab;
+	private AdminMessageTab adminMessageTab;
 	private TabSheet adminLayout;
 	private Panel statisticsLayout;
 	private Window userBlockWindow;
@@ -123,6 +128,30 @@ public class ProfileViewImpl extends VerticalLayout implements ProfileView {
 		} else {
 			this.profileEditTab = new AdminProfileEditTab(listeners, user, users, cities);
 			tabSheet.addTab(profileEditTab, "Edit");
+		}
+	}
+
+	@Override
+	public void addMessageTab(User currUser, List<ChangeRequest> changeRequests) {
+		if ( messageTab != null ) {
+			Component oldMessageLayout = this.messageTab;
+			this.messageTab = new MessageTab(currUser, changeRequests);
+			tabSheet.replaceComponent(oldMessageLayout, messageTab);
+		} else {
+			this.messageTab = new MessageTab(currUser, changeRequests);
+			tabSheet.addTab(messageTab, "Message");
+		}
+	}
+
+	@Override
+	public void addMessageAdminTab(List<User> users, List<ChangeRequest> changeRequests) {
+		if ( adminMessageTab != null ) {
+			Component oldMessageLayout = this.adminMessageTab;
+			this.adminMessageTab = new AdminMessageTab(listeners, changeRequests, users);
+			tabSheet.replaceComponent(oldMessageLayout, adminMessageTab);
+		} else {
+			this.adminMessageTab = new AdminMessageTab(listeners, changeRequests, users);
+			tabSheet.addTab(adminMessageTab, "Message");
 		}
 	}
 

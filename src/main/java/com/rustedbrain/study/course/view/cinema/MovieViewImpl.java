@@ -33,7 +33,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -137,8 +139,11 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 		if ( creator || admin || moderator ) {
 			layout.addComponentsAndExpand(new Button("Delete", (Button.ClickListener) event -> listeners
 					.forEach(listener -> listener.buttonDeleteCommentClicked(comment.getId()))));
-			layout.addComponentsAndExpand(new Button("Edit", (Button.ClickListener) event -> listeners
-					.forEach(listener -> listener.buttonEditeCommentClicked(comment.getId()))));
+
+			Button editButton = new Button("Edit");
+			editButton.addClickListener(
+					event -> messageLayout.addComponent(getEditPopup(comment.getId(), comment.getMessage())));
+			layout.addComponentsAndExpand(editButton);
 		}
 		if ( admin || moderator ) {
 			layout.addComponentsAndExpand(new Button("Block", (Button.ClickListener) event -> listeners
@@ -150,9 +155,23 @@ public class MovieViewImpl extends VerticalLayout implements MovieView {
 		layout.setSizeFull();
 
 		messageLayout.addComponent(new Panel(layout));
-
 		commentLayout.addComponentsAndExpand(new Panel(messageLayout));
 		return new Panel(commentLayout);
+	}
+
+	private PopupView getEditPopup(long commentId, String message) {
+		TextField commentTextField = new TextField("New comment", message);
+		VerticalLayout changePopupContent = new VerticalLayout();
+		changePopupContent.addComponent(commentTextField);
+		changePopupContent
+				.addComponent(new Button("Change", (Button.ClickListener) event -> listeners.forEach(listener -> {
+					listener.buttonEditCommentClicked(commentId, commentTextField.getValue());
+					reload();
+				})));
+		PopupView changePopup = new PopupView(null, changePopupContent);
+		changePopup.setSizeUndefined();
+		changePopup.setPopupVisible(true);
+		return changePopup;
 	}
 
 	private Layout getMovieInfoLayout(Movie movie) {

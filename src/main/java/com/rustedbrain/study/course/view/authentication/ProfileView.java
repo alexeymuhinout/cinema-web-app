@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.ChangeRequest;
 import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
@@ -43,6 +44,10 @@ public interface ProfileView extends ApplicationView {
 	void addProfileEditTab(User currUser, List<City> cities);
 
 	void addProfileAdminEditTab(User currUser, List<User> users, List<City> cities);
+
+	void addMessageAdminTab(List<User> users, List<ChangeRequest> changeRequests);
+
+	void addMessageTab(User currUser, List<ChangeRequest> changeRequests);
 
 	void closeUserBlockWindow();
 
@@ -89,6 +94,10 @@ public interface ProfileView extends ApplicationView {
 		void buttonFilmScreeningEventsClicked(FilmScreening selectedFilmScreening);
 
 		void buttonFeaturesClicked(Cinema selectedCinema, Set<Feature> features);
+
+		void buttonAcceptChangeRequestClicked(long userId, String fieldName, String value, long changeRequestId);
+
+		void buttonDeclineChangeRequestClicked(long userId, String fieldName, String value, long changeRequestId);
 	}
 
 	void showFilmScreeningEventsWindow(FilmScreening selectedFilmScreening);
@@ -98,4 +107,5 @@ public interface ProfileView extends ApplicationView {
 	void closeFeaturesWindow();
 
 	void showFeaturesWindow(Cinema selectedCinema, Set<Feature> features);
+
 }

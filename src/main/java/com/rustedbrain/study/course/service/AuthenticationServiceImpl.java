@@ -4,10 +4,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.servlet.http.Cookie;
@@ -18,8 +20,10 @@ import org.springframework.stereotype.Service;
 import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserInfo;
 import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.ChangeRequest;
 import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
+import com.rustedbrain.study.course.service.repository.ChangeRequestRepository;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
@@ -32,6 +36,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private static final String COOKIE_NAME = "remember-me";
 
 	private AuthorizationUserService authorizationUserService;
+	private ChangeRequestRepository changeRequestRepository;
+
+	@Autowired
+	public void setChangeRequestRepository(ChangeRequestRepository changeRequestRepository) {
+		this.changeRequestRepository = changeRequestRepository;
+	}
 
 	private static Optional<Cookie> getRememberMeCookie() {
 		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
@@ -94,8 +104,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public void changeUserName(long id, String name, UserRole authorizedUserRole) {
 		switch (authorizedUserRole) {
-		case ADMINISTRATOR:
-		case MODERATOR: {
+		case ADMINISTRATOR: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
 			if ( optionalAuthUser.isPresent() ) {
 				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
@@ -106,9 +115,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 			break;
 		default: {
-			// TODO: 4/8/18 Add logic to check last renaming request and prevent to change
-			// data too often
-			// TODO: 4/8/18 Add logic to create request in database about renaming for admin
+			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+			if ( optionalAuthUser.isPresent() ) {
+				String userRole = optionalAuthUser.get().getUserRole().name().toLowerCase();
+				String tableName = Character.toUpperCase(userRole.charAt(0)) + userRole.substring(1);
+				ChangeRequest changeRequest = new ChangeRequest(tableName, "name", id, name);
+				changeRequestRepository.save(changeRequest);
+			} else {
+				throw new IllegalArgumentException("User with specified id not found.");
+			}
 		}
 			break;
 		}
@@ -130,14 +145,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		default: {
 			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
 			if ( optionalAuthUser.isPresent() ) {
-				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
-						.changeUserLogin(id, login);
+				String userRole = optionalAuthUser.get().getUserRole().name().toLowerCase();
+				String tableName = Character.toUpperCase(userRole.charAt(0)) + userRole.substring(1);
+				ChangeRequest changeRequest = new ChangeRequest(tableName, "login", id, login);
+				changeRequestRepository.save(changeRequest);
 			} else {
 				throw new IllegalArgumentException("User with specified id not found.");
 			}
-			// TODO: 4/8/18 Add logic to check last renaming request and prevent to change
-			// data too often
-			// TODO: 4/8/18 Add logic to create request in database about renaming for admin
 		}
 			break;
 		}
@@ -157,9 +171,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 			break;
 		default: {
-			// TODO: 4/8/18 Add logic to check last renaming request and prevent to change
-			// data too often
-			// TODO: 4/8/18 Add logic to create request in database about renaming for admin
+			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+			if ( optionalAuthUser.isPresent() ) {
+				String userRole = optionalAuthUser.get().getUserRole().name().toLowerCase();
+				String tableName = Character.toUpperCase(userRole.charAt(0)) + userRole.substring(1);
+				ChangeRequest changeRequest = new ChangeRequest(tableName, "mail", id, mail);
+				changeRequestRepository.save(changeRequest);
+			} else {
+				throw new IllegalArgumentException("User with specified id not found.");
+			}
 		}
 			break;
 		}
@@ -179,9 +199,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 			break;
 		default: {
-			// TODO: 4/8/18 Add logic to check last renaming request and prevent to change
-			// data too often
-			// TODO: 4/8/18 Add logic to create request in database about renaming for admin
+			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+			if ( optionalAuthUser.isPresent() ) {
+				String userRole = optionalAuthUser.get().getUserRole().name().toLowerCase();
+				String tableName = Character.toUpperCase(userRole.charAt(0)) + userRole.substring(1);
+				ChangeRequest changeRequest = new ChangeRequest(tableName, "surname", id, surname);
+				changeRequestRepository.save(changeRequest);
+			} else {
+				throw new IllegalArgumentException("User with specified id not found.");
+			}
 		}
 			break;
 		}
@@ -201,9 +227,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 			break;
 		default: {
-			// TODO: 4/8/18 Add logic to check last renaming request and prevent to change
-			// data too often
-			// TODO: 4/8/18 Add logic to create request in database about renaming for admin
+			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+			if ( optionalAuthUser.isPresent() ) {
+				String userRole = optionalAuthUser.get().getUserRole().name().toLowerCase();
+				String tableName = Character.toUpperCase(userRole.charAt(0)) + userRole.substring(1);
+				ChangeRequest changeRequest = new ChangeRequest(tableName, "city", id, String.valueOf(cityId));
+				changeRequestRepository.save(changeRequest);
+			} else {
+				throw new IllegalArgumentException("User with specified id not found.");
+			}
 		}
 			break;
 		}
@@ -223,9 +255,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 			break;
 		default: {
-			// TODO: 4/8/18 Add logic to check last renaming request and prevent to change
-			// data too often
-			// TODO: 4/8/18 Add logic to create request in database about renaming for admin
+			Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(id);
+			if ( optionalAuthUser.isPresent() ) {
+				String userRole = optionalAuthUser.get().getUserRole().name().toLowerCase();
+				String tableName = Character.toUpperCase(userRole.charAt(0)) + userRole.substring(1);
+				String birthdayFormat = birthday.format(DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH));
+				ChangeRequest changeRequest = new ChangeRequest(tableName, "birthday", id, birthdayFormat);
+				changeRequestRepository.save(changeRequest);
+			} else {
+				throw new IllegalArgumentException("User with specified id not found.");
+			}
 		}
 			break;
 		}
@@ -247,7 +286,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				throw new IllegalArgumentException("User with specified id not found.");
 			}
 		}
-			// TODO: 4/8/18 Create blocking logic for moderator
 			break;
 		default: {
 			throw new IllegalArgumentException("Only administrator and moderator can block another users.");
@@ -268,7 +306,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				throw new IllegalArgumentException("User with specified id not found.");
 			}
 		}
-			// TODO: 4/8/18 Create blocking logic for moderator
 			break;
 		default: {
 			throw new IllegalArgumentException("Only administrator and moderator can unblock another users.");
@@ -359,5 +396,64 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public List<Manager> getManagers() {
 		return authorizationUserService.getManagers();
+	}
+
+	@Override
+	public List<ChangeRequest> getChangeRequests() {
+		return changeRequestRepository.findAll();
+	}
+
+	@Override
+	public void acceptChangeRequest(long userId, String fieldName, String value, long changeRequestId) {
+		Optional<AuthUser> optionalAuthUser = authorizationUserService.getAuthUserById(userId);
+		if ( optionalAuthUser.isPresent() ) {
+			switch (fieldName) {
+			case "surname":
+				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
+						.changeUserSurname(userId, value);
+				break;
+			case "name":
+				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
+						.changeUserName(userId, value);
+				break;
+			case "login":
+				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
+						.changeUserLogin(userId, value);
+				break;
+			case "mail":
+				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
+						.changeUserMail(userId, value);
+				break;
+			case "birthday": {
+				authorizationUserService
+						.getUserPropertiesAccessor(
+								optionalAuthUser.get().getUserRole())
+						.changeUserBirthday(userId,
+								Date.from(LocalDate
+										.parse(value, DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH))
+										.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			}
+				break;
+			case "city":
+				authorizationUserService.getUserPropertiesAccessor(optionalAuthUser.get().getUserRole())
+						.changeUserCity(userId, Long.valueOf(value));
+				break;
+			}
+
+			Optional<ChangeRequest> optionChangeRequest = changeRequestRepository.findById(changeRequestId);
+			if ( optionChangeRequest.isPresent() ) {
+				changeRequestRepository.editAcceptance(changeRequestId, true);
+			}
+		}
+
+	}
+
+	@Override
+	public void declineChangeRequest(long userId, String fieldName, String value, long changeRequestId) {
+		Optional<ChangeRequest> optionChangeRequest = changeRequestRepository.findById(changeRequestId);
+		if ( optionChangeRequest.isPresent() ) {
+			changeRequestRepository.deleteById(changeRequestId);
+		}
+
 	}
 }

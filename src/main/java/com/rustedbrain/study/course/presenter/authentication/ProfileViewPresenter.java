@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.rustedbrain.study.course.model.dto.AuthUser;
 import com.rustedbrain.study.course.model.dto.UserRole;
+import com.rustedbrain.study.course.model.persistence.authorization.ChangeRequest;
 import com.rustedbrain.study.course.model.persistence.authorization.Manager;
 import com.rustedbrain.study.course.model.persistence.authorization.User;
 import com.rustedbrain.study.course.model.persistence.cinema.Cinema;
@@ -159,7 +160,20 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	}
 
 	private void addMessagesTab(UserRole role) {
-		logger.info("Messages tab successfully added.");
+		User currUser = authenticationService.getAuthenticUser();
+		List<ChangeRequest> changeRequests = authenticationService.getChangeRequests();
+		switch (role) {
+		case ADMINISTRATOR: {
+			List<User> users = authenticationService.getUsersByRoles(Arrays.stream(UserRole.values())
+					.filter(rolePredicate -> !rolePredicate.equals(UserRole.NOT_AUTHORIZED))
+					.collect(Collectors.toList()));
+			view.addMessageAdminTab(users, changeRequests);
+		}
+			break;
+		default: {
+			view.addMessageTab(currUser, changeRequests);
+		}
+		}
 	}
 
 	@Override
@@ -176,7 +190,11 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	@Override
 	public void buttonChangeLoginClicked(long id, String login) {
 		authenticationService.changeUserLogin(id, login, authenticationService.getUserRole());
-		authenticationService.logOut();
+		if ( authenticationService.getUserRole().equals(UserRole.ADMINISTRATOR) ) {
+			authenticationService.logOut();
+		} else {
+			view.reload();
+		}
 	}
 
 	@Override
@@ -277,5 +295,17 @@ public class ProfileViewPresenter implements Serializable, ProfileView.ViewListe
 	@Override
 	public void buttonFeaturesClicked(Cinema selectedCinema, Set<Feature> features) {
 		view.showFeaturesWindow(selectedCinema, features);
+	}
+
+	@Override
+	public void buttonAcceptChangeRequestClicked(long userId, String fieldName, String value, long changeRequestId) {
+		authenticationService.acceptChangeRequest(userId, fieldName, value, changeRequestId);
+		view.reload();
+	}
+
+	@Override
+	public void buttonDeclineChangeRequestClicked(long userId, String fieldName, String value, long changeRequestId) {
+		authenticationService.declineChangeRequest(userId, fieldName, value, changeRequestId);
+		view.reload();
 	}
 }

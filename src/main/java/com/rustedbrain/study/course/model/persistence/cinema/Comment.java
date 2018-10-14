@@ -11,9 +11,6 @@ import java.util.Set;
 @Table(name = "message")
 public class Comment extends DatabaseEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5328296118776124391L;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private User user;
@@ -78,11 +75,11 @@ public class Comment extends DatabaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if ( this == o )
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if ( o == null || getClass() != o.getClass() )
 			return false;
-		if (!super.equals(o))
+		if ( !super.equals(o) )
 			return false;
 
 		Comment comment1 = (Comment) o;
